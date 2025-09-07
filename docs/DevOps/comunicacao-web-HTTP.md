@@ -45,3 +45,54 @@ Para traduzir um nome de domínio amigável (google.com.br) para um endereço IP
 Fonte: https://www.cloudflare.com/pt-br/learning/dns/glossary/dns-root-server/
 
 ## 4. Estrutura e Métodos do HTTP
+As mensagens HTTP são estruturadas em duas partes:
+
+**Headers (Cabeçalhos):** Contêm metadados sobre a mensagem, como o tipo de conteúdo e o método da requisição.
+
+**Body (Corpo):** Contém o conteúdo da mensagem, como dados em formato JSON.
+
+<img width="590" height="269" alt="Image" src="https://github.com/user-attachments/assets/96bde9b9-46ba-472d-8b22-16ca7af207fa" />
+
+Fonte: https://mazer.dev/pt-br/http/introducao-protocolo-http/
+
+A intenção de uma requisição é definida pelos Métodos HTTP. Os quatro métodos mais importantes, que formam o acrônimo CRUD (Create, Read, Update, Delete), são:
+
+**POST (Create):** Usado para criar novos recursos.
+
+**GET (Read):** Usado para obter ou ler dados.
+
+**PUT (Update):** Usado para atualizar um recurso.
+
+**DELETE (Delete):** Usado para apagar um recurso.
+
+## 5. Servidores HTTP Stateless e a Manutenção de Estado
+Servidores HTTP são, por natureza, stateless (sem estado). Isso significa que eles não guardam informações (como emails e senhas) de requisições anteriores. Para resolver isso, usamos mecanismos como:
+
+**Sessões:** O cliente carrega um token de acesso em cada requisição para "lembrar" ao servidor quem ele é.
+
+**Cookies:** Pequenos arquivos de dados que o servidor pede para o cliente armazenar, contendo informações que podem ser usadas em requisições futuras.
+
+## 6. A Importância da Segurança: HTTP vs. HTTPS
+O protocolo HTTP é vulnerável, pois os dados trafegam sem criptografia, o que pode ser facilmente interceptado. Para garantir a segurança, usamos o HTTPS (Hypertext Transfer Protocol Secure). O HTTPS adiciona uma camada de segurança (primeiro SSL e agora TLS), que criptografa os dados.
+
+A criptografia funciona com chaves privadas (mantidas pelo servidor) e chaves públicas (presentes no certificado digital do servidor). Quando um cliente se conecta, o servidor envia seu certificado digital. O cliente usa a chave pública para criptografar uma chave de sessão, que só o servidor, com sua chave privada, pode descriptografar. A partir daí, a comunicação se torna segura.
+
+## 7. A Evolução do HTTP
+O protocolo HTTP evoluiu para otimizar a performance e a segurança:
+
+**HTTP 1.1:** Requer múltiplas conexões paralelas para enviar várias requisições simultaneamente, o que pode causar gargalos.
+
+**HTTP/2:** Introduziu a multiplexação, permitindo várias requisições em uma única conexão TCP, melhorando a eficiência. Também adicionou cabeçalhos mais curtos e o server push, que torna o servidor mais proativo.
+
+**HTTP/3:** A versão mais recente, baseada no novo protocolo de transporte QUIC. O QUIC é uma evolução do UDP, focado em velocidade. Ele incorpora segurança por padrão, eliminando a necessidade de apertos de mão ("handshakes") separados para TCP e TLS, resultando em ganhos significativos de velocidade e desempenho.
+
+
+REFERENCIAS
+https://developer.mozilla.org/pt-BR/docs/Web/HTTP/Guides/Overview
+https://www.youtube.com/watch?v=kncOJZrnkTg
+https://www.youtube.com/watch?v=V4XZ81vRGtM
+https://www.alura.com.br/artigos/http
+https://www.alura.com.br/artigos/conhecendo-o-modelo-osi
+https://www.alura.com.br/artigos/rede-de-computadores
+https://www.alura.com.br/artigos/dns-o-que-e-qual-escolher
+https://www.alura.com.br/artigos/diferencas-entre-get-e-post
