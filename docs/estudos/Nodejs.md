@@ -88,7 +88,6 @@ https://www.alura.com.br/artigos/como-instalar-node-js-windows-linux-macos
 4. [Node.js C++ Addons & libuv](https://nodejs.org/api/addons.html)  
 5. [Node-API (N-API)](https://nodejs.org/api/n-api.html)  
 6. [Node.js GitHub — OpenJS Foundation](https://github.com/nodejs/node)  
-7. [Wikipedia — Node.js](https://en.wikipedia.org/wiki/Node.js)  
-8. [Wired (2014) — io.js Fork](https://www.wired.com/2014/12/io-js/)  
-9. [Wired (2015) — Node.js Foundation](https://www.wired.com/2015/06/nodejs/)  
+7. [Wired (2014) — io.js Fork](https://www.wired.com/2014/12/io-js/)  
+8. [Wired (2015) — Node.js Foundation](https://www.wired.com/2015/06/nodejs/)  
 
