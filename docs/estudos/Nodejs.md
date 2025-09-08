@@ -78,7 +78,8 @@ Via **Node-API (N-API)**, permitindo escrever extensões nativas com estabilidad
 
 ---
 ## ⚙️ Como instalar o Node.js no Linux (Ubuntu)
-
+Acesse esse link e siga o passo a passo:
+https://www.alura.com.br/artigos/como-instalar-node-js-windows-linux-macos
 
 ## 📚 Referências
 1. [Node.js Official Website](https://nodejs.org/)  
