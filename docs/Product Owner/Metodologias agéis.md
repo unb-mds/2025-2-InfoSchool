@@ -96,13 +96,17 @@ Ferramentas úteis que vai te dar apoio ao processo:
 ● Comunicação: Slack, Microsoft Teams.
 
 ## 📚 Referências
-● Scrum Guide (2020): Leitura obrigatória. É a fonte oficial. Disponível em:
-https://scrumguides.org/
-● Introdução ao Scrum – DevMedia - https://www.devmedia.com.br/
-● Metodologias Ágeis – ÍRIS Lab (PDF) - https://irislab.df.gov.br/
-● Scrum.org e Scrum Alliance: Principais organizações com artigos, blogs e certificações
-para Scrum Master e Product Owner
-● Manifesto Ágil - https://agilemanifesto.org/iso/ptbr/manifesto.html
+
+SCHWABER, Ken; SUTHERLAND, Jeff. **Scrum Guide**. 2020. Disponível em: <https://scrumguides.org/>. Acesso em: 10 set. 2025.  
+
+DEVMEDIA. **Introdução ao Scrum**. Disponível em: <https://www.devmedia.com.br/>. Acesso em: 10 set. 2025.  
+
+ÍRIS LAB. **Metodologias Ágeis**. Brasília, DF, [s.d.]. Disponível em: <https://irislab.df.gov.br/>. Acesso em: 10 set. 2025.  
+
+SCRUM.ORG; SCRUM ALLIANCE. **Artigos, blogs e certificações para Scrum Master e Product Owner**. Disponível em: <https://www.scrum.org/>; <https://www.scrumalliance.org/>. Acesso em: 10 set. 2025.  
+
+BECK, Kent; et al. **Manifesto Ágil**. 2001. Disponível em: <https://agilemanifesto.org/iso/ptbr/manifesto.html>. Acesso em: 10 set. 2025.  
+
 
 ## 🎥 Vídeos Recomendados
 
