@@ -1,4 +1,6 @@
 # 2025-2-InfoMap
+[Figma Scrum](https://www.figma.com/board/feNX4bnc1LbmuZ9Rp4j8QI/Template-MDS---group-11?node-id=0-1&t=wxkIsswMZSsrid6d-1)
+
 ## 📑 Índice
 - [Descrição](#-descrição)
 - [Funcionalidades](#-funcionalidades)
