@@ -22,3 +22,80 @@ Next.js é um framework React de código aberto desenvolvido pela Vercel que rev
 - **Hot reloading** - Recarregamento instantâneo durante o desenvolvimento
 - **Otimização de imagens** - Componente Image com optimizações automáticas
 - **Internacionalização** - Suporte nativo a múltiplos idiomas e rotas internacionalizadas
+
+## **Guia de Instalação**
+
+### **Pré-requisitos**
+
+```bash
+# Verifique se tem Node.js instalado (versão 18+)
+node --version
+
+# Verifique o gerenciador de pacotes
+npm --version
+# ou
+yarn --version
+```
+
+### **1. Criar Novo Projeto**
+
+```bash
+# Comando principal (sempre use a versão latest)
+npx create-next-app@latest meu-projeto-next
+
+# Durante a instalação, escolha:
+# - TypeScript: Yes
+# - ESLint: Yes
+# - Tailwind CSS: Yes
+# - src/ directory: Yes
+# - App Router: Yes
+# - Import alias: No
+```
+
+### **2. Executar o Projeto**
+
+```bash
+# Entrar na pasta do projeto
+cd meu-projeto-next
+
+# Modo desenvolvimento
+npm run dev
+
+# Acesse: http://localhost:3000
+```
+
+### **3. Estrutura Básica Criada**
+
+```
+meu-projeto-next/
+├── src/
+│   ├── app/
+│   │   ├── globals.css
+│   │   ├── layout.tsx
+│   │   └── page.tsx
+│   └── components/
+├── public/
+├── package.json
+└── next.config.js
+```
+
+## **Dependências Instaladas Automaticamente**
+
+### **Produção (package.json)**
+
+```json
+{
+  "dependencies": {
+    "next": "14.0.0",
+    "react": "18.0.0",
+    "react-dom": "18.0.0"
+  }
+}
+```
+
+### **Desenvolvimento (instaladas automaticamente)**
+
+- typescript - Suporte a TypeScript
+- tailwindcss - Estilização com Tailwind
+- eslint - Análise de código
+- @types/* - Definições TypeScript
