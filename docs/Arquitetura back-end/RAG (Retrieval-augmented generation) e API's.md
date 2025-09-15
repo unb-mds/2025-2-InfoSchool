@@ -43,25 +43,24 @@ O processo pode ser dividido em **quatro etapas principais**:
 
 Fluxo simplificado:  
 
-[Usuário]
-│
-▼
-[Prompt] → [Conversor de Embeddings] → [Banco de Vetores]
-│
-▼
-[Documentos Relevantes]
-│
-▼
-[LLM + Documentos Recuperados]
-│
-▼
-[Resposta Final]
+    U[Usuário] --> P[Prompt]
+    P --> E[Conversor de Embeddings]
+    E --> V[Banco de Vetores]
+    V --> D[Documentos Relevantes]
+    D --> L[LLM + Documentos Recuperados]
+    L --> R[Resposta Final]
 
 ---
 
-## ✅ Vantagens do RAG
+# Por que usar RAG?
+- **Atualização contínua do conhecimento:** dados podem ser atualizados na base sem re-treinar o LLM.  
+- **Redução de *hallucinations*:** fornecer evidências textuais torna as respostas mais verificáveis.  
+- **Custos:** permite usar LLMs menores ou menos chamadas se a informação estiver externa.  
+- **Governança / Compliance:** é possível restringir respostas a fontes autorizadas e registrar proveniência.
 
-- **Atualização em tempo real** → não depende apenas do treinamento estático do LLM.  
+---
+## ✅ Vantagens do RAG
+  
 - **Domínios especializados** → possível adicionar documentos de áreas específicas (jurídico, médico, educacional etc.).  
 - **Maior confiabilidade** → reduz alucinações, já que o modelo consulta fatos externos.  
 - **Customização** → diferentes bases de dados podem ser conectadas conforme a necessidade.  
@@ -107,10 +106,87 @@ Fluxo simplificado:
 
 ---
 
-## 📖 Referências
+## Fluxo de requisição (end-to-end)
 
-- Lewis, P., et al. (2020). *Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks*. NeurIPS.  
-- Pinecone Blog: [What is Retrieval-Augmented Generation (RAG)?](https://www.pinecone.io/learn/retrieval-augmented-generation/)  
-- LangChain Documentation: [RAG Applications](https://docs.langchain.com/docs/use-cases/retrieval-augmented-generation/)  
-- OpenAI Documentation: [Retrieval Plugins](https://platform.openai.com/docs/plugins/retrieval)  
+1. **User → API:** query + contexto do usuário  
+2. **Query processing:** normalização e expansão da consulta  
+3. **Embedding:** gerar embedding da query  
+4. **ANN Search:** busca top-N no Vector DB  
+5. **Rerank / Filter:** reordenação e filtragem  
+6. **Context selection:** selecionar passagens mais relevantes  
+7. **Prompt construction:** montagem do prompt  
+8. **LLM call:** geração da resposta  
+9. **Post-process:** citações, fact-checking, anonimização  
+10. **Return + Log:** resposta final e métricas  
+
+---
+
+## Como implementar — passo a passo
+
+- [ ] **PoC inicial:** corpus pequeno + FAISS + embeddings + LLM  
+- [ ] **Ingestão & Chunking:** tamanho ideal 500–1000 tokens com overlap  
+- [ ] **Embeddings:** escolher modelo conforme custo/latência  
+- [ ] **Vector DB:** FAISS (PoC) ou Pinecone/Qdrant/Milvus (produção)  
+- [ ] **Retriever & Hybrid Search:** combinação lexical + semântica  
+- [ ] **Prompting & Context Window:** controle de tokens + citações  
+- [ ] **LLM (Generator):** API externa ou self-hosted  
+- [ ] **Grounding & Provenance:** sempre mostrar fontes  
+- [ ] **Observability & Feedback:** métricas e pipeline de atualização  
+
+---
+
+## Boas práticas
+
+- Chunking inteligente (não cortar listas/tabelas)  
+- Uso de metadados para filtragem  
+- Hybrid search para consultas factuais  
+- Limite de tokens bem administrado  
+- Fact-checking com modelos auxiliares  
+- Logs e auditoria para compliance  
+- Otimização de custo e latência com cache e batch  
+
+---
+
+## Métricas essenciais
+
+- **Precision@k / Recall@k**  
+- **MRR (Mean Reciprocal Rank)**  
+- **Factuality / Hallucination rate**  
+- **Latency end-to-end**  
+- **Coverage / Freshness**  
+
+---
+
+## Exemplo de stack sugerido
+
+- **UI:** Next.js / React  
+- **API:** FastAPI / Node.js  
+- **Embeddings:** OpenAI / SentenceTransformers  
+- **Vector DB:** Pinecone / Qdrant / Milvus  
+- **Retriever:** LangChain / LlamaIndex / Haystack  
+- **LLM:** OpenAI, Anthropic, LlamaX, Mistral  
+- **Infra:** Docker + Kubernetes, Redis (cache)  
+- **Monitoring:** Prometheus + Grafana, ELK  
+
+---
+
+## Checklist de implantação
+
+- [ ] Pipeline de ingestão automatizado  
+- [ ] Testes de embeddings (nearest neighbors sanity)  
+- [ ] Políticas de segurança aplicadas  
+- [ ] Reindexação incremental com versionamento  
+- [ ] Feedback humano para correções  
+- [ ] SLA para latência + fallback configurado  
+- [ ] Plano de rollback do index  
+
+---
+
+## Referências
+
+1. *Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks* — Lewis et al.  
+2. **LangChain** — documentação conceitual sobre RAG e patterns  
+3. **OpenAI** — guia sobre RAG e semantic search  
+4. **Microsoft Azure** — overview e padrões RAG  
+5. **Tutoriais práticos** (Haystack, LangChain, DigitalOcean)  
 
