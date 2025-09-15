@@ -182,6 +182,72 @@ Fluxo simplificado:
 
 ---
 
+# 🔑 APIs para cada etapa do RAG
+
+## 1. LLM (Geração)
+Responsável por interpretar a consulta e gerar a resposta final.
+
+- **OpenAI API** → GPT-4.1, GPT-4o, GPT-5 (quando disponível)
+- **Anthropic Claude API** → Claude 3.x
+- **Cohere Generate API** → modelos otimizados para chat
+- **Google Gemini API** → modelos multimodais
+- **Mistral API** → modelos abertos (ex.: Mixtral)
+
+> ⚠️ Para controle total (on-premise ou open-source), use **Hugging Face Transformers** + servidores de modelo (vLLM, TGI, Ollama)
+
+---
+
+## 2. Embeddings (Vetorização)
+Convertem textos em vetores numéricos para busca semântica.
+
+- **OpenAI Embeddings API** → `text-embedding-3-small` / `text-embedding-3-large`
+- **Cohere Embed API** → `embed-multilingual-v3.0`
+- **Hugging Face Inference API** → diversos modelos de embeddings
+- **Voyage AI** → embeddings especializados em busca factual
+
+---
+
+## 3. Vector Database (Armazenamento e Busca)
+Guarda os vetores e executa a recuperação.
+
+- **Pinecone** → Vector DB SaaS
+- **Weaviate** → API GraphQL / REST
+- **Milvus / Zilliz Cloud** → escalável para bilhões de vetores
+- **Qdrant** → open source com API REST / gRPC
+- **Elasticsearch / OpenSearch** → busca textual + vetorial consolidada
+
+---
+
+## 4. Orquestração (opcional, mas recomendado)
+Facilita integrar **LLM + embeddings + retrievers + prompts**.
+
+- **LangChain (Python/JS)** → abstrações para RAG
+- **LlamaIndex** → conectar a diversas fontes de dados
+- **Haystack** → framework para pipelines RAG
+
+---
+
+# 🔗 Fluxo Simplificado de APIs
+
+1. **Usuário** → query
+2. **Embeddings API** → transforma query em vetor
+3. **Vector DB API** → busca documentos relevantes
+4. **LLM API** → gera resposta usando contexto recuperado
+5. **Entrega ao usuário**
+
+---
+
+# ⚖️ Dicas de escolha
+
+| Objetivo | Recomendação |
+|----------|--------------|
+| **Prototipar rápido** | OpenAI + Pinecone + LangChain |
+| **Open source / baixo custo** | Hugging Face + Qdrant/Milvus + Haystack |
+| **Multilinguagem (inclui português)** | Cohere + Weaviate |
+| **Governança / compliance** | Elasticsearch/OpenSearch + LLM privado |
+
+---
+
 ## Referências
 
 1. *Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks* — Lewis et al.  
