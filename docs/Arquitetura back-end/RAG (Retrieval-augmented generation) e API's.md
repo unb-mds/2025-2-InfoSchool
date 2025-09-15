@@ -44,18 +44,18 @@ O processo pode ser dividido em **quatro etapas principais**:
 Fluxo simplificado:  
 
 [Usuário]
-   │
-   ▼
+│
+▼
 [Prompt] → [Conversor de Embeddings] → [Banco de Vetores]
-                                         │
-                                         ▼
-                               [Documentos Relevantes]
-                                         │
-                                         ▼
-                           [LLM + Documentos Recuperados]
-                                         │
-                                         ▼
-                                  [Resposta Final]
+│
+▼
+[Documentos Relevantes]
+│
+▼
+[LLM + Documentos Recuperados]
+│
+▼
+[Resposta Final]
 
 ---
 
