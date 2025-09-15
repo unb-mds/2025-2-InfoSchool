@@ -193,8 +193,6 @@ Responsável por interpretar a consulta e gerar a resposta final.
 - **Google Gemini API** → modelos multimodais
 - **Mistral API** → modelos abertos (ex.: Mixtral)
 
-> ⚠️ Para controle total (on-premise ou open-source), use **Hugging Face Transformers** + servidores de modelo (vLLM, TGI, Ollama)
-
 ---
 
 ## 2. Embeddings (Vetorização)
