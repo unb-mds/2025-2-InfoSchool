@@ -99,3 +99,59 @@ meu-projeto-next/
 - tailwindcss - Estilização com Tailwind
 - eslint - Análise de código
 - @types/* - Definições TypeScript
+
+### Configuração das pastas adaptado com a arquitetura modular reutilizando as pré fabricadas pelo Next.js:
+
+```
+meu-projeto-next/
+├── src/
+│   ├── modules/              ← ARQUITETURA MODULAR
+│   │   ├── auth/
+│   │   │   ├── components/
+│   │   │   ├── hooks/
+│   │   │   ├── services/
+│   │   │   └── types/
+│   │   ├── products/
+│   │   └── shared/
+│   │       ├── components/   ← Componentes globais
+│   │       ├── hooks/        ← Hooks reutilizáveis
+│   │       ├── utils/        ← Funções utilitárias
+│   │       └── types/        ← Tipos TypeScript
+│   ├── app/                  ← NEXT.JS APP ROUTER (original)
+│   │   ├── globals.css
+│   │   ├── layout.tsx
+│   │   ├── page.tsx
+│   │   └── api/              ← API Routes do Next.js
+│   └── lib/                  ← Configurações e bibliotecas
+├── public/                   ← Arquivos estáticos
+├── package.json
+└── next.config.js
+```
+
+## **Passo a Passo de Adaptação**
+
+### **1. Criar Estrutura Modular**
+
+```bash
+# Dentro do projeto Next.js criado
+mkdir -p src/modules/auth/components
+mkdir -p src/modules/auth/hooks
+mkdir -p src/modules/auth/services
+mkdir -p src/modules/auth/types
+
+mkdir -p src/modules/shared/components
+mkdir -p src/modules/shared/hooks
+mkdir -p src/modules/shared/utils
+mkdir -p src/modules/shared/types
+```
+
+### **2. Mover Componentes Existentes**
+```bash
+# Mover componentes para a estrutura modular
+mv src/components/* src/modules/shared/components/
+rmdir src/components
+
+# Criar arquivo de barril para exportações
+echo "export * from './Button';" > src/modules/shared/components/index.ts
+echo "export * from './Card';" >> src/modules/shared/components/index.ts
+```
