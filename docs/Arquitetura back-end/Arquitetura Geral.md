@@ -44,14 +44,12 @@
 
 ## 5. Camada de Dados
 - **Banco de Dados Relacional**: PostgreSQL (armazenamento estruturado dos microdados).
-- **Banco de Dados Vetorial**: pgvector (no PostgreSQL) ou Pinecone/Milvus.
-- **Data Lake (opcional)**: armazenar CSVs/Parquet dos microdados brutos.
+- **Banco de Dados Vetorial**: pgvector (no PostgreSQL) ou Pinecone/Milvus
 
 ---
 
 ## 6. Camada de Infraestrutura
 - **Hospedagem**: Vercel (frontend) + Railway/Render/AWS (backend).
-- **Mensageria (opcional)**: Kafka/RabbitMQ para ingestão de novos microdados.
 - **Monitoramento**: Grafana + Prometheus ou ferramentas SaaS.
 - **CI/CD**: GitHub Actions para testes e deploy.
 
@@ -70,5 +68,34 @@
 
 ---
 
-## 📊 Diagrama Simplificado
+# 📊 Diagrama da Arquitetura em Camadas
+
+```mermaid
+flowchart TD
+
+%% Camada de Apresentação
+A[Frontend - Next.js] -->|REST/GraphQL| B[API Layer - Node.js]
+
+%% Camada de Aplicação
+B --> C[Business Services]
+
+%% Camada de Integração
+C --> D[RAG Pipeline]
+D --> D1[Indexação & Embeddings]
+D --> D2[VetorDB - pgvector / Pinecone / Milvus]
+D --> D3[Busca Híbrida]
+D --> D4[LLM Provider - GPT / Claude / Llama]
+
+%% Camada de Dados
+C --> E[(PostgreSQL)]
+
+%% Camada de Infraestrutura
+subgraph Infra[Infraestrutura]
+  G[Hospedagem: Vercel, AWS, Railway]
+  H[CI/CD: GitHub Actions]
+  I[Monitoramento: Grafana/Prometheus]
+end
+
+A --- Infra
+B --- Infra
 
