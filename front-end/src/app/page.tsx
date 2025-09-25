@@ -13,14 +13,12 @@ export default function Home() {
       <section>
         <h2>1. Visão Geral</h2>
         <p>
-          O projeto InfoSchool tem como objetivo [facilitar o acesso e a análise dos dados do Censo Escolar da Educação Básica. A iniciativa busca transformar informações complexas em relatórios visuais e intuitivos, permitindo que gestores, pesquisadores e a sociedade acompanhem de forma clara os principais indicadores da educação.
+          O projeto InfoSchool tem como objetivo facilitar o acesso e a análise dos dados do Censo Escolar da Educação Básica. A iniciativa busca transformar informações complexas em relatórios visuais e intuitivos, permitindo que gestores, pesquisadores e a sociedade acompanhem de forma clara os principais indicadores da educação.
 
 Através de dashboards interativos e de uma busca inteligente sobre os dados, o sistema oferece suporte na tomada de decisões e promove maior transparência na gestão escolar. Além disso, o enriquecimento dos metadados amplia a utilidade do portal, tornando-o uma ferramenta confiável e acessível para diferentes públicos.
 
-Com isso, o InfoSchool contribui para aproximar dados educacionais da realidade das escolas, simplificando a compreensão das informações e apoiando a construção de políticas públicas mais eficazes.].
-        </p>
-        <p>
-          Com uma experiência de usuário (UX) aprimorada, o produto permite:
+Com isso, o InfoSchool contribui para aproximar dados educacionais da realidade das escolas, simplificando a compreensão das informações e apoiando a construção de políticas públicas mais eficazes.
+
         </p>
         <ul>
           <li>➡️ Visualizar de forma simples [funcionalidade 1].</li>
