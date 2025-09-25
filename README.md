@@ -34,4 +34,4 @@ Este projeto utiliza:
 - **React Query**  
 - **Tailwind CSS** 
 
----
+--
