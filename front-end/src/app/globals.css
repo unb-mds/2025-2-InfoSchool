@@ -1,26 +1,30 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* Configurar fonte Harys World local */
+@font-face {
+  font-family: 'Harys World';
+  src: url('/fonts/Harys-World.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
+/* Estilos globais básicos */
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: #2D2D2D;
+  color: white;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+}
+
+/* Estilo para ícone light mode */
+img[alt="Modo Claro"] {
+  filter: brightness(0) invert(1);
+}
+/* No final do globals.css */
+@font-face {
+  font-family: 'Harys World';
+  src: local('Arial'), local('Helvetica');
+  unicode-range: U+000-5FF; /* Apenas caracteres latinos */
 }
