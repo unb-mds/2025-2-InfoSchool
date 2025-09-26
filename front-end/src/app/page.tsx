@@ -2,8 +2,8 @@ export default function Sobre() {
   return (
     <div className="min-h-screen bg-[#2D2D2D]">
       
-      {/* Container com 90% da largura da tela */}
-      <section className="max-w-[80%] mx-auto px-4 py-8 md:py-16">
+      {/* Container principal com mesma margem do header */}
+      <div className="max-w-[80%] mx-auto px-4 py-8 md:py-16"> 
         <div className="flex flex-col lg:flex-row items-start gap-8 lg:gap-12">
           
           <div className="flex-1 lg:flex-[0.6] pt-8">
@@ -42,7 +42,7 @@ export default function Sobre() {
             </div>
           </div>
         </div>
-      </section>
+      </div>
     </div>
   );
 }
