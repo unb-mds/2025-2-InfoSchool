@@ -9,7 +9,7 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: 'InfoSchool - Censo Escolar',
-  description: 'Plataforma de análise do censo escolar',
+  description: 'Plataforma de análise do censo escolar brasileiro',
 };
 
 export default function RootLayout({
@@ -20,6 +20,10 @@ export default function RootLayout({
   return (
     <html lang="pt-BR">
       <head>
+        {/* === FAVICON SIMPLES QUE FUNCIONA === */}
+        <link rel="icon" href="/favicon.ico" />
+        
+        {/* Google Fonts */}
         <link
           href="https://fonts.googleapis.com/css2?family=Rammetto+One&display=swap"
           rel="stylesheet"
