@@ -21,7 +21,7 @@ export default function RootLayout({
     <html lang="pt-BR">
       <head>
         {/* === FAVICON SIMPLES QUE FUNCIONA === */}
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href="/Favicon/favicon.ico" />
         
         {/* Google Fonts */}
         <link
