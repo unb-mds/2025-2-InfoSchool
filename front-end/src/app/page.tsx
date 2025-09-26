@@ -2,20 +2,19 @@ export default function Sobre() {
   return (
     <div className="min-h-screen bg-[#2D2D2D]">
       
-      {/* Seção principal com conteúdo alinhado ao topo */}
-      <section className="max-w-7xl mx-auto px-4 py-8 md:py-16">
+      {/* Container principal com mesma margem do header */}
+      <div className="max-w-[80%] mx-auto px-4 py-8 md:py-16"> 
         <div className="flex flex-col lg:flex-row items-start gap-8 lg:gap-12">
           
           {/* Caixa de texto - 60% da largura */}
           <div className="flex-1 lg:flex-[0.6] pt-8">
             
-            {/* Título principal com quebra de linha */}
+            {/* Título principal com quebras de linha conforme pedido */}
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight text-left"
                 style={{ fontFamily: "'Rammetto One', cursive" }}>
-              Conheça a educação do <span className="text-[#2C80FF]">Brasil </span>
-              em cada 
-              <br />
-              <span className="text-[#2C80FF]">detalhe</span>
+              Conheça a educação<br />
+              do <span className="text-[#2C80FF]">Brasil</span><br />
+              em cada <span className="text-[#2C80FF]">detalhe</span>
             </h1>
             
             {/* Descrição com fonte Sansita */}
@@ -47,7 +46,7 @@ export default function Sobre() {
             </div>
           </div>
         </div>
-      </section>
+      </div>
     </div>
   );
 }

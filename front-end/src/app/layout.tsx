@@ -20,12 +20,21 @@ export default function RootLayout({
   return (
     <html lang="pt-BR">
       <head>
-        {/* === FAVICON SIMPLES QUE FUNCIONA === */}
-        <link rel="icon" href="/favicon.ico" />
+        {/* === FAVICON ATUALIZADO PARA PASTA FAVICON === */}
+        <link rel="icon" href="/Favicon/favicon.ico" />
         
-        {/* Google Fonts */}
+        {/* Google Fonts - adicionar Sansita e Harys World */}
         <link
           href="https://fonts.googleapis.com/css2?family=Rammetto+One&display=swap"
+          rel="stylesheet"
+        />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Sansita&display=swap"
+          rel="stylesheet"
+        />
+        {/* Fonte Harys World (se for local) */}
+        <link
+          href="/fonts/Harys-World.ttf"
           rel="stylesheet"
         />
       </head>

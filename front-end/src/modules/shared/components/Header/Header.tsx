@@ -2,13 +2,16 @@
 import { useState } from 'react';
 
 export default function Header() {
+  // Estado para controlar se o menu mobile está aberto ou fechado
   const [menuOpen, setMenuOpen] = useState(false);
 
+  // Função para lidar com clique nos botões e fechar menu mobile
   const handleButtonClick = (action: string) => {
     console.log(`Botão clicado: ${action}`);
     setMenuOpen(false);
   };
 
+  // Função para alternar entre tema claro e escuro
   const toggleTheme = () => {
     console.log('Alternando tema claro/escuro');
   };
@@ -16,17 +19,17 @@ export default function Header() {
   return (
     <header className="bg-[#2D2D2D] border-b border-[#444444] sticky top-0 z-50">
       
-      {/* Container principal do header com largura reduzida */}
-      <div className="max-w-3xl mx-auto px-4 py-1 md:py-2"> 
+      {/* Container principal com 90% de largura para bordas mais externas */}
+      <div className="max-w-[80%] mx-auto px-4 py-1 md:py-2"> 
         
         <div className="flex justify-between items-center">
           
-          {/* Botão da logo no canto esquerdo */}
+          {/* Logo e nome InfoSchool no canto esquerdo */}
           <button 
             onClick={() => handleButtonClick('InfoSchool Logo + Texto')}
             className="flex items-center gap-1 md:gap-2 hover:scale-110 transition-transform duration-200 active:scale-105 cursor-pointer"
           >
-            {/* Texto do nome InfoSchool */}
+            {/* Texto InfoSchool com fonte personalizada Harys World */}
             <h1 
               className="text-white font-bold leading-none text-[28px] sm:text-[36px] md:text-[48px]"
               style={{ 
@@ -36,7 +39,7 @@ export default function Header() {
               InfoSchool
             </h1>
             
-            {/* Imagem da logo ao lado do texto */}
+            {/* Imagem SVG da logo */}
             <img 
               src="/images/InfoSchool-logo.svg"
               alt="InfoSchool Logo" 
@@ -49,7 +52,7 @@ export default function Header() {
           {/* Menu de navegação para desktop - lado direito */}
           <nav className="hidden md:flex items-center gap-10 lg:gap-12">
             
-            {/* Link "Sobre nós" */}
+            {/* Botão Sobre nós - texto simples */}
             <button 
               onClick={() => handleButtonClick('Sobre nós')}
               className="text-white hover:text-gray-300 transition-all duration-200 text-base lg:text-lg hover:scale-110 active:scale-105 cursor-pointer"
@@ -58,7 +61,7 @@ export default function Header() {
               Sobre nós
             </button>
             
-            {/* Botão "Usar IA" com fundo azul */}
+            {/* Botão Usar IA - com background azul e borda arredondada */}
             <button 
               onClick={() => handleButtonClick('Usar IA')}
               className="bg-[#2C80FF] text-white rounded-[20px] hover:bg-[#1a6fd8] transition-all duration-200 flex items-center justify-center w-[160px] lg:w-[190px] h-[30px] lg:h-[32px] hover:scale-110 active:scale-105 cursor-pointer"
@@ -70,7 +73,7 @@ export default function Header() {
               Usar IA
             </button>
 
-            {/* Botão para alternar entre tema claro e escuro */}
+            {/* Botão para alternar entre tema claro e escuro - ícone de sol */}
             <button 
               onClick={toggleTheme}
               className="flex items-center justify-center hover:opacity-80 transition-all duration-200 hover:scale-110 active:scale-105 cursor-pointer"
@@ -85,22 +88,24 @@ export default function Header() {
             </button>
           </nav>
 
-          {/* Botão do menu para mobile */}
+          {/* Botão menu hamburguer - aparece apenas em mobile */}
           <button 
             className="md:hidden text-white p-1 rounded hover:bg-gray-700 transition-all duration-200 hover:scale-110 active:scale-105 cursor-pointer"
             onClick={() => setMenuOpen(!menuOpen)}
             aria-label="Abrir menu"
           >
+            {/* Ícone de três linhas do menu hamburguer */}
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
             </svg>
           </button>
         </div>
 
-        {/* Menu expandido para dispositivos mobile */}
+        {/* Menu mobile expandido - aparece quando menuOpen é true */}
         {menuOpen && (
           <div className="md:hidden mt-2 space-y-2 border-t border-[#444444] pt-3">
             
+            {/* Botão Sobre nós versão mobile */}
             <button 
               onClick={() => handleButtonClick('Sobre nós (mobile)')}
               className="block text-white py-2 px-4 hover:bg-gray-800 rounded transition-all duration-200 w-full text-center hover:scale-105 active:scale-100 text-base cursor-pointer"
@@ -109,6 +114,7 @@ export default function Header() {
               Sobre nós
             </button>
             
+            {/* Botão Usar IA versão mobile */}
             <button 
               onClick={() => handleButtonClick('Usar IA (mobile)')}
               className="bg-[#2C80FF] text-white rounded-[20px] hover:bg-[#1a6fd8] transition-all duration-200 w-full py-2 hover:scale-105 active:scale-100 text-base cursor-pointer"
@@ -119,6 +125,7 @@ export default function Header() {
               Usar IA
             </button>
 
+            {/* Botão alternar tema versão mobile */}
             <button 
               onClick={toggleTheme}
               className="flex items-center justify-center w-full py-2 text-gray-400 hover:text-white transition-all duration-200 hover:scale-105 active:scale-100 text-base cursor-pointer"
