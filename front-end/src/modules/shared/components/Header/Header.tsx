@@ -1,33 +1,32 @@
 'use client';
 import { useState } from 'react';
-import Image from 'next/image';
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   const handleButtonClick = (action: string) => {
-    console.log(`✅ Botão clicado: ${action}`);
+    console.log(`Botão clicado: ${action}`);
     setMenuOpen(false);
   };
 
   const toggleTheme = () => {
-    console.log('🎨 Alternando tema claro/escuro');
+    console.log('Alternando tema claro/escuro');
   };
 
   return (
     <header className="bg-[#2D2D2D] border-b border-[#444444] sticky top-0 z-50">
       
-      {/* === CONTAINER PRINCIPAL RESPONSIVO === */}
-      <div className="max-w-7xl mx-auto px-4 py-1 md:py-2"> 
+      {/* Container principal do header com largura reduzida */}
+      <div className="max-w-3xl mx-auto px-4 py-1 md:py-2"> 
         
         <div className="flex justify-between items-center">
           
-          {/* === LOGO + TEXTO INFOSCHOOL - RESPONSIVO === */}
+          {/* Botão da logo no canto esquerdo */}
           <button 
             onClick={() => handleButtonClick('InfoSchool Logo + Texto')}
-            className="flex items-center gap-1 md:gap-2 hover:scale-110 transition-transform duration-200 active:scale-105"
+            className="flex items-center gap-1 md:gap-2 hover:scale-110 transition-transform duration-200 active:scale-105 cursor-pointer"
           >
-            {/* TEXTO "INFOSCHOOL" - TAMANHO RESPONSIVO */}
+            {/* Texto do nome InfoSchool */}
             <h1 
               className="text-white font-bold leading-none text-[28px] sm:text-[36px] md:text-[48px]"
               style={{ 
@@ -37,30 +36,32 @@ export default function Header() {
               InfoSchool
             </h1>
             
-            {/* IMAGEM DA LOGO - TAMANHO RESPONSIVO */}
+            {/* Imagem da logo ao lado do texto */}
             <img 
               src="/images/InfoSchool-logo.svg"
               alt="InfoSchool Logo" 
-              width={60}  // Menor em mobile
-              height={60} // Menor em mobile
-              className="object-contain w-[60px] h-[60px] md:w-[90px] md:h-[90px]" // Responsivo
+              width={60}
+              height={60}
+              className="object-contain w-[60px] h-[60px] md:w-[90px] md:h-[90px]"
             />
           </button>
 
-          {/* === MENU DESKTOP (APENAS TELAS GRANDES) === */}
-          <nav className="hidden md:flex items-center gap-4 lg:gap-6"> 
+          {/* Menu de navegação para desktop - lado direito */}
+          <nav className="hidden md:flex items-center gap-10 lg:gap-12">
             
+            {/* Link "Sobre nós" */}
             <button 
               onClick={() => handleButtonClick('Sobre nós')}
-              className="text-white hover:text-gray-300 transition-all duration-200 text-base lg:text-lg hover:scale-110 active:scale-105"
+              className="text-white hover:text-gray-300 transition-all duration-200 text-base lg:text-lg hover:scale-110 active:scale-105 cursor-pointer"
               style={{ fontFamily: "'Rammetto One', cursive" }}
             >
               Sobre nós
             </button>
             
+            {/* Botão "Usar IA" com fundo azul */}
             <button 
               onClick={() => handleButtonClick('Usar IA')}
-              className="bg-[#2C80FF] text-white rounded-[20px] hover:bg-[#1a6fd8] transition-all duration-200 flex items-center justify-center w-[160px] lg:w-[190px] h-[30px] lg:h-[32px] hover:scale-110 active:scale-105"
+              className="bg-[#2C80FF] text-white rounded-[20px] hover:bg-[#1a6fd8] transition-all duration-200 flex items-center justify-center w-[160px] lg:w-[190px] h-[30px] lg:h-[32px] hover:scale-110 active:scale-105 cursor-pointer"
               style={{ 
                 fontFamily: "'Rammetto One', cursive",
                 fontSize: '14px lg:text-base'
@@ -69,23 +70,24 @@ export default function Header() {
               Usar IA
             </button>
 
+            {/* Botão para alternar entre tema claro e escuro */}
             <button 
               onClick={toggleTheme}
-              className="flex items-center justify-center hover:opacity-80 transition-all duration-200 hover:scale-110 active:scale-105"
+              className="flex items-center justify-center hover:opacity-80 transition-all duration-200 hover:scale-110 active:scale-105 cursor-pointer"
             >
               <img 
                 src="/icons/light-mode.png"
                 alt="Modo Claro" 
-                width={24}  // Menor em mobile
-                height={24} // Menor em mobile
-                className="filter brightness-0 invert w-6 h-6 lg:w-[30px] lg:h-[30px]" // Responsivo
+                width={24}
+                height={24}
+                className="filter brightness-0 invert w-6 h-6 lg:w-[30px] lg:h-[30px]"
               />
             </button>
           </nav>
 
-          {/* === BOTÃO MENU HAMBURGUER (APENAS MOBILE) === */}
+          {/* Botão do menu para mobile */}
           <button 
-            className="md:hidden text-white p-1 rounded hover:bg-gray-700 transition-all duration-200 hover:scale-110 active:scale-105"
+            className="md:hidden text-white p-1 rounded hover:bg-gray-700 transition-all duration-200 hover:scale-110 active:scale-105 cursor-pointer"
             onClick={() => setMenuOpen(!menuOpen)}
             aria-label="Abrir menu"
           >
@@ -95,13 +97,13 @@ export default function Header() {
           </button>
         </div>
 
-        {/* === MENU MOBILE EXPANDIDO === */}
+        {/* Menu expandido para dispositivos mobile */}
         {menuOpen && (
           <div className="md:hidden mt-2 space-y-2 border-t border-[#444444] pt-3">
             
             <button 
               onClick={() => handleButtonClick('Sobre nós (mobile)')}
-              className="block text-white py-2 px-4 hover:bg-gray-800 rounded transition-all duration-200 w-full text-center hover:scale-105 active:scale-100 text-base"
+              className="block text-white py-2 px-4 hover:bg-gray-800 rounded transition-all duration-200 w-full text-center hover:scale-105 active:scale-100 text-base cursor-pointer"
               style={{ fontFamily: "'Rammetto One', cursive" }}
             >
               Sobre nós
@@ -109,7 +111,7 @@ export default function Header() {
             
             <button 
               onClick={() => handleButtonClick('Usar IA (mobile)')}
-              className="bg-[#2C80FF] text-white rounded-[20px] hover:bg-[#1a6fd8] transition-all duration-200 w-full py-2 hover:scale-105 active:scale-100 text-base"
+              className="bg-[#2C80FF] text-white rounded-[20px] hover:bg-[#1a6fd8] transition-all duration-200 w-full py-2 hover:scale-105 active:scale-100 text-base cursor-pointer"
               style={{ 
                 fontFamily: "'Rammetto One', cursive"
               }}
@@ -119,7 +121,7 @@ export default function Header() {
 
             <button 
               onClick={toggleTheme}
-              className="flex items-center justify-center w-full py-2 text-gray-400 hover:text-white transition-all duration-200 hover:scale-105 active:scale-100 text-base"
+              className="flex items-center justify-center w-full py-2 text-gray-400 hover:text-white transition-all duration-200 hover:scale-105 active:scale-100 text-base cursor-pointer"
             >
               <img 
                 src="/icons/light-mode.png" 
