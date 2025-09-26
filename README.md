@@ -28,7 +28,7 @@ Os microdados estão disponíveis publicamente no portal do INEP:
 Este projeto utiliza:
 
 - **Nesxt.js**
-- **Nodejs**
+- **Node.js**
 - **Typescript**
 - **Zustand** 
 - **React Query**  
