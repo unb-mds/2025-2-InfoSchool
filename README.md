@@ -6,6 +6,7 @@
 - [Funcionalidades](#-funcionalidades)
 - [Fonte de Dados](#-fonte-de-dados)
 - [Tecnologias](#-tecnologias)
+- [Como Rodar](#-como-rodar)
 - [Equipe](#-equipe)
 ---
 ## Descrição
@@ -34,4 +35,18 @@ Este projeto utiliza:
 - **React Query**  
 - **Tailwind CSS** 
 
---
+---
+## Como Rodar
+- Passo 1:
+Clonar o repositório na sua máquina:
+```bash
+git clone https://github.com/unb-mds/2025-2-InfoSchool.git
+```
+- Passo 2:
+Instalar as tecnologias usadas:
+---
+## Equipe
+| ![Pedro Augusto MDS](https://github.com/user-attachments/assets/568ffcc4-da96-4310-b200-8921f9495a2c) | ![Pedro Gomes MDS](https://github.com/user-attachments/assets/0eac3c37-1d5b-446f-bb48-52a893d2a8ac) | ![Davi Ursulino MDS](https://github.com/user-attachments/assets/ff7ad902-4640-446f-84cf-a2f5d214fbc2) | Coluna 1 | ![Leonado MDS](https://github.com/user-attachments/assets/3206604a-bc82-4ac4-84a8-026909c91714) | ![Joao MDS](https://github.com/user-attachments/assets/482c0304-2789-495c-8132-e22c59c691cd) |
+|----------|----------|----------|----------|----------|----------|
+| Pedro Augusto   | Pedro Gomes   | Davi Ursulino   | Fábio Alessandro   | Leonardo Lopes  | João Eduardo   |
+
