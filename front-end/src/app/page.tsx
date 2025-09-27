@@ -1,57 +1,48 @@
-import Image from 'next/image';
-
-export default function Home() {
+export default function Sobre() {
   return (
-    <main>
-      <h1>InfoSchool</h1>
-      <p>
-        Bem-vindo ao projeto InfoSchool, desenvolvido para a disciplina de Métodos de Desenvolvimento de Software (MDS - 2025/2).
-      </p>
-
-      <hr />
-
-      <section>
-        <h2>1. Visão Geral</h2>
-        <p>
-          O projeto InfoSchool tem como objetivo facilitar o acesso e a análise dos dados do Censo Escolar da Educação Básica. A iniciativa busca transformar informações complexas em relatórios visuais e intuitivos, permitindo que gestores, pesquisadores e a sociedade acompanhem de forma clara os principais indicadores da educação.
-
-Através de dashboards interativos e de uma busca inteligente sobre os dados, o sistema oferece suporte na tomada de decisões e promove maior transparência na gestão escolar. Além disso, o enriquecimento dos metadados amplia a utilidade do portal, tornando-o uma ferramenta confiável e acessível para diferentes públicos.
-
-Com isso, o InfoSchool contribui para aproximar dados educacionais da realidade das escolas, simplificando a compreensão das informações e apoiando a construção de políticas públicas mais eficazes.
-
-        </p>
-        <ul>
-          <li>➡️ Visualizar de forma simples [funcionalidade 1].</li>
-          <li>➡️ Solucionar problemas de [funcionalidade 2].</li>
-          <li>➡️ Usar tecnologia para [funcionalidade 3].</li>
-        </ul>
-      </section>
-
-      <section>
-        <h2>2. Links Importantes</h2>
-        <ul>
-          <li>✳️ <a href="[LINK PARA O PROTÓTIPO]" target="_blank" rel="noopener noreferrer">Protótipo de alta fidelidade</a></li>
-          <li>🗺️ <a href="[LINK PARA O STORY MAP]" target="_blank" rel="noopener noreferrer">Story Map Público</a></li>
-          <li>📦 <a href="[LINK PARA O BOARD DO PROJETO]" target="_blank" rel="noopener noreferrer">Board do Projeto no GitHub</a></li>
-        </ul>
-      </section>
-
-      <section className="equipe">
-        <h2>3. Equipe</h2>
-        <div className="equipe-container">
-          <div className="membro">
-            <img src="/foto-do-membro1.jpg" alt="Foto do Membro 1" width={120} height={120} />
-            <h3>Nome do Membro 1</h3>
-            <p>Função do Membro 1</p>
+    <div className="min-h-screen bg-[#2D2D2D]">
+      
+      {/* Container principal com mesma margem do header */}
+      <div className="max-w-[80%] mx-auto px-4 py-8 md:py-16"> 
+        <div className="flex flex-col lg:flex-row items-start gap-8 lg:gap-12">
+          
+          <div className="flex-1 lg:flex-[0.6] pt-8">
+            
+            {/* Título com quebras de linha específicas */}
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight text-left"
+                style={{ fontFamily: "'Rammetto One', cursive" }}>
+              Conheça a educação<br />
+              do <span className="text-[#2C80FF]">Brasil</span><br />
+              em cada <span className="text-[#2C80FF]">detalhe</span>
+            </h1>
+            
+            <p className="text-xl md:text-2xl text-gray-300 mb-10 leading-relaxed text-left max-w-2xl"
+               style={{ fontFamily: "'Sansita', sans-serif" }}>
+              Nosso site tem o objetivo de informar sobre as principais informações 
+              escolares em todo o Brasil, utilizando o censo escolar
+            </p>
+            
+            <button className="bg-[#2C80FF] text-white rounded-[25px] hover:bg-[#1a6fd8] transition-all duration-200 px-10 py-4 text-xl font-semibold hover:scale-105 active:scale-100 min-w-[220px] cursor-pointer"
+              style={{ 
+                fontFamily: "'Rammetto One', cursive"
+              }}>
+              Explorar escolas
+            </button>
           </div>
-
-          <div className="membro">
-            <img src="/foto-do-membro2.jpg" alt="Foto do Membro 2" width={120} height={120} />
-            <h3>Nome do Membro 2</h3>
-            <p>Função do Membro 2</p>
+          
+          <div className="flex-1 lg:flex-[0.4] flex justify-center lg:justify-end">
+            <div className="w-full max-w-[400px] lg:max-w-[550px]">
+              <img 
+                src="/images/Tv.svg"
+                alt="Ilustração educação" 
+                width={637}
+                height={637}
+                className="w-full h-auto object-contain lg:mt-0"
+              />
+            </div>
           </div>
         </div>
-      </section>
-    </main>
+      </div>
+    </div>
   );
 }
