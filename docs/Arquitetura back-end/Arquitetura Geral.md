@@ -96,10 +96,9 @@ E --> F[(Data Lake - CSV/Parquet)]
 
 %% Camada de Infraestrutura
 subgraph Infra[Infraestrutura]
-  H[Hospedagem: Vercel, GCP, AWS]
+  H[Hospedagem: Vercel, Azure, AWS]
   I[CI/CD: GitHub Actions / Cloud Build]
   J[Monitoramento: Grafana / Stackdriver]
-  K[Mensageria: Pub/Sub ou Kafka]
 end
 
 A --- Infra
