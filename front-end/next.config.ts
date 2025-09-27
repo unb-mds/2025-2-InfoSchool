@@ -14,7 +14,9 @@ const nextConfig: NextConfig = {
   },
   // Garantir que funciona em desenvolvimento
   trailingSlash: false,
-  skipTrailingSlashRedirect: true
+  skipTrailingSlashRedirect: true,
+  output: 'export', 
+  distDir: 'out',
 };
 
 export default nextConfig;
