@@ -94,7 +94,7 @@ export default function Sobre() {
               }}
               className="text-gray-300"
             >
-              Você pode navegar manualmente com as nossas palavras interativas
+              Você pode navegar manualmente com as nossas páginas interativas 
             </p>
           </div>
 
@@ -129,7 +129,7 @@ export default function Sobre() {
               }}
               className="text-gray-300"
             >
-              Você pode ver quais escolas estão íntegras de cada categoria
+              Você pode ver quais escolas estão no topo de cada categoria
             </p>
           </div>
 
@@ -164,156 +164,250 @@ export default function Sobre() {
               }}
               className="text-gray-300"
             >
-              Você pode digitar ou falar o que deseja e ir direto aos dashboards com as informações
+              Você pode digitar ou falar o que deseja e ir direto ao dashboard com as informações.
             </p>
           </div>
         </div>
       </section>
       
-      {/* Seção Mapa com cabeçalho */}
-      <section className="max-w-[80%] mx-auto px-4 py-8 md:py-16">
-        {/* Cabeçalho Mapa - mesma fonte e tamanho de "Como funciona" */}
-        <h2
-          className="text-4xl md:text-5xl font-bold text-white text-center mb-12"
-          style={{ fontFamily: "'Rammetto One', cursive" }}
-        >
-          Mapa
-        </h2>
-        
-        {/* Container do Mapa */}
-        <div 
-          className="w-full h-96 bg-gray-800/40 backdrop-blur-md rounded-2xl flex items-center justify-center p-4"
-          style={{ 
-            boxShadow: '30px 30px 70px rgba(0, 0, 0, 0.5)' 
-          }}
-        >
-          <button 
-            className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-colors duration-300 hover:scale-110 transition-transform duration-200 cursor-pointer"
-            style={{ fontFamily: "'Rammetto One', cursive" }}
-          >
-            Permitir localização
-          </button>
-        </div>
-      </section>
+    {/* Seção Mapa com cabeçalho */}
+<section className="max-w-[80%] mx-auto px-4 py-8 md:py-16">
+  {/* Cabeçalho Mapa - mesma fonte e tamanho de "Como funciona" */}
+  <h2
+    className="text-4xl md:text-5xl font-bold text-white text-center mb-12"
+    style={{ fontFamily: "'Rammetto One', cursive" }}
+  >
+    Mapa
+  </h2>
+  
+     {/* Container do Mapa - #D9D9D9 COM DESFOQUE REAL E SOMBRA BRANCA */}
+  <div 
+    className="w-full h-96 rounded-2xl flex items-center justify-center p-4 relative overflow-hidden"
+    style={{ 
+      boxShadow: '0 0 50px 15px rgba(217, 217, 217, 0.3)'
+    }}
+  >
+    {/* Fundo com cor e desfoque */}
+    <div 
+      className="absolute inset-0 blur-lg"
+      style={{
+        backgroundColor: '#D9D9D9',
+        opacity: 0.8
+      }}
+    ></div>
+    
+    {/* Camada extra para mais desfoque */}
+    <div 
+      className="absolute inset-0 backdrop-blur-md bg-[#D9D9D9]/70"
+    ></div>
+    
+    {/* Conteúdo do mapa (botão) */}
+    <div className="relative z-10">
+      <button 
+        className="bg-[#2C80FF] hover:bg-[#1a6fd8] text-white font-bold py-3 px-6 rounded-[25px] transition-all duration-300 hover:scale-110 cursor-pointer"
+        style={{ fontFamily: "'Rammetto One', cursive" }}
+      >
+        Permitir localização
+      </button>
+    </div>
+  </div>
+</section>
     
 
-      {/* Seção Sobre Nós */}
-      <section className="max-w-[80%] mx-auto px-4 py-8 md:py-16">
-        {/* Título Sobre Nós */}
-        <h2
-          className="text-4xl md:text-5xl font-bold text-white text-center mb-12"
-          style={{ fontFamily: "'Rammetto One', cursive" }}
+    
+<section className="max-w-[85%] mx-auto px-4 py-12 md:py-20">
+  {/* Título Sobre Nós */}
+  <h2
+    className="text-4xl md:text-5xl font-bold text-white text-center mb-16"
+    style={{ fontFamily: "'Rammetto One', cursive" }}
+  >
+    Sobre nós
+  </h2>
+  
+  {/* Container principal com mais espaço */}
+  <div className="flex flex-col lg:flex-row gap-12 items-start mb-16">
+    
+    {/* Texto descritivo */}
+    <div className="lg:flex-1">
+      <div className="bg-[#3A3A3A] rounded-2xl p-8"
+           style={{ boxShadow: '30px 30px 70px rgba(0, 0, 0, 0.5)' }}>
+        <p 
+          className="text-lg md:text-xl text-white leading-relaxed text-justify"
+          style={{ fontFamily: "'Sansita', sans-serif" }}
         >
-          Sobre nós
-        </h2>
-        
-        {/* Texto descritivo */}
-        <div className="bg-[#3A3A3A] rounded-2xl p-8 mb-12"
-             style={{ boxShadow: '30px 30px 70px rgba(0, 0, 0, 0.5)' }}>
-          <p 
-            className="text-lg md:text-xl text-gray-300 leading-relaxed text-justify"
-            style={{ fontFamily: "'Sansita', sans-serif" }}
-          >
-            O InfoSchool é uma plataforma criada com o objetivo de aproximar a comunidade acadêmica e a sociedade dos dados do Censo Escolar, a maior pesquisa estatística sobre educação básica no Brasil. Nosso propósito é tornar essas informações mais acessíveis, visuais e compreensíveis para estudantes, professores e gestores. Aqui você encontra dados organizados de forma clara e interativa, permitindo compreender melhor os desafios e avanços da educação no país. Acreditamos que, ao transformar números em conhecimento, é possível promover reflexões e ações que impactem positivamente o futuro da educação.
-          </p>
+          O InfoSchool é uma plataforma criada com o objetivo de aproximar a comunidade acadêmica e a sociedade dos dados do Censo Escolar, a maior pesquisa estatística sobre educação básica no Brasil. Nosso propósito é tornar essas informações mais acessíveis, visuais e compreensíveis para estudantes, professores e gestores. Aqui você encontra dados organizados de forma clara e interativa, permitindo compreender melhor os desafios e avanços da educação no país. Acreditamos que, ao transformar números em conhecimento, é possível promover reflexões e ações que impactem positivamente o futuro da educação.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  {/* Linha divisória */}
+  <div className="border-t border-gray-600 my-16"></div>
+
+  {/* Seção Developer com mais espaço */}
+  <div className="text-center mb-16">
+    <h3
+      className="text-3xl md:text-4xl font-bold text-white mb-12"
+      style={{ fontFamily: "'Rammetto One', cursive" }}
+    >
+      Developer
+    </h3>
+  </div>
+
+  {/* Grid de Developers com tamanhos fixos e espaçamento consistente */}
+  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 justify-items-center">
+    
+    {/* Developer 1 - Leonardo */}
+    <div className="text-center">
+      <div 
+        className="bg-[#3A3A3A] rounded-2xl p-6 w-80 h-64 flex flex-col items-center justify-center cursor-pointer hover:scale-105 transition-all duration-300"
+        style={{ boxShadow: '30px 30px 70px rgba(0, 0, 0, 0.5)' }}
+      >
+        <div className="mb-4">
+          <img 
+            src="/photos/dev1.jpg" 
+            alt="Leonardo" 
+            className="w-40 h-40 rounded-full object-cover border-2 border-blue-500"
+          />
         </div>
-
-        {/* Linha divisória */}
-        <div className="border-t border-gray-600 my-12"></div>
-
-        {/* Seção Developer */}
-        <div className="text-center mb-8">
-          <h3 
-            className="text-3xl md:text-4xl font-bold text-white mb-6"
+        <div className="space-y-2">
+          <span 
+            className="text-xl font-bold text-white block"
             style={{ fontFamily: "'Rammetto One', cursive" }}
           >
-            Developer
-          </h3>
+            Leonardo da Silva
+          </span>
+          <span className="text-gray-300 text-base">developer</span>
         </div>
+      </div>
+    </div>
 
-        {/* Grid de Developers */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 justify-items-center">
-          
-          {/* Development */}
-          <div 
-            className="bg-[#3A3A3A] rounded-2xl p-6 text-center w-full max-w-[300px] min-h-[120px] flex items-center justify-center cursor-pointer hover:scale-105 transition-all duration-300"
-            style={{ boxShadow: '30px 30px 70px rgba(0, 0, 0, 0.5)' }}
-          >
-            <span 
-              className="text-xl font-bold text-white"
-              style={{ fontFamily: "'Rammetto One', cursive" }}
-            >
-              Development
-            </span>
-          </div>
-
-          {/* Distribuinte Development */}
-          <div 
-            className="bg-[#3A3A3A] rounded-2xl p-6 text-center w-full max-w-[300px] min-h-[120px] flex items-center justify-center cursor-pointer hover:scale-105 transition-all duration-300"
-            style={{ boxShadow: '30px 30px 70px rgba(0, 0, 0, 0.5)' }}
-          >
-            <span 
-              className="text-xl font-bold text-white"
-              style={{ fontFamily: "'Rammetto One', cursive" }}
-            >
-              Distribuinte Development
-            </span>
-          </div>
-
-          {/* Developer vazio */}
-          <div 
-            className="bg-[#3A3A3A] rounded-2xl p-6 text-center w-full max-w-[300px] min-h-[120px] flex items-center justify-center cursor-pointer hover:scale-105 transition-all duration-300"
-            style={{ boxShadow: '30px 30px 70px rgba(0, 0, 0, 0.5)' }}
-          >
-            <span 
-              className="text-xl font-bold text-white"
-              style={{ fontFamily: "'Rammetto One', cursive" }}
-            >
-              Developer
-            </span>
-          </div>
-
-          {/* Developer */}
-          <div 
-            className="bg-[#3A3A3A] rounded-2xl p-6 text-center w-full max-w-[300px] min-h-[120px] flex items-center justify-center cursor-pointer hover:scale-105 transition-all duration-300"
-            style={{ boxShadow: '30px 30px 70px rgba(0, 0, 0, 0.5)' }}
-          >
-            <span 
-              className="text-xl font-bold text-white"
-              style={{ fontFamily: "'Rammetto One', cursive" }}
-            >
-              Developer
-            </span>
-          </div>
-
-          {/* Developer */}
-          <div 
-            className="bg-[#3A3A3A] rounded-2xl p-6 text-center w-full max-w-[300px] min-h-[120px] flex items-center justify-center cursor-pointer hover:scale-105 transition-all duration-300"
-            style={{ boxShadow: '30px 30px 70px rgba(0, 0, 0, 0.5)' }}
-          >
-            <span 
-              className="text-xl font-bold text-white"
-              style={{ fontFamily: "'Rammetto One', cursive" }}
-            >
-              Developer
-            </span>
-          </div>
-
-          {/* Developer */}
-          <div 
-            className="bg-[#3A3A3A] rounded-2xl p-6 text-center w-full max-w-[300px] min-h-[120px] flex items-center justify-center cursor-pointer hover:scale-105 transition-all duration-300"
-            style={{ boxShadow: '30px 30px 70px rgba(0, 0, 0, 0.5)' }}
-          >
-            <span 
-              className="text-xl font-bold text-white"
-              style={{ fontFamily: "'Rammetto One', cursive" }}
-            >
-              Developer
-            </span>
-          </div>
-
+    {/* Developer 2 - João */}
+    <div className="text-center">
+      <div 
+        className="bg-[#3A3A3A] rounded-2xl p-6 w-80 h-64 flex flex-col items-center justify-center cursor-pointer hover:scale-105 transition-all duration-300"
+        style={{ boxShadow: '30px 30px 70px rgba(0, 0, 0, 0.5)' }}
+      >
+        <div className="mb-4">
+          <img 
+            src="/photos/dev2.jpg" 
+            alt="João Leles" 
+            className="w-40 h-40 rounded-full object-cover border-2 border-green-500"
+          />
         </div>
-      </section>
+        <div className="space-y-2">
+          <span 
+            className="text-xl font-bold text-white block"
+            style={{ fontFamily: "'Rammetto One', cursive" }}
+          >
+            João Leles
+          </span>
+          <span className="text-gray-300 text-base">developer</span>
+        </div>
+      </div>
+    </div>
+
+    {/* Developer 3 - Fábio */}
+    <div className="text-center">
+      <div 
+        className="bg-[#3A3A3A] rounded-2xl p-6 w-80 h-64 flex flex-col items-center justify-center cursor-pointer hover:scale-105 transition-all duration-300"
+        style={{ boxShadow: '30px 30px 70px rgba(0, 0, 0, 0.5)' }}
+      >
+        <div className="mb-4">
+          <img 
+            src="/photos/dev3.jpg" 
+            alt="Fábio Alessandro" 
+            className="w-40 h-40 rounded-full object-cover border-2 border-purple-500"
+          />
+        </div>
+        <div className="space-y-2">
+          <span 
+            className="text-xl font-bold text-white block"
+            style={{ fontFamily: "'Rammetto One', cursive" }}
+          >
+            Fábio Alessandro
+          </span>
+          <span className="text-gray-300 text-base">developer</span>
+        </div>
+      </div>
+    </div>
+
+    {/* Developer 4 - Davi */}
+    <div className="text-center">
+      <div 
+        className="bg-[#3A3A3A] rounded-2xl p-6 w-80 h-64 flex flex-col items-center justify-center cursor-pointer hover:scale-105 transition-all duration-300"
+        style={{ boxShadow: '30px 30px 70px rgba(0, 0, 0, 0.5)' }}
+      >
+        <div className="mb-4">
+          <img 
+            src="/photos/dev4.jpg" 
+            alt="Davi Ursulino" 
+            className="w-40 h-40 rounded-full object-cover border-2 border-yellow-500"
+          />
+        </div>
+        <div className="space-y-2">
+          <span 
+            className="text-xl font-bold text-white block"
+            style={{ fontFamily: "'Rammetto One', cursive" }}
+          >
+            Davi Ursulino
+          </span>
+          <span className="text-gray-300 text-base">developer</span>
+        </div>
+      </div>
+    </div>
+
+    {/* Developer 5 - Pedro Gomes */}
+    <div className="text-center">
+      <div 
+        className="bg-[#3A3A3A] rounded-2xl p-6 w-80 h-64 flex flex-col items-center justify-center cursor-pointer hover:scale-105 transition-all duration-300"
+        style={{ boxShadow: '30px 30px 70px rgba(0, 0, 0, 0.5)' }}
+      >
+        <div className="mb-4">
+          <img 
+            src="/photos/dev5.jpg" 
+            alt="Pedro Gomes" 
+            className="w-40 h-40 rounded-full object-cover border-2 border-red-500"
+          />
+        </div>
+        <div className="space-y-2">
+          <span 
+            className="text-xl font-bold text-white block"
+            style={{ fontFamily: "'Rammetto One', cursive" }}
+          >
+            Pedro Gomes
+          </span>
+          <span className="text-gray-300 text-base">developer</span>
+        </div>
+      </div>
+    </div>
+
+    {/* Developer 6 - Pedro Augusto */}
+    <div className="text-center">
+      <div 
+        className="bg-[#3A3A3A] rounded-2xl p-6 w-80 h-64 flex flex-col items-center justify-center cursor-pointer hover:scale-105 transition-all duration-300"
+        style={{ boxShadow: '30px 30px 70px rgba(0, 0, 0, 0.5)' }}
+      >
+        <div className="mb-4">
+          <img 
+            src="/photos/dev6.jpg" 
+            alt="Pedro Augusto" 
+            className="w-40 h-40 rounded-full object-cover border-2 border-pink-500"
+          />
+        </div>
+        <div className="space-y-2">
+          <span 
+            className="text-xl font-bold text-white block"
+            style={{ fontFamily: "'Rammetto One', cursive" }}
+          >
+            Pedro Augusto
+          </span>
+          <span className="text-gray-300 text-base">developer</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
     </div>
   );
 }
