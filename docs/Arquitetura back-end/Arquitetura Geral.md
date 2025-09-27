@@ -1,74 +1,79 @@
-# 🏗 Arquitetura em Camadas – Node.js + Next.js
+# 🏗 Arquitetura em Camadas – Node.js + Next.js + BigQuery
 
 ## 1. Camada de Apresentação (Frontend – Next.js)
-- **Tecnologia**: Next.js.
+- **Tecnologia**: Next.js
 - **Funções**:
-  - Interface do usuário para exploração dos dados do censo.
-  - Dashboard interativo (gráficos e tabelas).
-  - Interface conversacional (chat) para interagir com o RAG.
-  - Autenticação de usuários (caso necessário).
-  - Consumo da API do backend via REST/GraphQL.
+  - Interface do usuário (dashboards, tabelas, chat).  
+  - Integração com a API do backend.  
+  - Visualização de análises do BigQuery em tempo real.  
+  - Chat interativo para consultas em linguagem natural (via RAG).  
 
 ---
 
-## 2. Camada de Aplicação (Backend – Node.js/Express/Fastify)
-- **Tecnologia**: Node.js com Express ou Fastify.
+## 2. Camada de Aplicação (Backend – Node.js)
+- **Tecnologia**: Node.js (Express ou Fastify).  
 - **Funções**:
-  - Orquestrar a lógica de negócio.
-  - Expor endpoints REST/GraphQL para o frontend.
-  - Conectar serviços de **busca vetorial** (para RAG).
-  - Middleware para autenticação, autorização e auditoria.
+  - Orquestrar consultas e lógica de negócio.  
+  - Expor APIs REST/GraphQL para o frontend.  
+  - Conectar diretamente ao **BigQuery** para consultas analíticas.  
+  - Intermediar chamadas ao **RAG Pipeline**.  
 
 ---
 
-## 3. Camada de Serviço (Business Logic)
+## 3. Camada de Serviço (Business Services)
 - **Funções**:
-  - Processamento dos microdados do Censo Escolar.
-  - Enriquecimento dos metadados (normalização, categorização).
-  - Implementação de consultas complexas e filtros.
-  - Conexão com os serviços de IA (RAG).
-  - Cache de resultados frequentes.
+  - Implementação das regras de negócio.  
+  - Definição de consultas ao **BigQuery** (SQL analítico).  
+  - Otimização e cache de queries frequentes.  
+  - Conexão com o **pipeline de RAG** (quando necessário).  
 
 ---
 
-## 4. Camada de Integração (RAG e Serviços Externos)
-- **Serviços**:
-  - **RAG Pipeline**:
-    1. **Indexação**: dividir dados do censo em chunks, enriquecer com embeddings.
-    2. **Armazenamento Vetorial**: Pinecone, Weaviate, Milvus ou PostgreSQL + pgvector.
-    3. **Busca híbrida**: semântica (vetorial) + keyword.
-    4. **LLM**: OpenAI GPT, Anthropic Claude ou Llama 3 para geração de respostas.
-  - **APIs externas**: dados adicionais do MEC/INEP.
+## 4. Camada de Integração (RAG e IA)
+- **Componentes**:
+  - **Indexação e embeddings** dos microdados ou metadados.  
+  - **Armazenamento Vetorial**: Pinecone, Weaviate ou Milvus.  
+  - **Busca híbrida**: semântica + filtros tabulares vindos do BigQuery.  
+  - **LLM Provider**: GPT, Claude ou Llama para geração de respostas.  
 
 ---
 
 ## 5. Camada de Dados
-- **Banco de Dados Relacional**: PostgreSQL (armazenamento estruturado dos microdados).
-- **Banco de Dados Vetorial**: pgvector (no PostgreSQL) ou Pinecone/Milvus
+- **BigQuery (Data Warehouse)**  
+  - Fonte única de dados tabulares e históricos.  
+  - Responsável por consultas analíticas massivas.  
+  - Armazena tanto microdados brutos quanto tabelas processadas.  
+
+- **Data Lake (CSV/Parquet no GCS)**  
+  - Armazena arquivos originais do Censo Escolar.  
+  - Alimenta o BigQuery.  
+
+- **Banco Vetorial (VectorDB)**  
+  - Para embeddings usados no RAG.  
+  - Conectado ao backend para buscas semânticas.  
 
 ---
 
 ## 6. Camada de Infraestrutura
-- **Hospedagem**: Vercel (frontend) + Railway/Render/AWS (backend).
-- **Monitoramento**: Grafana + Prometheus ou ferramentas SaaS.
-- **CI/CD**: GitHub Actions para testes e deploy.
+- **Hospedagem**: Vercel (frontend) + Railway/Azure/AWS (backend).  
+- **CI/CD**: GitHub Actions ou Cloud Build.  
+- **Monitoramento**: Grafana, Prometheus ou Stackdriver (GCP).    
 
 ---
 
-## 🔗 Fluxo de Dados
-1. Usuário acessa o **Next.js** (UI).
-2. UI chama a API no **Node.js**.
-3. API consulta:
-   - PostgreSQL (dados tabulares).
-   - VetorDB (para busca semântica no RAG).
-4. Serviço de RAG envia contexto relevante para o **LLM**.
-5. LLM gera resposta + dados de apoio.
-6. API retorna ao frontend.
-7. Frontend renderiza no **dashboard** ou **chatbot**.
+## 🔗 Fluxo Resumido
+1. Usuário acessa o **Next.js**.  
+2. A interface chama o **backend em Node.js**.  
+3. O backend consulta diretamente o **BigQuery** para dados estruturados.  
+4. Se for consulta em linguagem natural, o backend aciona o **RAG Pipeline**:
+   - Recupera contexto do **BigQuery** (estatísticas, tabelas).  
+   - Combina com informações semânticas do **VectorDB**.  
+   - Envia ao **LLM** para gerar a resposta.  
+5. O resultado retorna ao **frontend** (dashboard ou chat).  
 
 ---
 
-# 📊 Diagrama da Arquitetura em Camadas
+## 📊 Diagrama Simplificado
 
 ```mermaid
 flowchart TD
@@ -82,20 +87,19 @@ B --> C[Business Services]
 %% Camada de Integração
 C --> D[RAG Pipeline]
 D --> D1[Indexação & Embeddings]
-D --> D2[VetorDB - pgvector / Pinecone / Milvus]
-D --> D3[Busca Híbrida]
-D --> D4[LLM Provider - GPT / Claude / Llama]
+D --> D2[VectorDB - Pinecone / Weaviate / Milvus]
+D --> D3[LLM Provider - GPT / Claude / Llama]
 
 %% Camada de Dados
-C --> E[(PostgreSQL)]
+C --> E[(BigQuery - Data Warehouse)]
+E --> F[(Data Lake - CSV/Parquet)]
 
 %% Camada de Infraestrutura
 subgraph Infra[Infraestrutura]
-  G[Hospedagem: Vercel, AWS, Railway]
-  H[CI/CD: GitHub Actions]
-  I[Monitoramento: Grafana/Prometheus]
+  H[Hospedagem: Vercel, Azure, AWS]
+  I[CI/CD: GitHub Actions / Cloud Build]
+  J[Monitoramento: Grafana / Stackdriver]
 end
 
 A --- Infra
 B --- Infra
-
