@@ -1,5 +1,7 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrophy, faLocationDot, faRobot } from '@fortawesome/free-solid-svg-icons';
+import GoogleMaps from '@/modules/shared/components/GoogleMaps/google-maps';
+
 
 export default function Sobre() {
   return (
@@ -187,28 +189,10 @@ export default function Sobre() {
       boxShadow: '0 0 50px 15px rgba(217, 217, 217, 0.3)'
     }}
   >
-    {/* Fundo com cor e desfoque */}
-    <div 
-      className="absolute inset-0 blur-lg"
-      style={{
-        backgroundColor: '#D9D9D9',
-        opacity: 0.8
-      }}
-    ></div>
-    
-    {/* Camada extra para mais desfoque */}
-    <div 
-      className="absolute inset-0 backdrop-blur-md bg-[#D9D9D9]/70"
-    ></div>
-    
+
+      <GoogleMaps /> {/* Mapa do Google Maps */}
     {/* Conteúdo do mapa (botão) */}
-    <div className="relative z-10">
-      <button 
-        className="bg-[#2C80FF] hover:bg-[#1a6fd8] text-white font-bold py-3 px-6 rounded-[25px] transition-all duration-300 hover:scale-110 cursor-pointer"
-        style={{ fontFamily: "'Rammetto One', cursive" }}
-      >
-        Permitir localização
-      </button>
+    <div className="relative z-10"> 
     </div>
   </div>
 </section>
