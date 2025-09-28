@@ -30,7 +30,7 @@ export default function Sobre() {
             {/* Botão Explorar Escolas */}
             <button className="bg-[#2C80FF] text-white rounded-[25px] hover:bg-[#1a6fd8] transition-all duration-200 px-6 sm:px-8 md:px-10 py-3 md:py-4 text-lg sm:text-xl font-semibold hover:scale-105 active:scale-100 sm:min-w-[200px] cursor-pointer text-center transform hover:scale-105 sm:hover:scale-105"
               style={{ fontFamily: "'Rammetto One', cursive"}}>
-            Explorar escolas
+              Explorar escolas
             </button>
           </div>
           
@@ -49,7 +49,7 @@ export default function Sobre() {
         </div>
       </div>
 
-            {/* Seção Como Funciona - RESPONSIVA */}
+      {/* Seção Como Funciona - RESPONSIVA */}
       <section className="max-w-[95%] sm:max-w-[90%] md:max-w-[80%] mx-auto px-3 sm:px-4 py-6 md:py-16">
         <h2
           className="text-3xl sm:text-4xl md:text-5xl font-bold text-white text-center mb-8 md:mb-12"
@@ -86,10 +86,7 @@ export default function Sobre() {
             </h3>
             <p
               style={{
-                fontFamily: "'Sansita', sans-serif",
-                fontSize: "16px",
-                sm: "17px",
-                md: "18px"
+                fontFamily: "'Sansita', sans-serif"
               }}
               className="text-gray-300 text-base sm:text-[17px] md:text-[18px]"
             >
@@ -239,23 +236,13 @@ export default function Sobre() {
   {/* Linha divisória */}
   <div className="border-t border-gray-600 my-12 md:my-16"></div>
 
-  {/* Seção Developer com mais espaço */}
-  <div className="text-center mb-12 md:mb-16">
-    <h3
-      className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-8 md:mb-12"
-      style={{ fontFamily: "'Rammetto One', cursive" }}
-    >
-      Developer
-    </h3>
-  </div>
-
-  {/* Grid de Developers com tamanhos fixos e espaçamento consistente */}
-  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 justify-items-center">
+           {/* Grid de Developers COMPACTO MAS PROPORCIONAL */}
+  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4 justify-items-center w-full">
     
     {/* Developer 1 - Leonardo */}
-    <div className="text-center">
+    <div className="text-center w-full px-1 sm:px-0">
       <div 
-        className="bg-[#3A3A3A] rounded-2xl p-4 sm:p-6 w-full max-w-[280px] sm:w-80 h-56 sm:h-64 flex flex-col items-center justify-center cursor-pointer transform sm:hover:scale-105 transition-all duration-300"
+        className="bg-[#3A3A3A] rounded-2xl p-4 sm:p-5 w-full max-w-[280px] sm:max-w-full h-56 sm:h-64 flex flex-col items-center justify-center cursor-pointer transform sm:hover:scale-105 transition-all duration-300"
         style={{ boxShadow: '30px 30px 70px rgba(0, 0, 0, 0.5)' }}
       >
         <div className="mb-3 sm:mb-4">
@@ -278,9 +265,9 @@ export default function Sobre() {
     </div>
 
     {/* Developer 2 - João */}
-    <div className="text-center">
+    <div className="text-center w-full px-1 sm:px-0">
       <div 
-        className="bg-[#3A3A3A] rounded-2xl p-4 sm:p-6 w-full max-w-[280px] sm:w-80 h-56 sm:h-64 flex flex-col items-center justify-center cursor-pointer transform sm:hover:scale-105 transition-all duration-300"
+        className="bg-[#3A3A3A] rounded-2xl p-4 sm:p-5 w-full max-w-[280px] sm:max-w-full h-56 sm:h-64 flex flex-col items-center justify-center cursor-pointer transform sm:hover:scale-105 transition-all duration-300"
         style={{ boxShadow: '30px 30px 70px rgba(0, 0, 0, 0.5)' }}
       >
         <div className="mb-3 sm:mb-4">
@@ -303,9 +290,9 @@ export default function Sobre() {
     </div>
 
     {/* Developer 3 - Fábio */}
-    <div className="text-center">
+    <div className="text-center w-full px-1 sm:px-0">
       <div 
-        className="bg-[#3A3A3A] rounded-2xl p-4 sm:p-6 w-full max-w-[280px] sm:w-80 h-56 sm:h-64 flex flex-col items-center justify-center cursor-pointer transform sm:hover:scale-105 transition-all duration-300"
+        className="bg-[#3A3A3A] rounded-2xl p-4 sm:p-5 w-full max-w-[280px] sm:max-w-full h-56 sm:h-64 flex flex-col items-center justify-center cursor-pointer transform sm:hover:scale-105 transition-all duration-300"
         style={{ boxShadow: '30px 30px 70px rgba(0, 0, 0, 0.5)' }}
       >
         <div className="mb-3 sm:mb-4">
@@ -328,9 +315,9 @@ export default function Sobre() {
     </div>
 
     {/* Developer 4 - Davi */}
-    <div className="text-center">
+    <div className="text-center w-full px-1 sm:px-0">
       <div 
-        className="bg-[#3A3A3A] rounded-2xl p-4 sm:p-6 w-full max-w-[280px] sm:w-80 h-56 sm:h-64 flex flex-col items-center justify-center cursor-pointer transform sm:hover:scale-105 transition-all duration-300"
+        className="bg-[#3A3A3A] rounded-2xl p-4 sm:p-5 w-full max-w-[280px] sm:max-w-full h-56 sm:h-64 flex flex-col items-center justify-center cursor-pointer transform sm:hover:scale-105 transition-all duration-300"
         style={{ boxShadow: '30px 30px 70px rgba(0, 0, 0, 0.5)' }}
       >
         <div className="mb-3 sm:mb-4">
@@ -353,9 +340,9 @@ export default function Sobre() {
     </div>
 
     {/* Developer 5 - Pedro Gomes */}
-    <div className="text-center">
+    <div className="text-center w-full px-1 sm:px-0">
       <div 
-        className="bg-[#3A3A3A] rounded-2xl p-4 sm:p-6 w-full max-w-[280px] sm:w-80 h-56 sm:h-64 flex flex-col items-center justify-center cursor-pointer transform sm:hover:scale-105 transition-all duration-300"
+        className="bg-[#3A3A3A] rounded-2xl p-4 sm:p-5 w-full max-w-[280px] sm:max-w-full h-56 sm:h-64 flex flex-col items-center justify-center cursor-pointer transform sm:hover:scale-105 transition-all duration-300"
         style={{ boxShadow: '30px 30px 70px rgba(0, 0, 0, 0.5)' }}
       >
         <div className="mb-3 sm:mb-4">
@@ -378,9 +365,9 @@ export default function Sobre() {
     </div>
 
     {/* Developer 6 - Pedro Augusto */}
-    <div className="text-center">
+    <div className="text-center w-full px-1 sm:px-0">
       <div 
-        className="bg-[#3A3A3A] rounded-2xl p-4 sm:p-6 w-full max-w-[280px] sm:w-80 h-56 sm:h-64 flex flex-col items-center justify-center cursor-pointer transform sm:hover:scale-105 transition-all duration-300"
+        className="bg-[#3A3A3A] rounded-2xl p-4 sm:p-5 w-full max-w-[280px] sm:max-w-full h-56 sm:h-64 flex flex-col items-center justify-center cursor-pointer transform sm:hover:scale-105 transition-all duration-300"
         style={{ boxShadow: '30px 30px 70px rgba(0, 0, 0, 0.5)' }}
       >
         <div className="mb-3 sm:mb-4">
