@@ -17,7 +17,7 @@
 - [Tecnologias](#-tecnologias)
 - [Pré-requisitos](#-pré-requisitos)
 - [Como Rodar](#como-rodar)
-- [Licença](#licenca)
+- [LICENSE](#licenca)
 - [Equipe](#equipe)
 
 ---
