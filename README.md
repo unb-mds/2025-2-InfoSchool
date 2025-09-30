@@ -16,11 +16,9 @@
 - [Fonte de Dados](#-fonte-de-dados)
 - [Tecnologias](#-tecnologias)
 - [Pré-requisitos](#-pré-requisitos)
-- [Como Rodar](#-como-rodar)
-- [Estrutura do Projeto](#-estrutura-do-projeto)
-- [Contribuição](#-contribuição)
-- [LICENSE](#-licença)
-- [Equipe](#-equipe)
+- [Como Rodar](#como-rodar)
+- [Licença](#licenca)
+- [Equipe](#equipe)
 
 ---
 
