@@ -17,7 +17,7 @@
 - [Tecnologias](#-tecnologias)
 - [Pré-requisitos](#-pré-requisitos)
 - [Como Rodar](#como-rodar)
-- [LICENSE](#licenca)
+- [LICENSE](#-license)
 - [Equipe](#equipe)
 
 ---
@@ -89,7 +89,7 @@ O projeto estará disponível em:
 ## 📜 LICENSE
 
 Este projeto está sob a licença MIT.
-Veja o arquivo [LICENSE](#-licença)
+Veja o arquivo [LICENSE](#licenca)
  para mais detalhes.
  
  ---
