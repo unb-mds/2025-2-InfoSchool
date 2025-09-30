@@ -89,8 +89,7 @@ O projeto estará disponível em:
 ## 📜 LICENSE
 
 Este projeto está sob a licença MIT.
-Veja o arquivo [LICENSE](#licenca)
- para mais detalhes.
+
  
  ---
 ## Equipe
