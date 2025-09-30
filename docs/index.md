@@ -1,6 +1,6 @@
 #  InfoSchool
 
-Bem-vindo à documentação oficial do **InfoSchool** 🚀  
+Bem-vindo à documentação oficial do **InfoSchool** 
 
 O **InfoSchool** é um projeto desenvolvido para facilitar a gestão e organização de informações escolares.  
 Aqui você encontrará tudo o que precisa para instalar, configurar e usar o sistema.
