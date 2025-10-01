@@ -133,7 +133,7 @@ A estrutura do repositório organiza o código-fonte, a documentação e os arte
 ---
 
 ## Equipe
-| ![Pedro Augusto MDS](https://github.com/user-attachments/assets/568ffcc4-da96-4310-b200-8921f9495a2c) | ![Pedro Gomes MDS](https://github.com/user-attachments/assets/0eac3c37-1d5b-446f-bb48-52a893d2a8ac) | ![Davi Ursulino MDS](https://github.com/user-attachments/assets/ff7ad902-4640-446f-84cf-a2f5d214fbc2) | ![Fabio MDS](https://github.com/user-attachments/assets/b9234b21-ee5b-464e-948f-e45a0cea7ca2) | ![Leonado MDS](https://github.com/user-attachments/assets/3206604a-bc82-4ac4-84a8-026909c91714) | ![Joao MDS](https://github.com/user-attachments/assets/482c0304-2789-495c-8132-e22c59c691cd) |
+| ![Pedro Augusto MDS](https://github.com/user-attachments/assets/568ffcc4-da96-4310-b200-8921f9495a2c) | ![Pedro Gomes MDS](https://github.com/user-attachments/assets/0eac3c37-1d5b-446f-bb48-52a893d2a8ac) | ![Davi Ursulino MDS](https://github.com/user-attachments/assets/ff7ad902-4640-446f-84cf-a2f5d214fbc2) | ![FABIO MDS](https://github.com/user-attachments/assets/9c69cbe5-14f5-4148-b8ee-8bfc958c4071) | ![Leonado MDS](https://github.com/user-attachments/assets/3206604a-bc82-4ac4-84a8-026909c91714) | ![Joao MDS](https://github.com/user-attachments/assets/482c0304-2789-495c-8132-e22c59c691cd) |
 |----------|----------|----------|----------|----------|----------|
 | Pedro Augusto   | Pedro Gomes   | Davi Ursulino   | Fábio Alessandro   | Leonardo Lopes  | João Eduardo   |
 
