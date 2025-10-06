@@ -1,7 +1,7 @@
 ATA DE REUNIÃO
 -
 
-**Data:22/09/2025**
+**Data:15/09/2025**
 
 :raising_hand:  Participantes
 -
