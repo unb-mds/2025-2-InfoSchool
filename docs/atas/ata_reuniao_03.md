@@ -1,7 +1,7 @@
 ATA DE REUNIÃO
 -
 
-**Data:**
+**Data:15/09/2025**
 
 :raising_hand:  Participantes
 -
@@ -15,13 +15,13 @@ ATA DE REUNIÃO
 :mag_right:  Pauta
 -
 
-1. Assunto 1
-2. Assunto 2  
-3. Assunto 3  
+1. Levanar Requisitos
+2. Estudos  
+3. Definir tecnologias 
 
 :speech_balloon: Discussões
 -
 
-- **Assunto 1:** (Resumo do que foi discutido e decidido)
-- **Assunto 2:** (Resumo do que foi discutido e decidido)  
-- **Assunto 3:** (Resumo do que foi discutido e decidido)
+- **Levantar requisitos:** Foi decidido quem irira fazer os requisitos e levantamos alguns principais
+- **Estudos:** Foi solicitado estudos sobre algumas tecnologias que iriamos usar  
+- **Definir tecnologias:** Foi designado alguém para decidir as tecnologias, tanto quanto linguagens como bibliotecas
