@@ -1,25 +1,19 @@
 'use client';
 import { useState } from 'react';
+import { useTheme } from '../ThemeProvider';
 
 export default function Header() {
-  // Estado para controlar se o menu mobile está aberto ou fechado
   const [menuOpen, setMenuOpen] = useState(false);
+  const { theme, toggleTheme } = useTheme();
 
-  // Função para lidar com clique nos botões e fechar menu mobile
   const handleButtonClick = (action: string) => {
     console.log(`Botão clicado: ${action}`);
     setMenuOpen(false);
   };
 
-  // Função para alternar entre tema claro e escuro
-  const toggleTheme = () => {
-    console.log('Alternando tema claro/escuro');
-  };
-
   return (
-    <header className="bg-[#2D2D2D] border-b border-[#444444] sticky top-0 z-50">
+    <header className="bg-header border-theme border-b sticky top-0 z-50 transition-colors duration-300">
       
-      {/* Container com 90% da largura da tela */}
       <div className="max-w-[80%] mx-auto px-4 py-1 md:py-2"> 
         
         <div className="flex justify-between items-center">
@@ -29,7 +23,7 @@ export default function Header() {
             className="flex items-center gap-1 md:gap-2 hover:scale-110 transition-transform duration-200 active:scale-105 cursor-pointer"
           >
             <h1 
-              className="text-white font-bold leading-none text-[28px] sm:text-[36px] md:text-[48px]"
+              className="font-bold leading-none text-[28px] sm:text-[36px] md:text-[48px]"
               style={{ 
                 fontFamily: "'Harys World', Arial, sans-serif",
               }}
@@ -50,7 +44,7 @@ export default function Header() {
             
             <button 
               onClick={() => handleButtonClick('Sobre nós')}
-              className="text-white hover:text-gray-300 transition-all duration-200 text-base lg:text-lg hover:scale-110 active:scale-105 cursor-pointer"
+              className="hover:text-gray-300 transition-all duration-200 text-base lg:text-lg hover:scale-110 active:scale-105 cursor-pointer"
               style={{ fontFamily: "'Rammetto One', cursive" }}
             >
               Sobre nós
@@ -58,7 +52,7 @@ export default function Header() {
             
             <button 
               onClick={() => handleButtonClick('Usar IA')}
-              className="bg-[#2C80FF] text-white rounded-[20px] hover:bg-[#1a6fd8] transition-all duration-200 flex items-center justify-center w-[160px] lg:w-[190px] h-[30px] lg:h-[32px] hover:scale-110 active:scale-105 cursor-pointer"
+              className="bg-primary text-white rounded-[20px] hover:bg-[#1a6fd8] transition-all duration-200 flex items-center justify-center w-[160px] lg:w-[190px] h-[30px] lg:h-[32px] hover:scale-110 active:scale-105 cursor-pointer"
               style={{ 
                 fontFamily: "'Rammetto One', cursive",
                 fontSize: '14px lg:text-base'
@@ -70,23 +64,33 @@ export default function Header() {
             <button 
               onClick={toggleTheme}
               className="flex items-center justify-center hover:opacity-80 transition-all duration-200 hover:scale-110 active:scale-105 cursor-pointer"
+              aria-label={theme === 'light' ? 'Ativar modo escuro' : 'Ativar modo claro'}
             >
-              <img 
-                src="/icons/light-mode.png"
-                alt="Modo Claro" 
-                width={24}
-                height={24}
-                className="filter brightness-0 invert w-6 h-6 lg:w-[30px] lg:h-[30px]"
-              />
+              {theme === 'light' ? (
+                <img 
+                  src="/icons/dark-mode.png"
+                  alt="Modo Escuro" 
+                  width={32}
+                  height={32}
+                  className="w-8 h-8 lg:w-9 lg:h-9"
+                />
+              ) : (
+                <img 
+                  src="/icons/light-mode.png"
+                  alt="Modo Claro" 
+                  width={32}
+                  height={32}
+                  className="w-8 h-8 lg:w-9 lg:h-9"
+                />
+              )}
             </button>
           </nav>
 
           <button 
-            className="md:hidden text-white p-1 rounded hover:bg-gray-700 transition-all duration-200 hover:scale-110 active:scale-105 cursor-pointer"
+            className="md:hidden p-1 rounded hover:bg-gray-700 transition-all duration-200 hover:scale-110 active:scale-105 cursor-pointer"
             onClick={() => setMenuOpen(!menuOpen)}
             aria-label="Abrir menu"
           >
-            {/* Ícone de três linhas do menu hamburguer */}
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
             </svg>
@@ -94,21 +98,19 @@ export default function Header() {
         </div>
 
         {menuOpen && (
-          <div className="md:hidden mt-2 space-y-2 border-t border-[#444444] pt-3">
+          <div className="md:hidden mt-2 space-y-2 border-t border-theme pt-3">
             
-            {/* Botão Sobre nós versão mobile */}
             <button 
               onClick={() => handleButtonClick('Sobre nós (mobile)')}
-              className="block text-white py-2 px-4 hover:bg-gray-800 rounded transition-all duration-200 w-full text-center hover:scale-105 active:scale-100 text-base cursor-pointer"
+              className="block py-2 px-4 hover:bg-gray-800 rounded transition-all duration-200 w-full text-center hover:scale-105 active:scale-100 text-base cursor-pointer"
               style={{ fontFamily: "'Rammetto One', cursive" }}
             >
               Sobre nós
             </button>
             
-            {/* Botão Usar IA versão mobile */}
             <button 
               onClick={() => handleButtonClick('Usar IA (mobile)')}
-              className="bg-[#2C80FF] text-white rounded-[20px] hover:bg-[#1a6fd8] transition-all duration-200 w-full py-2 hover:scale-105 active:scale-100 text-base cursor-pointer"
+              className="bg-primary text-white rounded-[20px] hover:bg-[#1a6fd8] transition-all duration-200 w-full py-2 hover:scale-105 active:scale-100 text-base cursor-pointer"
               style={{ 
                 fontFamily: "'Rammetto One', cursive"
               }}
@@ -116,19 +118,33 @@ export default function Header() {
               Usar IA
             </button>
 
-            {/* Botão alternar tema versão mobile */}
             <button 
               onClick={toggleTheme}
               className="flex items-center justify-center w-full py-2 text-gray-400 hover:text-white transition-all duration-200 hover:scale-105 active:scale-100 text-base cursor-pointer"
             >
-              <img 
-                src="/icons/light-mode.png" 
-                alt="Modo Claro"
-                width={20}
-                height={20}
-                className="filter brightness-0 invert mr-3"
-              />
-              Alternar Tema
+              {theme === 'light' ? (
+                <>
+                  <img 
+                    src="/icons/dark-mode.png" 
+                    alt="Modo Escuro"
+                    width={26}
+                    height={26}
+                    className="mr-3 w-7 h-7"
+                  />
+                  Modo Escuro
+                </>
+              ) : (
+                <>
+                  <img 
+                    src="/icons/light-mode.png" 
+                    alt="Modo Claro"
+                    width={26}
+                    height={26}
+                    className="mr-3 w-7 h-7"
+                  />
+                  Modo Claro
+                </>
+              )}
             </button>
           </div>
         )}
