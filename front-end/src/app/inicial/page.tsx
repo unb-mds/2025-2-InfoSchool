@@ -196,7 +196,7 @@ interface DeveloperCardProps {
 function DeveloperCard({ photo, name, role, borderColor }: DeveloperCardProps) {
   return (
     <div className="text-center w-full px-1 sm:px-0">
-      <div className="bg-[#3A3A3A] rounded-2xl p-4 sm:p-5 w-full max-w-[280px] sm:max-w-full h-56 sm:h-64 flex flex-col items-center justify-center cursor-pointer transform sm:hover:scale-105 transition-all duration-300"
+      <div className="bg-[#3A3A3A] rounded-2xl p-4 sm:p-5 w-full max-w-[280px] sm:max-w-full h-56 sm:h-64 flex flex-col items-center justify-center transform sm:hover:scale-105 transition-all duration-300"
            style={{ boxShadow: '30px 30px 70px rgba(0, 0, 0, 0.5)' }}>
         <div className="mb-3 sm:mb-4">
           <img 
