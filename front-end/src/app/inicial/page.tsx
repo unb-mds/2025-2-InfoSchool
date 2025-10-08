@@ -70,23 +70,25 @@ export default function Inicial() {
           
           {/* CARD 1 - CAMINHO NORMAL */}
           <ScrollAnimation direction="up" duration={500} delay={150}>
-            <div className="bg-card-alt rounded-2xl p-4 sm:p-5 md:p-6 text-center transition-all duration-500 w-full max-w-[280px] sm:max-w-[300px] md:max-w-[330px] min-h-[260px] sm:min-h-[280px] md:min-h-[300px] flex flex-col justify-start items-center cursor-pointer transform sm:hover:scale-105"
-                 style={{ boxShadow: '20px 20px 50px rgba(0, 0, 0, 0.6)' }}>
-              <span className="mt-3 sm:mt-4 mb-3 sm:mb-4 transition-colors duration-500">
-                <FontAwesomeIcon icon={faLocationDot} style={{ color: "#2C80FF", width: "32px", height: "32px" }} />
-              </span>
-              <h3 className="mb-4 sm:mb-5 text-2xl sm:text-[26px] md:text-[28px] text-text transition-colors duration-500"
-                  style={{ 
-                    fontFamily: "'Rammetto One', cursive",
-                    textShadow: '0 0 40px currentColor'
-                  }}>
-                Caminho normal
-              </h3>
-              <p className="text-text text-base sm:text-[17px] md:text-[18px] transition-colors duration-500"
-                 style={{ fontFamily: "'Sansita', sans-serif" }}>
-                Você pode navegar manualmente com as nossas páginas interativas 
-              </p>
-            </div>
+            <a href="/mapa">
+              <div className="bg-card-alt rounded-2xl p-4 sm:p-5 md:p-6 text-center transition-all duration-500 w-full max-w-[280px] sm:max-w-[300px] md:max-w-[330px] min-h-[260px] sm:min-h-[280px] md:min-h-[300px] flex flex-col justify-start items-center cursor-pointer transform sm:hover:scale-105"
+                   style={{ boxShadow: '20px 20px 50px rgba(0, 0, 0, 0.6)' }}>
+                <span className="mt-3 sm:mt-4 mb-3 sm:mb-4 transition-colors duration-500">
+                  <FontAwesomeIcon icon={faLocationDot} style={{ color: "#2C80FF", width: "32px", height: "32px" }} />
+                </span>
+                <h3 className="mb-4 sm:mb-5 text-2xl sm:text-[26px] md:text-[28px] text-text transition-colors duration-500"
+                    style={{ 
+                      fontFamily: "'Rammetto One', cursive",
+                      textShadow: '0 0 40px currentColor'
+                    }}>
+                  Caminho normal
+                </h3>
+                <p className="text-text text-base sm:text-[17px] md:text-[18px] transition-colors duration-500"
+                   style={{ fontFamily: "'Sansita', sans-serif" }}>
+                  Você pode navegar manualmente com as nossas páginas interativas 
+                </p>
+              </div>
+            </a>
           </ScrollAnimation>
 
           {/* CARD 2 - VER RANKING */}
