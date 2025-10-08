@@ -9,11 +9,84 @@
   font-display: swap;
 }
 
+/* Variáveis CSS para os temas */
+:root {
+  /* Tema Claro */
+  --background: #FFFFFF;
+  --card: #F5F5F5;
+  --card-alt: #F8F9FA;
+  --text: #000000;
+  --header: #F8F9FA;
+  --primary: #2C80FF;
+  --border: #E5E5E5;
+  --gray-text: #000000; /* MUDADO: era #6B7280 (cinza), agora PRETO */
+  --shadow: rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="dark"] {
+  /* Tema Escuro */
+  --background: #2D2D2D;
+  --card: #3A3A3A;
+  --card-alt: #323232;
+  --text: #FFFFFF;
+  --header: #2D2D2D;
+  --primary: #2C80FF;
+  --border: #444444;
+  --gray-text: #FFFFFF; /* MUDADO: era #9CA3AF (cinza), agora BRANCO */
+  --shadow: rgba(0, 0, 0, 0.6);
+}
+
 /* Estilos globais básicos */
 body {
-  background-color: #2D2D2D;
-  color: white;
+  background-color: var(--background);
+  color: var(--text);
   margin: 0;
   padding: 0;
   min-height: 100vh;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Classes utilitárias para usar as variáveis */
+.bg-background {
+  background-color: var(--background);
+}
+
+.bg-card {
+  background-color: var(--card);
+}
+
+.bg-card-alt {
+  background-color: var(--card-alt);
+}
+
+.bg-header {
+  background-color: var(--header);
+}
+
+.text-primary {
+  color: var(--primary);
+}
+
+.bg-primary {
+  background-color: var(--primary);
+}
+
+.border-theme {
+  border-color: var(--border);
+}
+
+.text-text {
+  color: var(--text);
+}
+
+.text-gray-theme {
+  color: var(--gray-text);
+}
+
+.shadow-theme {
+  box-shadow: 20px 20px 50px var(--shadow);
+}
+
+.shadow-theme-large {
+  box-shadow: 30px 30px 70px var(--shadow);
 }

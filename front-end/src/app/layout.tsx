@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
-import { Header, Footer } from '@/modules/shared/components';
+import { Header, Footer, ThemeProvider } from '@/modules/shared/components';
 
 const inter = Inter({ 
   subsets: ['latin'],
@@ -20,10 +20,7 @@ export default function RootLayout({
   return (
     <html lang="pt-BR">
       <head>
-        {/* === FAVICON SIMPLES QUE FUNCIONA === */}
         <link rel="icon" href="/Favicon/favicon.ico" />
-        
-        {/* Google Fonts - adicionar Sansita e Harys World */}
         <link
           href="https://fonts.googleapis.com/css2?family=Rammetto+One&display=swap"
           rel="stylesheet"
@@ -32,18 +29,19 @@ export default function RootLayout({
           href="https://fonts.googleapis.com/css2?family=Sansita&display=swap"
           rel="stylesheet"
         />
-        {/* Fonte Harys World (se for local) */}
         <link
           href="/fonts/Harys-World.ttf"
           rel="stylesheet"
         />
       </head>
-      <body className={`${inter.className} bg-[#2D2D2D] text-white min-h-screen flex flex-col`}>
-        <Header />
-        <main className="flex-1">
-          {children}
-        </main>
-        <Footer />
+      <body className={`${inter.className} min-h-screen flex flex-col`}>
+        <ThemeProvider>
+          <Header />
+          <main className="flex-1">
+            {children}
+          </main>
+          <Footer />
+        </ThemeProvider>
       </body>
     </html>
   );

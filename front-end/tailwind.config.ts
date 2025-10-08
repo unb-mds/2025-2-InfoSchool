@@ -12,9 +12,26 @@ const config: Config = {
         'primary': '#2C80FF',
         'background': '#2D2D2D',
       },
+      textShadow: {
+        'glow-light': '0 0 40px rgba(0, 0, 0, 0.8)',
+        'glow-dark': '0 0 40px rgba(255, 255, 255, 0.3)',
+      }
     },
   },
-  plugins: [],
+  plugins: [
+    function({ addUtilities }: { addUtilities: any }) {
+      const newUtilities = {
+        '.text-glow-light': {
+          textShadow: '0 0 40px rgba(0, 0, 0, 0.8)',
+        },
+        '.text-glow-dark': {
+          textShadow: '0 0 40px rgba(255, 255, 255, 0.3)',
+        },
+      }
+      addUtilities(newUtilities)
+    },
+  ],
+  darkMode: 'class',
 };
 
 export default config;
