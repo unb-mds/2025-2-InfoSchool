@@ -1,7 +1,7 @@
 ATA DE REUNIÃO
 -
 
-**Data:**
+**Data:15/09/2025**
 
 :raising_hand:  Participantes
 -
@@ -11,17 +11,18 @@ ATA DE REUNIÃO
 - Davi - Arquiteto
 - João - Arquiteto
 - Fábio - Devops  
+- Leonardo - Product Owner
 
 :mag_right:  Pauta
 -
 
-1. Assunto 1
-2. Assunto 2  
-3. Assunto 3  
+1. Estudos  
+2. Story Map
+3. Prototipo baixa fidelidade do figma
 
 :speech_balloon: Discussões
 -
 
-- **Assunto 1:** (Resumo do que foi discutido e decidido)
-- **Assunto 2:** (Resumo do que foi discutido e decidido)  
-- **Assunto 3:** (Resumo do que foi discutido e decidido)
+- **Estudos:** Foi solicitado estudos sobre algumas tecnologias que iriamos usar, decidida na semana passada  
+- **Story Map:** Foi designado alguém para estudar e fazer o story map
+- **Prototipo baixa fidelidade dp figma**: Foi decido quem irá fazer e como irá fazer
