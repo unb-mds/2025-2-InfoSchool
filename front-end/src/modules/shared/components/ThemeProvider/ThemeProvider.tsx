@@ -1,3 +1,4 @@
+//app/
 'use client';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
@@ -24,7 +25,19 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (mounted) {
-      document.documentElement.setAttribute('data-theme', theme);
+      
+      const html = document.documentElement;
+      
+      if (theme === 'dark') {
+        html.classList.add('dark');
+        html.classList.remove('light');
+      } else {
+        html.classList.add('light');
+        html.classList.remove('dark');
+      }
+      
+      // ⬇️ Mantém data-theme para CSS customizado (se precisar)
+      html.setAttribute('data-theme', theme);
       localStorage.setItem('theme', theme);
     }
   }, [theme, mounted]);
@@ -34,7 +47,11 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   };
 
   if (!mounted) {
-    return null;
+    return (
+      <div className="dark"> {/* ⬅️ Durante SSR, força tema escuro */}
+        {children}
+      </div>
+    );
   }
 
   return (

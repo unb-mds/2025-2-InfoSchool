@@ -65,140 +65,107 @@ export default function MapaPage() {
   }, []);
 
   return (
-    <main className="min-h-screen flex flex-col p-4 sm:p-6 lg:p-8 transition-colors duration-300"
-          style={{
-            backgroundColor: 'var(--background)',
-            color: 'var(--text)'
-          }}>
+    <main className="min-h-screen transition-colors duration-300 bg-background text-text">
       
-      {/* ========== CONTEÚDO PRINCIPAL ========== */}
-      <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+      {/* ========== CONTEÚDO PRINCIPAL - MESMA MARGEM DA PÁGINA INICIAL ========== */}
+      <div className="max-w-[95%] sm:max-w-[90%] md:max-w-[80%] mx-auto px-3 sm:px-4 py-6 md:py-16">
         
-        {/* ========== LADO ESQUERDO - PESQUISA ========== */}
-        <div className="flex flex-col items-center lg:items-start justify-center">
+        {/* ========== GRID PRINCIPAL - ALINHAMENTO NO MEIO ========== */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 min-h-[70vh] items-center">
           
-          {/* Barra de Pesquisa com Sugestões */}
-          <div className="relative w-full max-w-md">
-            <div className="relative">
-              <Search 
-                className="absolute left-4 top-1/2 -translate-y-1/2 transition-colors duration-300"
-                size={20}
-                style={{ color: 'var(--gray-text)' }}
-              />
-              <input
-                type="text"
-                placeholder="Digite o nome do estado..."
-                className="w-full h-14 rounded-full pl-12 pr-6 focus:outline-none focus:ring-2 focus:ring-blue-500 text-lg transition-colors duration-300"
-                style={{
-                  backgroundColor: 'var(--card)',
-                  border: '1px solid var(--border)',
-                  color: 'var(--text)'
-                }}
-                value={searchTerm}
-                onChange={(e) => {
-                  setSearchTerm(e.target.value);
-                  setShowSuggestions(true);
-                }}
-                onFocus={() => setShowSuggestions(true)}
-                onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
-              />
-            </div>
+          {/* ========== LADO ESQUERDO - PESQUISA NO MEIO ========== */}
+          <div className="flex flex-col items-center lg:items-start justify-center h-full">
+            <div className="w-full max-w-md">
+              
+              {/* Barra de Pesquisa */}
+              <div className="relative">
+                <Search 
+                  className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-theme"
+                  size={20}
+                />
+                <input
+                  type="text"
+                  placeholder="Digite o nome do estado..."
+                  className="w-full h-14 rounded-full pl-12 pr-6 focus:outline-none focus:ring-2 focus:ring-primary text-lg bg-card border border-theme text-text"
+                  value={searchTerm}
+                  onChange={(e) => {
+                    setSearchTerm(e.target.value);
+                    setShowSuggestions(true);
+                  }}
+                  onFocus={() => setShowSuggestions(true)}
+                  onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
+                />
+              </div>
 
-            {/* Lista de Sugestões */}
-            {showSuggestions && searchTerm && (
-              <div className="absolute top-full left-0 right-0 rounded-lg mt-2 max-h-60 overflow-y-auto z-10 shadow-lg transition-colors duration-300"
-                   style={{
-                     backgroundColor: 'var(--card)',
-                     border: '1px solid var(--border)',
-                     boxShadow: 'var(--shadow)'
-                   }}>
-                {filteredEstados.length > 0 ? (
-                  filteredEstados.map((estado) => (
-                    <button
-                      key={estado.sigla}
-                      className="w-full text-left px-4 py-3 transition-colors border-b last:border-b-0 duration-300"
-                      style={{
-                        borderColor: 'var(--border)'
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.backgroundColor = 'var(--card-alt)';
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.backgroundColor = 'transparent';
-                      }}
-                      onClick={() => {
-                        setSearchTerm(estado.nome);
-                        setShowSuggestions(false);
-                      }}
-                    >
-                      <div className="flex justify-between items-center">
-                        <span style={{ color: 'var(--text)' }}>{estado.nome}</span>
-                        <span className="bg-blue-600 text-white px-2 py-1 rounded text-sm">
-                          {estado.sigla}
-                        </span>
-                      </div>
-                    </button>
-                  ))
-                ) : (
-                  <div className="px-4 py-3 text-center transition-colors duration-300"
-                       style={{ color: 'var(--gray-text)' }}>
-                    Nenhum estado encontrado
+              {/* Sugestões - POSIÇÃO ABSOLUTA (não empurra o conteúdo) */}
+              {showSuggestions && searchTerm && (
+                <div className="absolute top-full left-0 right-0 mt-2 max-h-60 overflow-y-auto z-50 shadow-theme bg-card border border-theme rounded-lg">
+                  {filteredEstados.length > 0 ? (
+                    filteredEstados.map((estado) => (
+                      <button
+                        key={estado.sigla}
+                        className="w-full text-left px-4 py-3 transition-colors duration-300 border-b border-theme last:border-b-0 hover:bg-card-alt"
+                        onClick={() => {
+                          setSearchTerm(estado.nome);
+                          setShowSuggestions(false);
+                        }}
+                      >
+                        <div className="flex justify-between items-center">
+                          <span className="text-text">{estado.nome}</span>
+                          <span className="bg-primary text-white px-2 py-1 rounded text-sm">
+                            {estado.sigla}
+                          </span>
+                        </div>
+                      </button>
+                    ))
+                  ) : (
+                    <div className="px-4 py-3 text-center text-gray-theme">
+                      Nenhum estado encontrado
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Sugestões Populares quando não há pesquisa */}
+              {!searchTerm && (
+                <div className="mt-6">
+                  <p className="text-sm mb-3 text-gray-theme">
+                    Sugestões populares:
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {estadosBrasileiros.slice(0, 6).map((estado) => (
+                      <button
+                        key={estado.sigla}
+                        className="px-3 py-2 rounded-lg text-sm transition-colors duration-300 border border-theme bg-card text-text hover:bg-card-alt"
+                        onClick={() => setSearchTerm(estado.nome)}
+                      >
+                        {estado.nome}
+                      </button>
+                    ))}
                   </div>
-                )}
-              </div>
-            )}
+                </div>
+              )}
+            </div>
           </div>
 
-          {/* Sugestões Populares quando não há pesquisa */}
-          {!searchTerm && (
-            <div className="mt-6 w-full max-w-md">
-              <p className="text-sm mb-3 transition-colors duration-300"
-                 style={{ color: 'var(--gray-text)' }}>
-                Sugestões populares:
-              </p>
-              <div className="flex flex-wrap gap-2">
-                {estadosBrasileiros.slice(0, 6).map((estado) => (
-                  <button
-                    key={estado.sigla}
-                    className="px-3 py-2 rounded-lg text-sm transition-colors duration-300 border"
-                    style={{
-                      backgroundColor: 'var(--card)',
-                      borderColor: 'var(--border)',
-                      color: 'var(--text)'
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.backgroundColor = 'var(--card-alt)';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.backgroundColor = 'var(--card)';
-                    }}
-                    onClick={() => setSearchTerm(estado.nome)}
-                  >
-                    {estado.nome}
-                  </button>
-                ))}
+          {/* ========== LADO DIREITO - MAPA GRANDE ========== */}
+          <div className="flex items-center justify-end h-full w-full"> {/* ⬅️ justify-end E w-full */}
+              <div className="relative h-full min-h-[80vh] w-[120%] -mr-32"> {/* ⬅️ w-[120%] E -mr-32 */}
+                {/* Mapa do Brasil - GRANDE */}
+                  <Image
+                   src="/images/brasil.png"
+                   alt="Mapa do Brasil"
+                   fill
+                   style={{ 
+                     objectFit: "contain"
+                   }}
+                   priority
+                   className="transition-opacity duration-300 scale-133"
+                 />
               </div>
             </div>
-          )}
-        </div>
 
-        {/* ========== LADO DIREITO - MAPA GRANDE ========== */}
-        <div className="flex items-center justify-center w-full h-full">
-          <div className="relative w-full h-full min-h-[80vh]">
-            {/* Mapa do Brasil - GRANDE */}
-            <Image
-              src="/images/brasil.png"
-              alt="Mapa do Brasil"
-              fill
-              style={{ 
-                objectFit: "contain"
-              }}
-              priority
-              className="transition-opacity duration-300 scale-107" 
-            />
-          </div>
         </div>
-
       </div>
     </main>
   );
