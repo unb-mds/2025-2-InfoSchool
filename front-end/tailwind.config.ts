@@ -11,6 +11,10 @@ const config: Config = {
       colors: {
         'primary': '#2C80FF',
         'background': '#2D2D2D',
+        // ⬇️ SÓ ESTAS 3 CORES FALTANDO:
+        'text': '#FFFFFF',
+        'card': '#3A3A3A',
+        'card-alt': '#323232',
       },
       textShadow: {
         'glow-light': '0 0 40px rgba(0, 0, 0, 0.8)',
