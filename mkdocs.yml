@@ -1,1 +1,61 @@
-site_name: My Docs
+site_name: InfoSchool
+site_url: https://mydomain.org/mysite
+theme:
+  name: material
+  palette:
+    - scheme: default
+      toggle:
+        icon: material/brightness-7 
+        name: Switch to dark mode
+
+    - scheme: slate
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.instant
+    - navigation.instant.progress
+    - navigation.instant.preview
+    - navigation.tracking
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.sections
+    - navigation.path
+    - navigation.expand
+    - toc.follow
+    - toc.integrate
+
+nav:
+  - Início: Home.md
+  - Contributing: Contributing.md
+  - Arquitetura Backend:
+    - Arquitetura Geral: Arquitetura Backend/Arquitetura-geral.md
+    - RAG: Arquitetura Backend/RAG.md
+  - Arquitetura Frontend:
+    - Arquitetura Geral: Arquitetura Frontend/arquitetura-frontend.md
+  - Estudos: 
+    - Frontend:
+      - HTML&CSS: Estudos/Frontend/html_css.md
+      - JavaScript: Estudos/Frontend/javascript.md
+      - Nodejs: Estudos/Frontend/Nodejs.md
+    - DevOps: 
+      - Linux: Estudos/DevOps/linux.md
+      - Comunicação Web: Estudos/DevOps/comunicacao-web-HTTP.md
+      - Docker: Estudos/DevOps/Docker.md
+    - Requisitos: 
+      - Requisitos: Estudos/Requisitos/Requisitos.md
+    - Git e GitHub: 
+      - Git e GitHub: Estudos/Git e GitHub/Git-GitHub-GitPages.md
+    - Metodologias Agéis: 
+      - Metodologias Agéis: Estudos/Metodologias Agéis/Metodologias agéis.md
+      - Scrum Master: Estudos/Metodologias Agéis/scrum_master.md
+    - Backlog: 
+      - Backlog: Estudos/Backlog/Técnicas de Backlog.md
+  - Atas: 
+    - Ata 01: Atas Reuniao/ata_reuniao_01.md
+    - Ata 02: Atas Reuniao/ata_reuniao_02.md
+    - Ata 03: Atas Reuniao/ata_reuniao_03.md
+    - Template Ata: Atas Reuniao/template_ata.md
+extra_css:
+  - stylesheets/extra.css 
+    
