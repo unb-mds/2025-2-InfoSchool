@@ -1,13 +1,18 @@
-@import "tailwindcss";
-
-/* Configurar fonte Harys World local */
+/* FORÇAR CARREGAMENTO DAS FONTES ANTES DE TUDO */
 @font-face {
   font-family: 'Harys World';
   src: url('/fonts/Harys-World.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
-  font-display: swap;
+  font-display: block;
 }
+
+/* PRÉ-CARREGAR FONTES EXTERNAS */
+@import url('https://fonts.googleapis.com/css2?family=Rammetto+One&display=block');
+@import url('https://fonts.googleapis.com/css2?family=Sansita&display=block');
+@import url('https://fonts.googleapis.com/css2?family=Inter&display=block');
+
+@import "tailwindcss";
 
 /* Variáveis CSS para os temas */
 :root {
@@ -19,7 +24,7 @@
   --header: #F8F9FA;
   --primary: #2C80FF;
   --border: #E5E5E5;
-  --gray-text: #000000; /* MUDADO: era #6B7280 (cinza), agora PRETO */
+  --gray-text: #000000;
   --shadow: rgba(0, 0, 0, 0.1);
 }
 
@@ -32,7 +37,7 @@
   --header: #2D2D2D;
   --primary: #2C80FF;
   --border: #444444;
-  --gray-text: #FFFFFF; /* MUDADO: era #9CA3AF (cinza), agora BRANCO */
+  --gray-text: #FFFFFF;
   --shadow: rgba(0, 0, 0, 0.6);
 }
 
