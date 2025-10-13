@@ -1,28 +1,27 @@
 ATA DE REUNIÃO
 -
 
-**Data:**08/09/2025
+**Data:08/09/2025**
 
 :raising_hand:  Participantes
 -
+
 - Pedro Augusto – Scrum Master  
 - Pedro Gomes – Product Owner  
-- Leonardo – Product Owner
 - Davi - Arquiteto
 - João - Arquiteto
-- Fábio - Devops 
-
+- Fábio - Devops  
 
 :mag_right:  Pauta
 -
 
-1. Requisitos
-2. Nome do projeto
-3. Atribuições de tasks
+1. Levantar Requisitos
+2. Estudos  
+3. Definir tecnologias 
 
 :speech_balloon: Discussões
 -
 
-- **Requisitos:** Foi discutido os requisitos feitos durante a sprint passada
-- **Nome do projeto:** Foi escolhido o nome do nosso projeto INFOMAP  
-- **Atribuições de tasks:** Foi designado aos participantes da reunião tarefas que julgamos importante para a continuação do projeto 
+- **Levantar requisitos:** Foi decidido quem irá fazer os requisitos e levantamos alguns principais
+- **Estudos:** Foi solicitado estudos sobre algumas tecnologias que iriamos usar  
+- **Definir tecnologias:** Foi designado alguém para decidir as tecnologias, tanto quanto linguagens como bibliotecas
