@@ -1,6 +1,12 @@
 // src/app/page.tsx
-import { redirect } from 'next/navigation';
+'use client';
+import { useEffect } from 'react';
 
 export default function RootPage() {
-  redirect('/inicial');
+  useEffect(() => {
+    // Redirect instantâneo com JavaScript
+    window.location.href = '/inicial';
+  }, []);
+
+  return null; // Não mostra nada
 }

@@ -18,8 +18,8 @@ export default function Header() {
         
         <div className="flex justify-between items-center">
           
-          <button 
-            onClick={() => handleButtonClick('InfoSchool Logo + Texto')}
+          <a 
+            href="/inicial"
             className="flex items-center gap-1 md:gap-2 hover:scale-110 transition-transform duration-500 active:scale-105 cursor-pointer"
           >
             <h1 
@@ -38,7 +38,7 @@ export default function Header() {
               height={60}
               className="object-contain w-[60px] h-[60px] md:w-[90px] md:h-[90px] transition-colors duration-500"
             />
-          </button>
+          </a>
 
           <nav className="hidden md:flex items-center gap-10 lg:gap-12">
             

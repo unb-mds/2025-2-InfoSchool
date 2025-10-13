@@ -1,3 +1,4 @@
+'use client';
 export default function Footer() {
   return (
     <footer className="bg-card border-t border-theme mt-auto transition-colors duration-500">
