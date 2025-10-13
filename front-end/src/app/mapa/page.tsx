@@ -75,7 +75,7 @@ export default function MapaPage() {
           
           {/* ========== LADO ESQUERDO - PESQUISA NO MEIO ========== */}
           <div className="flex flex-col items-center lg:items-start justify-center h-full">
-            <div className="w-full max-w-md">
+            <div className="w-full max-w-md relative"> {/* ⬅️ ADICIONEI relative AQUI */}
               
               {/* Barra de Pesquisa */}
               <div className="relative">
@@ -97,7 +97,7 @@ export default function MapaPage() {
                 />
               </div>
 
-              {/* Sugestões - POSIÇÃO ABSOLUTA (não empurra o conteúdo) */}
+              {/* Sugestões - AGORA COM CONTAINER RELATIVE */}
               {showSuggestions && searchTerm && (
                 <div className="absolute top-full left-0 right-0 mt-2 max-h-60 overflow-y-auto z-50 shadow-theme bg-card border border-theme rounded-lg">
                   {filteredEstados.length > 0 ? (
@@ -149,21 +149,21 @@ export default function MapaPage() {
           </div>
 
           {/* ========== LADO DIREITO - MAPA GRANDE ========== */}
-          <div className="flex items-center justify-end h-full w-full"> {/* ⬅️ justify-end E w-full */}
-              <div className="relative h-full min-h-[80vh] w-[120%] -mr-32"> {/* ⬅️ w-[120%] E -mr-32 */}
-                {/* Mapa do Brasil - GRANDE */}
-                  <Image
-                   src="/images/brasil.png"
-                   alt="Mapa do Brasil"
-                   fill
-                   style={{ 
-                     objectFit: "contain"
-                   }}
-                   priority
-                   className="transition-opacity duration-300 scale-133"
-                 />
-              </div>
+          <div className="flex items-center justify-end h-full w-full">
+            <div className="relative h-full min-h-[80vh] w-[120%] -mr-32">
+              {/* Mapa do Brasil - GRANDE */}
+              <Image
+                src="/images/brasil.png"
+                alt="Mapa do Brasil"
+                fill
+                style={{ 
+                  objectFit: "contain"
+                }}
+                priority
+                className="transition-opacity duration-300 scale-133"
+              />
             </div>
+          </div>
 
         </div>
       </div>
