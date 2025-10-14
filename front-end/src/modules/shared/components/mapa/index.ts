@@ -1,0 +1,1 @@
+export { default as MapaMunicipios } from './MapaMunicipios';
