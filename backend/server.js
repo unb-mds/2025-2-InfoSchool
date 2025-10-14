@@ -1,4 +1,4 @@
-import Fastify from "fastify";
+const Fastify = require("fastify");
 
 const app = Fastify();
 
