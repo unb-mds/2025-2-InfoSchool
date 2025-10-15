@@ -1,36 +1,32 @@
 const Fastify = require("fastify");
+const paginaInicialRoutes = require("./src/routes/public/home.js");
+const rankingRoutes = require("./src/routes/public/ranking.js");
+const ragRoutes = require("./src/routes/public/rag.js");
+const brasilRoutes = require("./src/routes/maps/brasil.js");
+const estadosRoutes = require("./src/routes/maps/estado.js");
+const municipioRoutes = require("./src/routes/maps/municipio.js");
+const dashboardRoutes = require("./src/routes/dashboard/index.js");
 
 const app = Fastify();
 
-app.get("/pagina-inicial", async () => {
-  return { message: "Rota inicial funcionando!" };
+app.register(paginaInicialRoutes, { prefix: "/pagina-inicial" });
+app.register(rankingRoutes, { prefix: "/ranking" });
+app.register(ragRoutes, { prefix: "/rag" });
+app.register(brasilRoutes, { prefix: "/mapa" });
+app.register(estadosRoutes, { prefix: "/estado" });
+app.register(municipioRoutes, { prefix: "/estado/municipio" });
+app.register(dashboardRoutes, { prefix: "/estado/municipio/dashboard" });
+
+app.setErrorHandler((error, request, reply) => {
+  console.error(error);
+
+  reply.status(error.statusCode || 500).send({
+    error: true,
+    message: error.message || "Erro interno do servidor",
+  });
 });
 
-app.get("/mapa-brasil", async () => {
-  return { message: "Rota do mapa funcionando!" };
-});
-
-app.get("/ranking", async () => {
-  return { message: "Rota do ranking funcionando!" };
-});
-
-app.get("/rag", async () => {
-  return { message: "Rota do rag funcionando!" };
-});
-
-app.get("/mapa-estado", async () => {
-  return { message: "Rota do mapa dos estados funcionando!" };
-});
-
-app.get("/mapa-municipio", async () => {
-  return { message: "Rota do mapa dos municípios funcionando!" };
-});
-
-app.get("/dashboard", async () => {
-  return { message: "Rota do dashboard funcionando!" };
-});
-
-app.listen({ port: 3000 }, (err) => {
+app.listen({ port: 3000 }, (err, address) => {
   if (err) throw err;
-  console.log(`Pagina inicial rodando em http://localhost:3000/pagina-inicial`);
+  console.log(`Servidor rodando em http://localhost:3000`);
 });
