@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect, use, useRef } from 'react';
 import { Search, X } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import * as d3 from 'd3';
 
 interface PageProps {
@@ -27,14 +28,21 @@ interface MunicipioData {
 export default function PaginaEstado({ params }: PageProps) {
   const { sigla } = use(params);
   const [geoData, setGeoData] = useState<MunicipioData | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true); // ⬅️ Voltei para true
   const [searchTerm, setSearchTerm] = useState('');
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [municipioSelecionado, setMunicipioSelecionado] = useState<string | null>(null);
   const svgRef = useRef<SVGSVGElement>(null);
+  const router = useRouter();
+
+  // FUNÇÃO DE NAVEGAÇÃO
+  const navegarParaMunicipio = (nomeMunicipio: string) => {
+    const slug = `${nomeMunicipio.toLowerCase().replace(/ /g, '-')}-${sigla.toLowerCase()}`;
+    router.push(`/municipios/${slug}`);
+  };
 
   // Nome completo do estado em vez da sigla
-  const getNomeEstado = (sigla: string): string => {
+  const getNomeEstado = (siglaParam: string): string => {
     const estados: { [key: string]: string } = {
       'ac': 'Acre', 'al': 'Alagoas', 'ap': 'Amapá', 'am': 'Amazonas', 'ba': 'Bahia',
       'ce': 'Ceará', 'df': 'Distrito Federal', 'es': 'Espírito Santo', 'go': 'Goiás', 
@@ -44,22 +52,23 @@ export default function PaginaEstado({ params }: PageProps) {
       'ro': 'Rondônia', 'rr': 'Roraima', 'sc': 'Santa Catarina', 'sp': 'São Paulo',
       'se': 'Sergipe', 'to': 'Tocantins'
     };
-    return estados[sigla.toLowerCase()] || sigla.toUpperCase();
+    return estados[siglaParam.toLowerCase()] || siglaParam.toUpperCase();
   };
 
   const nomeEstado = getNomeEstado(sigla);
 
   // Dados mockados de municípios baseado no estado
-  const getMunicipiosPorEstado = (sigla: string) => {
+  const getMunicipiosPorEstado = (siglaParam: string) => {
     const municipios: { [key: string]: string[] } = {
       'sp': ["São Paulo", "Campinas", "Santos", "Ribeirão Preto", "Sorocaba", "São José dos Campos"],
       'rj': ["Rio de Janeiro", "Niterói", "Duque de Caxias", "São Gonçalo", "Nova Iguaçu"],
       'mg': ["Belo Horizonte", "Uberlândia", "Contagem", "Juiz de Fora", "Betim"],
       'ba': ["Salvador", "Feira de Santana", "Vitória da Conquista", "Camaçari", "Itabuna"],
       'go': ["Goiânia", "Aparecida de Goiânia", "Anápolis", "Rio Verde", "Luziânia"],
-      'rr': ["Boa Vista", "Caracaraí", "Rorainópolis", "Alto Alegre", "Mucajaí"]
+      'rr': ["Boa Vista", "Caracaraí", "Rorainópolis", "Alto Alegre", "Mucajaí"],
+      'ac': ["Rio Branco", "Cruzeiro do Sul", "Sena Madureira", "Tarauacá", "Feijó"]
     };
-    return municipios[sigla.toLowerCase()] || ["São Paulo", "Campinas", "Santos"];
+    return municipios[siglaParam.toLowerCase()] || ["Capital", "Cidade 1", "Cidade 2"];
   };
 
   const municipiosExemplo = getMunicipiosPorEstado(sigla);
@@ -286,18 +295,20 @@ export default function PaginaEstado({ params }: PageProps) {
                 </div>
               )}
 
-              {/* Sugestões */}
+              {/* Sugestões - AGORA COM NAVEGAÇÃO */}
               {showSuggestions && searchTerm && (
                 <div className="absolute top-full left-0 right-0 mt-2 max-h-60 overflow-y-auto z-50 shadow-theme bg-card border border-theme rounded-lg transition-colors duration-500">
                   {municipiosFiltrados.length > 0 ? (
                     municipiosFiltrados.map((municipio, index) => (
                       <button
                         key={index}
-                        className="w-full text-left px-4 py-3 border-b border-theme last:border-b-0 hover:bg-card-alt text-text transition-colors duration-500"
+                        className="w-full text-left px-4 py-3 border-b border-theme last:border-b-0 hover:bg-card-alt text-text transition-colors duration-500 cursor-pointer"
                         onClick={() => {
                           setMunicipioSelecionado(municipio);
                           setSearchTerm(municipio);
                           setShowSuggestions(false);
+                          // ⬇️⬇️⬇️ NAVEGAÇÃO AQUI ⬇️⬇️⬇️
+                          navegarParaMunicipio(municipio);
                         }}
                       >
                         <div className="flex justify-between items-center">
@@ -313,7 +324,7 @@ export default function PaginaEstado({ params }: PageProps) {
                 </div>
               )}
 
-              {/* Sugestões Populares - AGORA COM MUNICÍPIOS DO ESTADO ATUAL */}
+              {/* Sugestões Populares - AGORA COM NAVEGAÇÃO */}
               {!searchTerm && !municipioSelecionado && (
                 <div className="mt-6 transition-colors duration-500">
                   <p className="text-sm mb-3 text-gray-theme transition-colors duration-500">
@@ -323,10 +334,12 @@ export default function PaginaEstado({ params }: PageProps) {
                     {municipiosExemplo.map((municipio, index) => (
                       <button
                         key={index}
-                        className="w-full text-left px-4 py-3 rounded-lg border border-theme bg-card text-text hover:bg-card-alt transition-colors duration-500"
+                        className="w-full text-left px-4 py-3 rounded-lg border border-theme bg-card text-text hover:bg-card-alt transition-colors duration-500 cursor-pointer"
                         onClick={() => {
                           setMunicipioSelecionado(municipio);
                           setSearchTerm(municipio);
+                          // ⬇️⬇️⬇️ NAVEGAÇÃO AQUI ⬇️⬇️⬇️
+                          navegarParaMunicipio(municipio);
                         }}
                       >
                         {municipio}

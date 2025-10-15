@@ -1,14 +1,14 @@
 'use client';
-import { Search } from 'lucide-react';
+import { Search } from 'lucide-react'; // ⬅️ Este import está correto
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation'; // ⬅️ IMPORTANTE: Adicione este import
+import { useRouter } from 'next/navigation';
 
 export default function MapaPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [isDark, setIsDark] = useState(false);
-  const router = useRouter(); // ⬅️ Hook para navegação
+  const router = useRouter();
 
   // Lista de todos os estados brasileiros
   const estadosBrasileiros = [
@@ -49,14 +49,14 @@ export default function MapaPage() {
 
   // Função para navegar para a página do estado
   const navegarParaEstado = (sigla: string) => {
-  router.push(`/estado/${sigla.toLowerCase()}`); // ← Mudei para "estado" (singular)
+    router.push(`/estado/${sigla.toLowerCase()}`);
   };
+
   // Função para alternar o tema
   const toggleTheme = () => {
     const newTheme = !isDark;
     setIsDark(newTheme);
     
-    // Aplica o tema no data-theme do html
     if (newTheme) {
       document.documentElement.setAttribute('data-theme', 'dark');
     } else {
@@ -73,13 +73,13 @@ export default function MapaPage() {
   return (
     <main className="min-h-screen transition-colors duration-300 bg-background text-text">
       
-      {/* ========== CONTEÚDO PRINCIPAL - MESMA MARGEM DA PÁGINA INICIAL ========== */}
+      {/* ========== CONTEÚDO PRINCIPAL ========== */}
       <div className="max-w-[95%] sm:max-w-[90%] md:max-w-[80%] mx-auto px-3 sm:px-4 py-6 md:py-16">
         
-        {/* ========== GRID PRINCIPAL - ALINHAMENTO NO MEIO ========== */}
+        {/* ========== GRID PRINCIPAL ========== */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 min-h-[70vh] items-center">
           
-          {/* ========== LADO ESQUERDO - PESQUISA NO MEIO ========== */}
+          {/* ========== LADO ESQUERDO - PESQUISA ========== */}
           <div className="flex flex-col items-center lg:items-start justify-center h-full">
             <div className="w-full max-w-md relative">
               
@@ -101,7 +101,6 @@ export default function MapaPage() {
                   onFocus={() => setShowSuggestions(true)}
                   onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
                   onKeyDown={(e) => {
-                    // Enter para navegar para o primeiro resultado
                     if (e.key === 'Enter' && filteredEstados.length > 0) {
                       navegarParaEstado(filteredEstados[0].sigla);
                     }
@@ -109,7 +108,7 @@ export default function MapaPage() {
                 />
               </div>
 
-              {/* Sugestões - AGORA COM CONTAINER RELATIVE E NAVEGAÇÃO */}
+              {/* Sugestões */}
               {showSuggestions && searchTerm && (
                 <div className="absolute top-full left-0 right-0 mt-2 max-h-60 overflow-y-auto z-50 shadow-theme bg-card border border-theme rounded-lg">
                   {filteredEstados.length > 0 ? (
@@ -120,7 +119,6 @@ export default function MapaPage() {
                         onClick={() => {
                           setSearchTerm(estado.nome);
                           setShowSuggestions(false);
-                          // Navega para a página do estado
                           navegarParaEstado(estado.sigla);
                         }}
                       >
@@ -140,7 +138,7 @@ export default function MapaPage() {
                 </div>
               )}
 
-              {/* Sugestões Populares quando não há pesquisa - AGORA COM NAVEGAÇÃO */}
+              {/* Sugestões Populares */}
               {!searchTerm && (
                 <div className="mt-6">
                   <p className="text-sm mb-3 text-gray-theme">
@@ -153,7 +151,6 @@ export default function MapaPage() {
                         className="px-3 py-2 rounded-lg text-sm transition-colors duration-300 border border-theme bg-card text-text hover:bg-card-alt cursor-pointer"
                         onClick={() => {
                           setSearchTerm(estado.nome);
-                          // Navega para a página do estado
                           navegarParaEstado(estado.sigla);
                         }}
                       >
@@ -166,10 +163,9 @@ export default function MapaPage() {
             </div>
           </div>
 
-          {/* ========== LADO DIREITO - MAPA GRANDE ========== */}
+          {/* ========== LADO DIREITO - MAPA ========== */}
           <div className="flex items-center justify-end h-full w-full">
             <div className="relative h-full min-h-[80vh] w-[120%] -mr-32">
-              {/* Mapa do Brasil - GRANDE */}
               <Image
                 src="/images/brasil.png"
                 alt="Mapa do Brasil"
