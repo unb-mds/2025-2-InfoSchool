@@ -111,8 +111,8 @@ export default function PaginaEstado({ params }: PageProps) {
     const svg = d3.select(svgRef.current);
     svg.selectAll("*").remove();
 
-    const width = 900;
-    const height = 700;
+    const width = 1000;
+    const height = 800;
     
     svg.attr('width', width)
        .attr('height', height);
@@ -120,16 +120,16 @@ export default function PaginaEstado({ params }: PageProps) {
     // Detecta tema baseado no HTML
     const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
 
-    // Projeção para o estado
+    // Projeção para o estado 
     const projection = d3.geoMercator()
       .center(getCentroEstado(sigla))
-      .scale(getEscalaEstado(sigla))
+      .scale(getEscalaEstado(sigla) * 1.2) 
       .translate([width / 2, height / 2]);
 
     const path = d3.geoPath().projection(projection);
 
     // Cores baseadas no tema
-    const fillColor = '#2C80FF'; // Azul primário do seu tema
+    const fillColor = '#2C80FF'; 
     const strokeColor = isDark ? '#1e40af' : '#1e40af';
     const hoverColor = '#ef4444';
     const bgColor = 'transparent';
@@ -208,15 +208,15 @@ export default function PaginaEstado({ params }: PageProps) {
 
   function getEscalaEstado(sigla: string): number {
     const escalas: { [key: string]: number } = {
-      'sp': 5500, 'rj': 9000, 'mg': 3800, 'ba': 2800,
-      'pr': 5000, 'rs': 3200, 'sc': 6500, 'go': 4200,
-      'mt': 2200, 'ms': 3800, 'es': 8000, 'pe': 5000,
-      'ce': 4800, 'pa': 1800, 'ma': 3200, 'pi': 3200,
-      'rn': 5800, 'pb': 5800, 'se': 6800, 'al': 6800,
-      'to': 3200, 'ro': 3200, 'ac': 3800, 'rr': 3800,
-      'ap': 4800, 'df': 12000,
+      'sp': 6000, 'rj': 10000, 'mg': 4200, 'ba': 3200, 
+      'pr': 5500, 'rs': 3500, 'sc': 7000, 'go': 4700,
+      'mt': 2500, 'ms': 4200, 'es': 8800, 'pe': 5500,
+      'ce': 5300, 'pa': 2000, 'ma': 3500, 'pi': 3500,
+      'rn': 6400, 'pb': 6400, 'se': 7500, 'al': 7500,
+      'to': 3500, 'ro': 3500, 'ac': 4200, 'rr': 4200,
+      'ap': 5300, 'df': 13200,
     };
-    return escalas[sigla.toLowerCase()] || 4000;
+    return escalas[sigla.toLowerCase()] || 4400;
   }
 
   if (loading) {
@@ -231,14 +231,14 @@ export default function PaginaEstado({ params }: PageProps) {
     <main className="min-h-screen bg-background text-text transition-colors duration-500">
       
       {/* ========== CONTEÚDO PRINCIPAL ========== */}
-      <div className="max-w-[95%] sm:max-w-[90%] md:max-w-[80%] mx-auto px-3 sm:px-4 py-6 md:py-16">
+      <div className="max-w-[95%] sm:max-w-[90%] md:max-w-[85%] mx-auto px-3 sm:px-4 py-6 md:py-16">
         
         {/* ========== GRID PRINCIPAL ========== */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 min-h-[70vh] items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 min-h-[80vh] items-center">
           
           {/* ========== LADO ESQUERDO - PESQUISA ========== */}
           <div className="flex flex-col items-center lg:items-start justify-center h-full">
-            <div className="w-full max-w-md relative">
+            <div className="w-full max-w-lg relative"> {/* Aumentei o max-width */}
               
               {/* Barra de Pesquisa */}
               <div className="relative transition-colors duration-500">
@@ -250,7 +250,7 @@ export default function PaginaEstado({ params }: PageProps) {
                 <input
                   type="text"
                   placeholder="Digite o nome do município..."
-                  className="w-full h-14 rounded-full pl-12 pr-6 focus:outline-none focus:ring-2 focus:ring-primary text-lg bg-card border border-theme text-text transition-colors duration-500"
+                  className="w-full h-16 rounded-full pl-12 pr-6 focus:outline-none focus:ring-2 focus:ring-primary text-lg bg-card border border-theme text-text transition-colors duration-500"
                   value={searchTerm}
                   onChange={(e) => {
                     setSearchTerm(e.target.value);
@@ -262,16 +262,16 @@ export default function PaginaEstado({ params }: PageProps) {
               </div>
 
               {/* Estado selecionado EM CIMA (nome completo) */}
-              <div className="flex items-center gap-3 mt-4 transition-colors duration-500">
-                <div className="bg-primary text-white px-5 py-3 rounded-full text-base font-medium flex items-center gap-3 transition-colors duration-500">
+              <div className="flex items-center gap-3 mt-6 transition-colors duration-500">
+                <div className="bg-primary text-white px-6 py-3 rounded-full text-lg font-semibold flex items-center gap-3 transition-colors duration-500">
                   {nomeEstado}
                 </div>
               </div>
 
-              {/* Município selecionado*/}
+              {/* Município selecionado */}
               {municipioSelecionado && (
-                <div className="mt-3 flex items-center gap-2 transition-colors duration-500">
-                  <span className="bg-primary text-white px-4 py-2 rounded-full text-sm transition-colors duration-500">
+                <div className="mt-4 flex items-center gap-3 transition-colors duration-500">
+                  <span className="bg-primary text-white px-5 py-2 rounded-full text-base font-medium transition-colors duration-500">
                     {municipioSelecionado}
                   </span>
                   <button
@@ -279,9 +279,9 @@ export default function PaginaEstado({ params }: PageProps) {
                       setMunicipioSelecionado(null);
                       setSearchTerm('');
                     }}
-                    className="text-white hover:bg-white/20 transition-colors duration-200 w-6 h-6 flex items-center justify-center rounded-full"
+                    className="text-white hover:bg-white/20 transition-colors duration-200 w-7 h-7 flex items-center justify-center rounded-full bg-primary/80 hover:bg-primary"
                   >
-                    <X size={16} />
+                    <X size={18} />
                   </button>
                 </div>
               )}
@@ -313,17 +313,17 @@ export default function PaginaEstado({ params }: PageProps) {
                 </div>
               )}
 
-              {/* Sugestões Populares - AGORA COM MUNICÍPIOS DO ESTADO ATUAL */}
+              {/* Sugestões Populares */}
               {!searchTerm && !municipioSelecionado && (
-                <div className="mt-6 transition-colors duration-500">
-                  <p className="text-sm mb-3 text-gray-theme transition-colors duration-500">
+                <div className="mt-8 transition-colors duration-500">
+                  <p className="text-base mb-4 text-gray-theme transition-colors duration-500">
                     Sugestões populares:
                   </p>
-                  <div className="space-y-2">
+                  <div className="space-y-3">
                     {municipiosExemplo.map((municipio, index) => (
                       <button
                         key={index}
-                        className="w-full text-left px-4 py-3 rounded-lg border border-theme bg-card text-text hover:bg-card-alt transition-colors duration-500"
+                        className="w-full text-left px-5 py-4 rounded-xl border border-theme bg-card text-text hover:bg-card-alt transition-colors duration-500 text-base"
                         onClick={() => {
                           setMunicipioSelecionado(municipio);
                           setSearchTerm(municipio);
@@ -338,9 +338,9 @@ export default function PaginaEstado({ params }: PageProps) {
             </div>
           </div>
 
-          {/* ========== LADO DIREITO - MAPA ========== */}
+          {/* ========== LADO DIREITO - MAPA MAIOR ========== */}
           <div className="flex items-center justify-end h-full w-full transition-colors duration-500">
-            <div className="relative h-full min-h-[80vh] w-[140%] -mr-48">
+            <div className="relative h-full min-h-[85vh] w-[150%] -mr-56"> {/* Aumentei mais */}
               <svg 
                 ref={svgRef}
                 className="transition-opacity duration-300"
