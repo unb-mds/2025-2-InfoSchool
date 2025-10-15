@@ -2,6 +2,7 @@
 import { useState, useEffect, use, useRef } from 'react';
 import { Search, X } from 'lucide-react';
 import * as d3 from 'd3';
+import { useRouter } from 'next/navigation';
 
 interface PageProps {
   params: Promise<{
@@ -26,6 +27,7 @@ interface MunicipioData {
 
 export default function PaginaEstado({ params }: PageProps) {
   const { sigla } = use(params);
+  const router = useRouter();
   const [geoData, setGeoData] = useState<MunicipioData | null>(null);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -33,7 +35,6 @@ export default function PaginaEstado({ params }: PageProps) {
   const [municipioSelecionado, setMunicipioSelecionado] = useState<string | null>(null);
   const svgRef = useRef<SVGSVGElement>(null);
 
-  // Nome completo do estado em vez da sigla
   const getNomeEstado = (sigla: string): string => {
     const estados: { [key: string]: string } = {
       'ac': 'Acre', 'al': 'Alagoas', 'ap': 'Amapá', 'am': 'Amazonas', 'ba': 'Bahia',
@@ -49,7 +50,6 @@ export default function PaginaEstado({ params }: PageProps) {
 
   const nomeEstado = getNomeEstado(sigla);
 
-  // Dados mockados de municípios baseado no estado
   const getMunicipiosPorEstado = (sigla: string) => {
     const municipios: { [key: string]: string[] } = {
       'sp': ["São Paulo", "Campinas", "Santos", "Ribeirão Preto", "Sorocaba", "São José dos Campos"],
@@ -64,7 +64,6 @@ export default function PaginaEstado({ params }: PageProps) {
 
   const municipiosExemplo = getMunicipiosPorEstado(sigla);
 
-  // Filtrar municípios baseado na pesquisa
   const municipiosFiltrados = municipiosExemplo.filter(municipio =>
     municipio.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -98,7 +97,6 @@ export default function PaginaEstado({ params }: PageProps) {
     }
   }, [sigla]);
 
-  // Efeito para desenhar o mapa quando os dados carregarem
   useEffect(() => {
     if (geoData && svgRef.current) {
       desenharMapa();
@@ -117,30 +115,25 @@ export default function PaginaEstado({ params }: PageProps) {
     svg.attr('width', width)
        .attr('height', height);
 
-    // Detecta tema baseado no HTML
     const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
 
-    // Projeção para o estado 
     const projection = d3.geoMercator()
       .center(getCentroEstado(sigla))
-      .scale(getEscalaEstado(sigla) * 1.2) 
+      .scale(getEscalaEstado(sigla) * 1.2)
       .translate([width / 2, height / 2]);
 
     const path = d3.geoPath().projection(projection);
 
-    // Cores baseadas no tema
-    const fillColor = '#2C80FF'; 
+    const fillColor = '#2C80FF';
     const strokeColor = isDark ? '#1e40af' : '#1e40af';
     const hoverColor = '#ef4444';
     const bgColor = 'transparent';
 
-    // Fundo transparente
     svg.append('rect')
       .attr('width', width)
       .attr('height', height)
       .attr('fill', bgColor);
 
-    // Desenha os municípios
     svg.selectAll('path.municipio')
       .data(geoData.features)
       .enter()
@@ -208,7 +201,7 @@ export default function PaginaEstado({ params }: PageProps) {
 
   function getEscalaEstado(sigla: string): number {
     const escalas: { [key: string]: number } = {
-      'sp': 6000, 'rj': 10000, 'mg': 4200, 'ba': 3200, 
+      'sp': 6000, 'rj': 10000, 'mg': 4200, 'ba': 3200,
       'pr': 5500, 'rs': 3500, 'sc': 7000, 'go': 4700,
       'mt': 2500, 'ms': 4200, 'es': 8800, 'pe': 5500,
       'ce': 5300, 'pa': 2000, 'ma': 3500, 'pi': 3500,
@@ -230,17 +223,13 @@ export default function PaginaEstado({ params }: PageProps) {
   return (
     <main className="min-h-screen bg-background text-text transition-colors duration-500">
       
-      {/* ========== CONTEÚDO PRINCIPAL ========== */}
       <div className="max-w-[95%] sm:max-w-[90%] md:max-w-[85%] mx-auto px-3 sm:px-4 py-6 md:py-16">
         
-        {/* ========== GRID PRINCIPAL ========== */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 min-h-[80vh] items-center">
           
-          {/* ========== LADO ESQUERDO - PESQUISA ========== */}
           <div className="flex flex-col items-center lg:items-start justify-center h-full">
-            <div className="w-full max-w-lg relative"> {/* Aumentei o max-width */}
+            <div className="w-full max-w-lg relative">
               
-              {/* Barra de Pesquisa */}
               <div className="relative transition-colors duration-500">
                 <Search 
                   className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-theme transition-colors duration-500"
@@ -261,17 +250,21 @@ export default function PaginaEstado({ params }: PageProps) {
                 />
               </div>
 
-              {/* Estado selecionado EM CIMA (nome completo) */}
               <div className="flex items-center gap-3 mt-6 transition-colors duration-500">
-                <div className="bg-primary text-white px-6 py-3 rounded-full text-lg font-semibold flex items-center gap-3 transition-colors duration-500">
+                <div className="bg-primary text-white px-5 py-2 rounded-full text-base font-medium flex items-center gap-2 transition-colors duration-500">
                   {nomeEstado}
+                  <button
+                    onClick={() => router.push('/mapa')}
+                    className="text-white hover:bg-white/20 transition-colors duration-200 w-5 h-5 flex items-center justify-center rounded-full"
+                  >
+                    <X size={14} />
+                  </button>
                 </div>
               </div>
 
-              {/* Município selecionado */}
               {municipioSelecionado && (
                 <div className="mt-4 flex items-center gap-3 transition-colors duration-500">
-                  <span className="bg-primary text-white px-5 py-2 rounded-full text-base font-medium transition-colors duration-500">
+                  <span className="bg-primary text-white px-4 py-2 rounded-full text-sm font-medium transition-colors duration-500">
                     {municipioSelecionado}
                   </span>
                   <button
@@ -279,14 +272,13 @@ export default function PaginaEstado({ params }: PageProps) {
                       setMunicipioSelecionado(null);
                       setSearchTerm('');
                     }}
-                    className="text-white hover:bg-white/20 transition-colors duration-200 w-7 h-7 flex items-center justify-center rounded-full bg-primary/80 hover:bg-primary"
+                    className="text-white hover:bg-white/20 transition-colors duration-200 w-6 h-6 flex items-center justify-center rounded-full bg-primary/80 hover:bg-primary"
                   >
-                    <X size={18} />
+                    <X size={16} />
                   </button>
                 </div>
               )}
 
-              {/* Sugestões */}
               {showSuggestions && searchTerm && (
                 <div className="absolute top-full left-0 right-0 mt-2 max-h-60 overflow-y-auto z-50 shadow-theme bg-card border border-theme rounded-lg transition-colors duration-500">
                   {municipiosFiltrados.length > 0 ? (
@@ -313,7 +305,6 @@ export default function PaginaEstado({ params }: PageProps) {
                 </div>
               )}
 
-              {/* Sugestões Populares */}
               {!searchTerm && !municipioSelecionado && (
                 <div className="mt-8 transition-colors duration-500">
                   <p className="text-base mb-4 text-gray-theme transition-colors duration-500">
@@ -338,9 +329,8 @@ export default function PaginaEstado({ params }: PageProps) {
             </div>
           </div>
 
-          {/* ========== LADO DIREITO - MAPA MAIOR ========== */}
           <div className="flex items-center justify-end h-full w-full transition-colors duration-500">
-            <div className="relative h-full min-h-[85vh] w-[150%] -mr-56"> {/* Aumentei mais */}
+            <div className="relative h-full min-h-[85vh] w-[150%] -mr-56">
               <svg 
                 ref={svgRef}
                 className="transition-opacity duration-300"
