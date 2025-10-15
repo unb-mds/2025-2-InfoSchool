@@ -1,4 +1,3 @@
-// src/app/inicial/page.tsx
 'use client';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrophy, faLocationDot, faRobot } from '@fortawesome/free-solid-svg-icons';
@@ -97,7 +96,7 @@ export default function Inicial() {
 
           {/* CARD 2 - VER RANKING */}
           <ScrollAnimation direction="up" duration={500} delay={200}>
-            <div className="w-full flex justify-center">
+            <a href="/ranking" className="w-full flex justify-center">
               <div className="bg-card-alt rounded-2xl p-5 sm:p-6 text-center transition-all duration-500 w-full max-w-[320px] sm:max-w-[340px] h-[280px] sm:h-[300px] flex flex-col justify-center items-center cursor-pointer transform hover:scale-105 active:scale-95 shadow-2xl hover:shadow-3xl"
                    style={{ boxShadow: '20px 20px 50px rgba(0, 0, 0, 0.6)' }}>
                 <span className="mb-4 transition-colors duration-500">
@@ -119,7 +118,7 @@ export default function Inicial() {
                   Você pode ver quais escolas estão no topo de cada categoria
                 </p>
               </div>
-            </div>
+            </a>
           </ScrollAnimation>
 
           {/* CARD 3 - CAMINHO DA IA */}
