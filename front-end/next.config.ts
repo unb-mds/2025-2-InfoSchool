@@ -1,22 +1,21 @@
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
-  // REMOVA completamente output e basePath para desenvolvimento
   images: {
-    unoptimized: true, // Isso permite SVG e imagens locais
+    unoptimized: true,
   },
-  // Configurações para evitar erros durante desenvolvimento
   typescript: {
     ignoreBuildErrors: true,
   },
   eslint: {
     ignoreDuringBuilds: true,
   },
-  // Garantir que funciona em desenvolvimento
   trailingSlash: false,
   skipTrailingSlashRedirect: true,
-  output: 'export', 
-  distDir: 'out',
+  
+  // ⚠️ REMOVA output: 'export' durante desenvolvimento
+  // output: 'export',
+  // distDir: 'out',
 };
 
 export default nextConfig;
