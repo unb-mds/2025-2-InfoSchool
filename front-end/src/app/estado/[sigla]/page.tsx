@@ -2,6 +2,7 @@
 import { useState, useEffect, use, useRef } from 'react';
 import { Search, X } from 'lucide-react';
 import * as d3 from 'd3';
+import { useRouter } from 'next/navigation';
 
 interface PageProps {
   params: Promise<{
@@ -32,6 +33,7 @@ export default function PaginaEstado({ params }: PageProps) {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [municipioSelecionado, setMunicipioSelecionado] = useState<string | null>(null);
   const svgRef = useRef<SVGSVGElement>(null);
+  const router = useRouter();
 
   // Nome completo do estado em vez da sigla
   const getNomeEstado = (sigla: string): string => {
@@ -219,6 +221,17 @@ export default function PaginaEstado({ params }: PageProps) {
     return escalas[sigla.toLowerCase()] || 4000;
   }
 
+  // Função para remover o estado selecionado e voltar para página anterior
+  const removerEstado = () => {
+    router.back(); // Volta para a página anterior
+  };
+
+  // Função para remover o município selecionado
+  const removerMunicipio = () => {
+    setMunicipioSelecionado(null);
+    setSearchTerm('');
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background text-text flex items-center justify-center transition-colors duration-500">
@@ -261,30 +274,34 @@ export default function PaginaEstado({ params }: PageProps) {
                 />
               </div>
 
-              {/* Estado selecionado EM CIMA (nome completo) */}
-              <div className="flex items-center gap-3 mt-4 transition-colors duration-500">
-                <div className="bg-primary text-white px-5 py-3 rounded-full text-base font-medium flex items-center gap-3 transition-colors duration-500">
+              {/* Estado e Município selecionados EM CIMA - LADO A LADO */}
+              <div className="flex flex-wrap items-center gap-3 mt-4 transition-colors duration-500">
+                {/* Estado selecionado */}
+                <div className="bg-primary text-white px-5 py-3 rounded-full text-base font-medium flex items-center gap-2 transition-colors duration-500">
                   {nomeEstado}
-                </div>
-              </div>
-
-              {/* Município selecionado*/}
-              {municipioSelecionado && (
-                <div className="mt-3 flex items-center gap-2 transition-colors duration-500">
-                  <span className="bg-primary text-white px-4 py-2 rounded-full text-sm transition-colors duration-500">
-                    {municipioSelecionado}
-                  </span>
                   <button
-                    onClick={() => {
-                      setMunicipioSelecionado(null);
-                      setSearchTerm('');
-                    }}
-                    className="text-white hover:bg-white/20 transition-colors duration-200 w-6 h-6 flex items-center justify-center rounded-full"
+                    onClick={removerEstado}
+                    className="text-white hover:bg-white/20 transition-colors duration-200 w-5 h-5 flex items-center justify-center rounded-full ml-1"
+                    title="Voltar para página anterior"
                   >
-                    <X size={16} />
+                    <X size={14} />
                   </button>
                 </div>
-              )}
+
+                {/* Município selecionado */}
+                {municipioSelecionado && (
+                  <div className="bg-primary text-white px-5 py-3 rounded-full text-base font-medium flex items-center gap-2 transition-colors duration-500">
+                    {municipioSelecionado}
+                    <button
+                      onClick={removerMunicipio}
+                      className="text-white hover:bg-white/20 transition-colors duration-200 w-5 h-5 flex items-center justify-center rounded-full ml-1"
+                      title="Remover município"
+                    >
+                      <X size={14} />
+                    </button>
+                  </div>
+                )}
+              </div>
 
               {/* Sugestões */}
               {showSuggestions && searchTerm && (
