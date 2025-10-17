@@ -1,7 +1,8 @@
-// src/app/municipios/[slug]/page.tsx - CÓDIGO COMPLETO CORRIGIDO
+// src/app/municipios/[slug]/page.tsx - LAYOUT IDÊNTICO À PÁGINA ESTADO
 'use client';
 import { useState, useEffect, use, useRef } from 'react';
 import { Search, ArrowLeft, School, MapPin, Phone, X } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import * as d3 from 'd3';
 
 // A interface 'Escola' define a estrutura de dados para cada escola.
@@ -68,6 +69,7 @@ interface PageProps {
 
 export default function PaginaMunicipio({ params }: PageProps) {
   const { slug } = use(params);
+  const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [escolas, setEscolas] = useState<Escola[]>([]);
@@ -104,7 +106,6 @@ export default function PaginaMunicipio({ params }: PageProps) {
 
   const { nomeMunicipio, siglaEstado } = extrairDadosDoSlug(slug);
   const nomeEstadoCompleto = getNomeEstado(siglaEstado);
-
 
   // Carregar dados
   useEffect(() => {
@@ -206,72 +207,90 @@ export default function PaginaMunicipio({ params }: PageProps) {
           stroke-width: 1px;
         }
       `}</style>
-      <div className="max-w-[95%] mx-auto px-4 py-8">
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 min-h-[70vh] items-center">
+      
+      {/* ========== CONTEÚDO PRINCIPAL ========== */}
+      <div className="max-w-[95%] sm:max-w-[90%] md:max-w-[85%] mx-auto px-3 sm:px-4 py-6 md:py-16">
+        
+        {/* ========== GRID PRINCIPAL ========== */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 min-h-[80vh] items-center">
           
+          {/* ========== SEÇÃO DE BUSCA ========== */}
           <div className="flex flex-col items-center lg:items-start justify-center h-full">
-            <div className="w-full max-w-lg relative space-y-4">
+            <div className="w-full max-w-lg relative">
               
-              <div className="relative">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-theme" size={20} />
+              {/* ========== BARRA DE PESQUISA ========== */}
+              <div className="relative transition-colors duration-500">
+                <Search 
+                  className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-theme transition-colors duration-500"
+                  size={20}
+                />
                 <input
                   type="text"
                   placeholder="Pesquisar escolas..."
-                  className="w-full h-14 rounded-full pl-12 pr-6 focus:outline-none focus:ring-2 focus:ring-primary text-lg bg-card border border-theme text-text"
+                  className="w-full h-16 rounded-full pl-12 pr-6 focus:outline-none focus:ring-2 focus:ring-primary text-lg bg-card border border-theme text-text transition-colors duration-500"
                   value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onChange={(e) => {
+                    setSearchTerm(e.target.value);
+                    setShowSchoolSuggestions(true);
+                  }}
                   onFocus={() => setShowSchoolSuggestions(true)}
                   onBlur={() => setTimeout(() => setShowSchoolSuggestions(false), 200)}
                 />
-                {/* Caixa de Sugestões de Escolas */}
-                {showSchoolSuggestions && (
-                  <div className="absolute top-full left-0 right-0 mt-2 max-h-60 overflow-y-auto z-50 shadow-theme bg-card border border-theme rounded-lg">
-                    {escolasFiltradas.length > 0 ? (
-                      escolasFiltradas.map((escola) => (
-                        <button
-                          key={escola.id}
-                          className="w-full text-left px-4 py-3 border-b border-theme last:border-b-0 hover:bg-card-alt text-text"
-                          onClick={() => {
-                            setSearchTerm(escola.nome);
-                            setEscolaSelecionada(escola);
-                            setShowSchoolSuggestions(false);
-                          }}
-                        >
-                          {escola.nome}
-                        </button>
-                      ))
-                    ) : (
-                      <div className="px-4 py-3 text-center text-gray-theme">
-                        Nenhuma escola encontrada
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-              
-              <div className="flex flex-wrap items-center gap-3">
-                  <div className="bg-primary text-white px-4 py-2 rounded-full text-sm font-medium flex items-center gap-2">
-                      <span>{nomeEstadoCompleto}</span>
-                       <button
-                          onClick={() => window.location.href = `/mapa`}
-                          className="text-white hover:bg-white/20 transition-colors duration-200 w-5 h-5 flex items-center justify-center rounded-full -mr-1"
-                      >
-                          <X size={14} />
-                      </button>
-                  </div>
-                  <div className="bg-primary text-white px-4 py-2 rounded-full text-sm font-medium flex items-center gap-2">
-                      <span>{nomeMunicipio}</span>
-                      <button
-                          onClick={() => window.location.href = `/estado/${siglaEstado.toLowerCase()}`}
-                          className="text-white hover:bg-white/20 transition-colors duration-200 w-5 h-5 flex items-center justify-center rounded-full -mr-1"
-                      >
-                          <X size={14} />
-                      </button>
-                  </div>
               </div>
 
-              {/* Cartão de Detalhes da Escola Selecionada */}
+              {/* ========== BADGES DO ESTADO E MUNICÍPIO ========== */}
+              <div className="flex items-center gap-3 mt-6 transition-colors duration-500">
+                <div className="bg-primary text-white px-5 py-2 rounded-full text-base font-medium flex items-center gap-2 transition-colors duration-500">
+                  {nomeEstadoCompleto}
+                  <button
+                    onClick={() => router.push('/mapa')}
+                    className="text-white hover:bg-white/20 transition-colors duration-200 w-5 h-5 flex items-center justify-center rounded-full"
+                  >
+                    <X size={14} />
+                  </button>
+                </div>
+                <div className="bg-primary text-white px-5 py-2 rounded-full text-base font-medium flex items-center gap-2 transition-colors duration-500">
+                  {nomeMunicipio}
+                  <button
+                    onClick={() => router.push(`/estado/${siglaEstado.toLowerCase()}`)}
+                    className="text-white hover:bg-white/20 transition-colors duration-200 w-5 h-5 flex items-center justify-center rounded-full"
+                  >
+                    <X size={14} />
+                  </button>
+                </div>
+              </div>
+
+              {/* ========== SUGESTÕES DE ESCOLAS ========== */}
+              {showSchoolSuggestions && (
+                <div className="absolute top-full left-0 right-0 mt-2 max-h-60 overflow-y-auto z-50 shadow-theme bg-card border border-theme rounded-lg transition-colors duration-500">
+                  {escolasFiltradas.length > 0 ? (
+                    escolasFiltradas.map((escola) => (
+                      <button
+                        key={escola.id}
+                        className="w-full text-left px-4 py-3 border-b border-theme last:border-b-0 hover:bg-card-alt text-text transition-colors duration-500"
+                        onClick={() => {
+                          setEscolaSelecionada(escola);
+                          setSearchTerm(escola.nome);
+                          setShowSchoolSuggestions(false);
+                        }}
+                      >
+                        <div className="flex justify-between items-center">
+                          <span className="transition-colors duration-500">{escola.nome}</span>
+                          <span className="bg-primary/20 text-primary px-2 py-1 rounded text-xs">
+                            {escola.tipo}
+                          </span>
+                        </div>
+                      </button>
+                    ))
+                  ) : (
+                    <div className="px-4 py-3 text-center text-gray-theme transition-colors duration-500">
+                      Nenhuma escola encontrada
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* ========== ESCOLA SELECIONADA ========== */}
               {escolaSelecionada && (
                 <div className="mt-6 bg-card rounded-xl p-4 border border-theme animate-fade-in">
                   <div className="flex items-start gap-4">
@@ -305,24 +324,28 @@ export default function PaginaMunicipio({ params }: PageProps) {
                   </div>
                 </div>
               )}
+
             </div>
           </div>
 
-          <div className="w-full h-full flex items-center justify-end sticky top-8">
-            {svgMunicipio ? (
-              <div
-                ref={mapContainerRef}
-                className="w-full svg-map-container"
-              />
-            ) : (
-              <div className="h-96 flex flex-col items-center justify-center text-gray-theme bg-gray-100 dark:bg-gray-800 rounded-lg w-full">
-                <div className="text-center">
-                  <School size={48} className="mx-auto mb-4 opacity-50" />
-                  <p>Mapa não disponível</p>
-                  <p className="text-sm mt-2">Município não encontrado na base do IBGE</p>
+          {/* ========== SEÇÃO DO MAPA ========== */}
+          <div className="flex items-center justify-end h-full w-full transition-colors duration-500">
+            <div className="relative h-full min-h-[85vh] w-[150%] -mr-56">
+              {svgMunicipio ? (
+                <div
+                  ref={mapContainerRef}
+                  className="w-full h-full svg-map-container"
+                />
+              ) : (
+                <div className="h-96 flex flex-col items-center justify-center text-gray-theme bg-gray-100 dark:bg-gray-800 rounded-lg w-full">
+                  <div className="text-center">
+                    <School size={48} className="mx-auto mb-4 opacity-50" />
+                    <p>Mapa não disponível</p>
+                    <p className="text-sm mt-2">Município não encontrado na base do IBGE</p>
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
 
         </div>
@@ -330,4 +353,3 @@ export default function PaginaMunicipio({ params }: PageProps) {
     </main>
   );
 }
-
