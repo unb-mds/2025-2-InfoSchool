@@ -2,11 +2,13 @@
 import { Search } from 'lucide-react';
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation'; // ⬅️ IMPORTANTE: Adicione este import
 
 export default function MapaPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [isDark, setIsDark] = useState(false);
+  const router = useRouter(); // ⬅️ Hook para navegação
 
   // Lista de todos os estados brasileiros
   const estadosBrasileiros = [
@@ -45,6 +47,10 @@ export default function MapaPage() {
     estado.sigla.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  // Função para navegar para a página do estado
+  const navegarParaEstado = (sigla: string) => {
+  router.push(`/estado/${sigla.toLowerCase()}`); // ← Mudei para "estado" (singular)
+  };
   // Função para alternar o tema
   const toggleTheme = () => {
     const newTheme = !isDark;
@@ -75,7 +81,7 @@ export default function MapaPage() {
           
           {/* ========== LADO ESQUERDO - PESQUISA NO MEIO ========== */}
           <div className="flex flex-col items-center lg:items-start justify-center h-full">
-            <div className="w-full max-w-md relative"> {/* ⬅️ ADICIONEI relative AQUI */}
+            <div className="w-full max-w-md relative">
               
               {/* Barra de Pesquisa */}
               <div className="relative">
@@ -94,20 +100,28 @@ export default function MapaPage() {
                   }}
                   onFocus={() => setShowSuggestions(true)}
                   onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
+                  onKeyDown={(e) => {
+                    // Enter para navegar para o primeiro resultado
+                    if (e.key === 'Enter' && filteredEstados.length > 0) {
+                      navegarParaEstado(filteredEstados[0].sigla);
+                    }
+                  }}
                 />
               </div>
 
-              {/* Sugestões - AGORA COM CONTAINER RELATIVE */}
+              {/* Sugestões - AGORA COM CONTAINER RELATIVE E NAVEGAÇÃO */}
               {showSuggestions && searchTerm && (
                 <div className="absolute top-full left-0 right-0 mt-2 max-h-60 overflow-y-auto z-50 shadow-theme bg-card border border-theme rounded-lg">
                   {filteredEstados.length > 0 ? (
                     filteredEstados.map((estado) => (
                       <button
                         key={estado.sigla}
-                        className="w-full text-left px-4 py-3 transition-colors duration-300 border-b border-theme last:border-b-0 hover:bg-card-alt"
+                        className="w-full text-left px-4 py-3 transition-colors duration-300 border-b border-theme last:border-b-0 hover:bg-card-alt cursor-pointer"
                         onClick={() => {
                           setSearchTerm(estado.nome);
                           setShowSuggestions(false);
+                          // Navega para a página do estado
+                          navegarParaEstado(estado.sigla);
                         }}
                       >
                         <div className="flex justify-between items-center">
@@ -126,7 +140,7 @@ export default function MapaPage() {
                 </div>
               )}
 
-              {/* Sugestões Populares quando não há pesquisa */}
+              {/* Sugestões Populares quando não há pesquisa - AGORA COM NAVEGAÇÃO */}
               {!searchTerm && (
                 <div className="mt-6">
                   <p className="text-sm mb-3 text-gray-theme">
@@ -136,8 +150,12 @@ export default function MapaPage() {
                     {estadosBrasileiros.slice(0, 6).map((estado) => (
                       <button
                         key={estado.sigla}
-                        className="px-3 py-2 rounded-lg text-sm transition-colors duration-300 border border-theme bg-card text-text hover:bg-card-alt"
-                        onClick={() => setSearchTerm(estado.nome)}
+                        className="px-3 py-2 rounded-lg text-sm transition-colors duration-300 border border-theme bg-card text-text hover:bg-card-alt cursor-pointer"
+                        onClick={() => {
+                          setSearchTerm(estado.nome);
+                          // Navega para a página do estado
+                          navegarParaEstado(estado.sigla);
+                        }}
                       >
                         {estado.nome}
                       </button>
