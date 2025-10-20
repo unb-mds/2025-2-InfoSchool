@@ -31,7 +31,6 @@ export default function PaginaEstado({ params }: PageProps) {
   const [todosMunicipios, setTodosMunicipios] = useState<string[]>([]);
   const svgRef = useRef<SVGSVGElement>(null);
 
-
   // Retorna nome do estado baseado na sigla
   const getNomeEstado = (sigla: string): string => {
     const estados: { [key: string]: string } = {
