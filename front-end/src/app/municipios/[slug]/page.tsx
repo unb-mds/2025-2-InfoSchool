@@ -120,7 +120,7 @@ export default function PaginaMunicipio({ params }: PageProps) {
         // Limpeza agressiva para remover todos os estilos que possam causar conflito.
         const cleanedSvgData = svgData
             .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '', ) // Remove blocos <style>
-            .replace(/<defs>.*?<\/defs>/gs, '') 
+            .replace(/<defs>.*?<\/defs>/g, '') 
             .replace(/style="[^"]*"/g, '')    
             .replace(/fill="[^"]*"/g, '')      
             .replace(/stroke="[^"]*"/g, '');   

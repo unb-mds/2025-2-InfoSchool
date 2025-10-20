@@ -1,5 +1,5 @@
 'use client';
-import { Search } from 'lucide-react'; // ⬅️ Este import está correto
+import { Search } from 'lucide-react';
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
@@ -41,11 +41,13 @@ export default function MapaPage() {
     { nome: "Tocantins", sigla: "TO" }
   ];
 
-  // Filtrar estados baseado no termo de pesquisa
-  const filteredEstados = estadosBrasileiros.filter(estado =>
-    estado.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    estado.sigla.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // ⚡ **MUDANÇA PRINCIPAL:** Mostrar todos os estados quando clicar, filtrar quando digitar
+  const filteredEstados = searchTerm
+    ? estadosBrasileiros.filter(estado =>
+        estado.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        estado.sigla.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    : estadosBrasileiros; // ⬅️ MOSTRA TODOS quando searchTerm estiver vazio
 
   // Função para navegar para a página do estado
   const navegarParaEstado = (sigla: string) => {
@@ -98,7 +100,9 @@ export default function MapaPage() {
                     setSearchTerm(e.target.value);
                     setShowSuggestions(true);
                   }}
-                  onFocus={() => setShowSuggestions(true)}
+                  onFocus={() => {
+                    setShowSuggestions(true); // ⬅️ MOSTRA SUGESTÕES AO CLICAR
+                  }}
                   onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter' && filteredEstados.length > 0) {
@@ -108,61 +112,45 @@ export default function MapaPage() {
                 />
               </div>
 
-              {/* Sugestões */}
-              {showSuggestions && searchTerm && (
+              {/* Sugestões - Agora mostra TODOS os estados ao clicar */}
+              {showSuggestions && (
                 <div className="absolute top-full left-0 right-0 mt-2 max-h-60 overflow-y-auto z-50 shadow-theme bg-card border border-theme rounded-lg">
-                  {filteredEstados.length > 0 ? (
-                    filteredEstados.map((estado) => (
-                      <button
-                        key={estado.sigla}
-                        className="w-full text-left px-4 py-3 transition-colors duration-300 border-b border-theme last:border-b-0 hover:bg-card-alt cursor-pointer"
-                        onClick={() => {
-                          setSearchTerm(estado.nome);
-                          setShowSuggestions(false);
-                          navegarParaEstado(estado.sigla);
-                        }}
-                      >
-                        <div className="flex justify-between items-center">
-                          <span className="text-text">{estado.nome}</span>
-                          <span className="bg-primary text-white px-2 py-1 rounded text-sm">
-                            {estado.sigla}
-                          </span>
-                        </div>
-                      </button>
-                    ))
+                  {filteredEstados.length > 0 ? (<>
+                   
+                     
+                      
+                      
+                      {/* Lista de estados */}
+                      {filteredEstados.map((estado) => (
+                        <button
+                          key={estado.sigla}
+                          className="w-full text-left px-4 py-3 transition-colors duration-300 border-b border-theme last:border-b-0 hover:bg-card-alt cursor-pointer"
+                          onClick={() => {
+                            setSearchTerm(estado.nome);
+                            setShowSuggestions(false);
+                            navegarParaEstado(estado.sigla);
+                          }}
+                        >
+                          <div className="flex justify-between items-center">
+                            <span className="text-text">{estado.nome}</span>
+                            <span className="bg-primary text-white px-2 py-1 rounded text-sm">
+                              {estado.sigla}
+                            </span>
+                          </div>
+                        </button>
+                      ))}
+                    </>
                   ) : (
                     <div className="px-4 py-3 text-center text-gray-theme">
-                      Nenhum estado encontrado
+                      Nenhum estado encontrado para "{searchTerm}"
                     </div>
                   )}
                 </div>
               )}
 
-              {/* Sugestões Populares */}
-              {!searchTerm && (
-                <div className="mt-6">
-                  <p className="text-sm mb-3 text-gray-theme">
-                    Sugestões populares:
-                  </p>
-                  <div className="flex flex-wrap gap-2">
-                    {estadosBrasileiros.slice(0, 6).map((estado) => (
-                      <button
-                        key={estado.sigla}
-                        className="px-3 py-2 rounded-lg text-sm transition-colors duration-300 border border-theme bg-card text-text hover:bg-card-alt cursor-pointer"
-                        onClick={() => {
-                          setSearchTerm(estado.nome);
-                          navegarParaEstado(estado.sigla);
-                        }}
-                      >
-                        {estado.nome}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
             </div>
           </div>
-
+          
           {/* ========== LADO DIREITO - MAPA ========== */}
           <div className="flex items-center justify-end h-full w-full">
             <div className="relative h-full min-h-[80vh] w-[120%] -mr-32">
