@@ -1,6 +1,6 @@
 // src/app/municipios/[slug]/page.tsx - LAYOUT IDÊNTICO À PÁGINA ESTADO
 'use client';
-import { useState, useEffect, use, useRef } from 'react';
+import { useState, useEffect, useRef, use } from 'react'; // ⬅️ Adicione 'use'
 import { Search, ArrowLeft, School, MapPin, Phone, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import * as d3 from 'd3';
@@ -33,7 +33,7 @@ const MunicipioService = {
           const nomeIBGENormalizado = m.nome
             .normalize('NFD')
             .replace(/[\u0300-\u036f]/g, '')
-            .replace(/-/g, ' ') // Substitui hífens por espaços
+            .replace(/-/g, ' ')
             .toLowerCase();
           return nomeIBGENormalizado === nomeSlugNormalizado;
         }
@@ -52,7 +52,7 @@ const MunicipioService = {
       return `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><text x="10" y="50">Mapa indisponível</text></svg>`;
     }
   },
-  // Retorna uma lista de exemplo de escolas, já que não há uma API pública para isso.
+
   getEscolasPorMunicipio: async (nome: string, sigla: string): Promise<Escola[]> => {
     console.log(`Buscando escolas para ${nome}, ${sigla}`);
     return [
@@ -63,12 +63,14 @@ const MunicipioService = {
   }
 };
 
+// ⚡ MUDANÇA: params é uma Promise
 interface PageProps {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ slug: string }>; // ⬅️ Agora é Promise
 }
 
 export default function PaginaMunicipio({ params }: PageProps) {
-  const { slug } = use(params);
+  // ⚡ MUDANÇA CRÍTICA: Use React.use() para desempacotar a Promise
+  const { slug } = use(params); // ⬅️ AGORA CORRETO com use()
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -79,7 +81,13 @@ export default function PaginaMunicipio({ params }: PageProps) {
   const [showSchoolSuggestions, setShowSchoolSuggestions] = useState(false);
   const [escolaSelecionada, setEscolaSelecionada] = useState<Escola | null>(null);
 
+  // ⚡ ADICIONAR: Validação do slug
   const extrairDadosDoSlug = (slug: string) => {
+    if (!slug) {
+      console.error('Slug está undefined ou vazio');
+      return { nomeMunicipio: '', siglaEstado: '' };
+    }
+    
     const partes = slug.split('-');
     const siglaEstado = partes[0]?.toUpperCase() || '';
     const nomeMunicipio = partes
