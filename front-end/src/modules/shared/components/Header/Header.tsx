@@ -1,3 +1,4 @@
+// src/components/Header/Header.tsx
 'use client';
 import { useState } from 'react';
 import { useTheme } from '../ThemeProvider/ThemeProvider';
@@ -5,6 +6,22 @@ import { useTheme } from '../ThemeProvider/ThemeProvider';
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const { theme, toggleTheme } = useTheme();
+
+  // Função para navegar até a seção Sobre nós
+  const handleSobreNosClick = () => {
+    setMenuOpen(false);
+    
+    // Se está na página inicial, faz scroll suave
+    if (window.location.pathname === '/inicial' || window.location.pathname === '/') {
+      const sobreNosSection = document.getElementById('sobre-nos-section');
+      if (sobreNosSection) {
+        sobreNosSection.scrollIntoView({ behavior: 'smooth' });
+      }
+    } else {
+      // Se está em outra página, redireciona para inicial com âncora
+      window.location.href = '/inicial#sobre-nos-section';
+    }
+  };
 
   const handleButtonClick = (action: string) => {
     console.log(`Botão clicado: ${action}`);
@@ -43,7 +60,7 @@ export default function Header() {
           <nav className="hidden md:flex items-center gap-10 lg:gap-12">
             
             <button 
-              onClick={() => handleButtonClick('Sobre nós')}
+              onClick={handleSobreNosClick}
               className="hover:text-gray-300 transition-all duration-500 text-base lg:text-lg hover:scale-110 active:scale-105 cursor-pointer"
               style={{ fontFamily: "'Rammetto One', cursive" }}
             >
@@ -101,7 +118,7 @@ export default function Header() {
           <div className="md:hidden mt-2 space-y-2 border-t border-theme pt-3 transition-colors duration-500">
             
             <button 
-              onClick={() => handleButtonClick('Sobre nós (mobile)')}
+              onClick={handleSobreNosClick}
               className="block py-2 px-4 hover:bg-gray-800 rounded transition-all duration-500 w-full text-center hover:scale-105 active:scale-100 text-base cursor-pointer"
               style={{ fontFamily: "'Rammetto One', cursive" }}
             >

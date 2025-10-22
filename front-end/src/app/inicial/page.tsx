@@ -152,7 +152,7 @@ export default function Inicial() {
       </section>
 
       {/* ========== SEÇÃO SOBRE NÓS - DESCRIÇÃO E DESENVOLVEDORES ========== */}
-      <section className="max-w-[95%] sm:max-w-[90%] md:max-w-[85%] mx-auto px-3 sm:px-4 py-8 md:py-12 lg:py-20">
+      <section id="sobre-nos-section" className="max-w-[95%] sm:max-w-[90%] md:max-w-[85%] mx-auto px-3 sm:px-4 py-8 md:py-12 lg:py-20">
         <ScrollAnimation direction="up" duration={500} delay={100}>
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-12 md:mb-16 transition-colors duration-500"
               style={{ fontFamily: "'Rammetto One', cursive" }}>
