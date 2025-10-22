@@ -26,6 +26,9 @@
   --border: #E5E5E5;
   --gray-text: #000000;
   --shadow: rgba(0, 0, 0, 0.1);
+  --scrollbar-track: #f1f1f1;
+  --scrollbar-thumb: #c1c1c1;
+  --scrollbar-thumb-hover: #a8a8a8;
 }
 
 [data-theme="dark"] {
@@ -39,6 +42,9 @@
   --border: #444444;
   --gray-text: #FFFFFF;
   --shadow: rgba(0, 0, 0, 0.6);
+  --scrollbar-track: #2D2D2D;
+  --scrollbar-thumb: #4A4A4A;
+  --scrollbar-thumb-hover: #5A5A5A;
 }
 
 /* Estilos globais básicos */
@@ -94,4 +100,28 @@ body {
 
 .shadow-theme-large {
   box-shadow: 30px 30px 70px var(--shadow);
+}
+
+/* Estilos da barra de rolagem para toda a página e elementos internos */
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--scrollbar-track);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover);
+}
+
+/* Para Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
 }
