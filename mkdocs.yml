@@ -27,6 +27,7 @@ theme:
 
 nav:
   - Início: index.md
+  - Requistos: Requisitos.md
   - Contributing: Contributing.md
   - Arquitetura Backend:
     - Arquitetura Geral: Arquitetura Backend/Arquitetura-geral.md
@@ -42,8 +43,6 @@ nav:
       - Linux: Estudos/DevOps/linux.md
       - Comunicação Web: Estudos/DevOps/comunicacao-web-HTTP.md
       - Docker: Estudos/DevOps/Docker.md
-    - Requisitos: 
-      - Requisitos: Estudos/Requisitos/Requisitos.md
     - Git e GitHub: 
       - Git e GitHub: Estudos/Git e GitHub/Git-GitHub-GitPages.md
     - Metodologias Agéis: 
