@@ -27,7 +27,7 @@ theme:
 
 nav:
   - Início: index.md
-  - Requistos: docs/Requisitos/Requisitos.md
+  - Requisitos: Requisitos/requisitos.md
   - Contributing: Contributing.md
   - Arquitetura Backend:
     - Arquitetura Geral: Arquitetura Backend/Arquitetura-geral.md
