@@ -1,6 +1,7 @@
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
+  outputFileTracingRoot: __dirname,
   images: {
     unoptimized: true,
   },
@@ -12,10 +13,6 @@ const nextConfig: NextConfig = {
   },
   trailingSlash: false,
   skipTrailingSlashRedirect: true,
-  
-  // ⚠️ REMOVA output: 'export' durante desenvolvimento
-  // output: 'export',
-  // distDir: 'out',
 };
 
 export default nextConfig;
