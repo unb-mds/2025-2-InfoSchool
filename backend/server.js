@@ -14,7 +14,7 @@ app.register(rankingRoutes, { prefix: "/ranking" });
 app.register(ragRoutes, { prefix: "/rag" });
 app.register(brasilRoutes, { prefix: "/mapa" });
 app.register(estadosRoutes, { prefix: "/estado" });
-app.register(municipioRoutes, { prefix: "/estado/municipio" });
+app.register(municipioRoutes, { prefix: "/estado" });
 app.register(dashboardRoutes, { prefix: "/estado/municipio/dashboard" });
 
 app.setErrorHandler((error, request, reply) => {

@@ -1,11 +1,10 @@
-// src/app/municipios/[slug]/page.tsx - LAYOUT IDÊNTICO À PÁGINA ESTADO
+// src/app/municipios/[slug]/page.tsx
 'use client';
-import { useState, useEffect, useRef, use } from 'react'; // ⬅️ Adicione 'use'
-import { Search, ArrowLeft, School, MapPin, Phone, X } from 'lucide-react';
+import { useState, useEffect, useRef, use } from 'react';
+import { Search, X, School, MapPin, Phone } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import * as d3 from 'd3';
 
-// A interface 'Escola' define a estrutura de dados para cada escola.
 interface Escola {
   id: string;
   nome: string;
@@ -15,10 +14,7 @@ interface Escola {
   nivel_ensino: string[];
 }
 
-// O 'MunicipioService' foi movido para dentro do ficheiro para resolver o erro de importação.
-// Este objeto simula a busca de dados de uma API externa.
 const MunicipioService = {
-  // Busca o mapa SVG de um município específico na API do IBGE.
   getSVGMunicipio: async (nome: string, sigla: string): Promise<string> => {
     try {
       const urlMunicipios = `https://servicodados.ibge.gov.br/api/v1/localidades/estados/${sigla}/municipios`;
@@ -29,7 +25,6 @@ const MunicipioService = {
       const nomeSlugNormalizado = nome.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
 
       const municipioEncontrado = municipios.find((m: any) => {
-          // Normaliza o nome do IBGE, removendo acentos e hífens para uma comparação mais robusta.
           const nomeIBGENormalizado = m.nome
             .normalize('NFD')
             .replace(/[\u0300-\u036f]/g, '')
@@ -49,12 +44,14 @@ const MunicipioService = {
       return await responseSVG.text();
     } catch (error) {
       console.error("Erro em getSVGMunicipio:", error);
-      return `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><text x="10" y="50">Mapa indisponível</text></svg>`;
+      return `<svg width="400" height="400" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <rect width="100" height="100" fill="#f0f0f0" stroke="#ccc"/>
+        <text x="50" y="50" text-anchor="middle" dominant-baseline="middle" fill="#666" font-size="8">Mapa de ${nome}</text>
+      </svg>`;
     }
   },
 
   getEscolasPorMunicipio: async (nome: string, sigla: string): Promise<Escola[]> => {
-    console.log(`Buscando escolas para ${nome}, ${sigla}`);
     return [
       { id: '1', nome: `Escola Estadual ${nome}`, endereco: `Rua Principal, 123 - Centro, ${nome}`, telefone: '(11) 9999-9999', tipo: 'Estadual', nivel_ensino: ['Fundamental', 'Médio'] },
       { id: '2', nome: `Colégio Municipal ${nome}`, endereco: `Av. Central, 456 - Centro, ${nome}`, telefone: '(11) 8888-8888', tipo: 'Municipal', nivel_ensino: ['Fundamental'] },
@@ -63,14 +60,12 @@ const MunicipioService = {
   }
 };
 
-// ⚡ MUDANÇA: params é uma Promise
 interface PageProps {
-  params: Promise<{ slug: string }>; // ⬅️ Agora é Promise
+  params: Promise<{ slug: string }>;
 }
 
 export default function PaginaMunicipio({ params }: PageProps) {
-  // ⚡ MUDANÇA CRÍTICA: Use React.use() para desempacotar a Promise
-  const { slug } = use(params); // ⬅️ AGORA CORRETO com use()
+  const { slug } = use(params);
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -81,24 +76,25 @@ export default function PaginaMunicipio({ params }: PageProps) {
   const [showSchoolSuggestions, setShowSchoolSuggestions] = useState(false);
   const [escolaSelecionada, setEscolaSelecionada] = useState<Escola | null>(null);
 
-  // ⚡ ADICIONAR: Validação do slug
   const extrairDadosDoSlug = (slug: string) => {
     if (!slug) {
-      console.error('Slug está undefined ou vazio');
-      return { nomeMunicipio: '', siglaEstado: '' };
+      return { nomeMunicipio: 'Município', siglaEstado: 'SP' };
     }
     
     const partes = slug.split('-');
-    const siglaEstado = partes[0]?.toUpperCase() || '';
+    const siglaEstado = partes[0]?.toUpperCase() || 'SP';
     const nomeMunicipio = partes
       .slice(1)
       .map(palavra => palavra.charAt(0).toUpperCase() + palavra.slice(1))
       .join(' ')
       .replace(/\bDe\b|\bDo\b|\bDa\b/g, match => match.toLowerCase());
-    return { nomeMunicipio, siglaEstado };
+    
+    return { 
+      nomeMunicipio: nomeMunicipio || 'Município', 
+      siglaEstado: siglaEstado || 'SP' 
+    };
   };
   
-  // Função para obter o nome completo do estado a partir da sigla
   const getNomeEstado = (sigla: string): string => {
     const estados: { [key: string]: string } = {
       'AC': 'Acre', 'AL': 'Alagoas', 'AP': 'Amapá', 'AM': 'Amazonas', 'BA': 'Bahia',
@@ -125,18 +121,20 @@ export default function PaginaMunicipio({ params }: PageProps) {
           MunicipioService.getEscolasPorMunicipio(nomeMunicipio, siglaEstado)
         ]);
         
-        // Limpeza agressiva para remover todos os estilos que possam causar conflito.
+        // Limpeza conservadora do SVG
         const cleanedSvgData = svgData
-            .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '', ) // Remove blocos <style>
-            .replace(/<defs>.*?<\/defs>/g, '') 
-            .replace(/style="[^"]*"/g, '')    
-            .replace(/fill="[^"]*"/g, '')      
-            .replace(/stroke="[^"]*"/g, '');   
+          .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '')
+          .replace(/fill="[^"]*"/g, '')
+          .replace(/stroke="[^"]*"/g, '');
 
         setSvgMunicipio(cleanedSvgData);
         setEscolas(escolasData);
       } catch (err) {
         console.error('❌ Erro ao carregar dados:', err);
+        setSvgMunicipio(`<svg width="400" height="400" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <rect width="100" height="100" fill="#f0f0f0" stroke="#ccc"/>
+          <text x="50" y="50" text-anchor="middle" dominant-baseline="middle" fill="#666" font-size="8">${nomeMunicipio}</text>
+        </svg>`);
       } finally {
         setLoading(false);
       }
@@ -147,40 +145,54 @@ export default function PaginaMunicipio({ params }: PageProps) {
     }
   }, [slug, nomeMunicipio, siglaEstado]);
 
-  // Efeito para aplicar interatividade D3 ao SVG quando ele for carregado
+  
+
+  // Aplicar interatividade D3 ao SVG
   useEffect(() => {
     if (svgMunicipio && mapContainerRef.current) {
-        const container = mapContainerRef.current;
-        
-        // Limpa o conteúdo anterior para evitar duplicatas ou conflitos
-        container.innerHTML = '';
-        container.innerHTML = svgMunicipio;
+      const container = mapContainerRef.current;
+      
+      // Limpa o conteúdo anterior
+      container.innerHTML = '';
+      
+      // Insere o SVG
+      container.innerHTML = svgMunicipio;
 
-        const svg = d3.select(container).select('svg');
+      const svgElement = container.querySelector('svg');
+      if (!svgElement) return;
 
-        // Se não encontrar um SVG, não faz nada
-        if (svg.empty()) return;
+      // Aplica estilos responsivos
+      svgElement.style.width = '80%';
+      svgElement.style.height = '80%';
+      svgElement.style.maxHeight = '50vh';
+         // ⬇️ ADICIONE ESTAS LINHAS PARA ALINHAMENTO ⬇️
+      svgElement.style.marginLeft = 'auto';
+      svgElement.style.marginRight = '0';
+      svgElement.style.display = 'block';
 
-        const paths = svg.selectAll('path, polygon, rect');
+      const svg = d3.select(svgElement);
 
-        const fillColor = '#2C80FF';
-        const hoverColor = '#ef4444';
+      const paths = svg.selectAll('path, polygon, rect');
 
-        paths
+      const fillColor = '#2C80FF';
+      const strokeColor = '#1e40af';
+      const hoverColor = '#ef4444';
+
+      paths
+        .style('fill', fillColor)
+        .style('stroke', strokeColor)
+        .style('stroke-width', '0.3')
+        .style('cursor', 'pointer')
+        .on('mouseover', function() {
+          d3.select(this)
+            .style('fill', hoverColor)
+            .style('stroke-width', '1');
+        })
+        .on('mouseout', function() {
+          d3.select(this)
             .style('fill', fillColor)
-            .style('cursor', 'pointer')
-            .on('mouseover', function() {
-                d3.select(this)
-                    .transition()
-                    .duration(200)
-                    .style('fill', hoverColor);
-            })
-            .on('mouseout', function() {
-                d3.select(this)
-                    .transition()
-                    .duration(200)
-                    .style('fill', fillColor);
-            });
+            .style('stroke-width', '0.3');
+        });
     }
   }, [svgMunicipio]);
 
@@ -190,43 +202,28 @@ export default function PaginaMunicipio({ params }: PageProps) {
       ? escolas.filter(escola =>
           escola.nome.toLowerCase().includes(searchTerm.toLowerCase())
         )
-      : escolas; // Mostra todas as escolas se a busca estiver vazia
+      : escolas;
     setEscolasFiltradas(filtradas);
   }, [searchTerm, escolas]);
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background text-text flex items-center justify-center">
+      <div className="min-h-screen bg-background text-text flex items-center justify-center transition-colors duration-500">
         <div className="text-xl">Carregando {nomeMunicipio}...</div>
       </div>
     );
   }
 
   return (
-    <main className="min-h-screen bg-background text-text transition-colors duration-500">
-      <style>{`
-        .svg-map-container svg {
-          width: 100%;
-          height: auto;
-          max-height: 80vh;
-        }
-        .svg-map-container path, .svg-map-container polygon, .svg-map-container rect {
-          stroke: #1e40af;
-          stroke-width: 1px;
-        }
-      `}</style>
-      
-      {/* ========== CONTEÚDO PRINCIPAL ========== */}
+    <main className="min-h-screen bg-background text-text transition-colors duration-500 overflow-x-hidden">
       <div className="max-w-[95%] sm:max-w-[90%] md:max-w-[85%] mx-auto px-3 sm:px-4 py-6 md:py-16">
-        
-        {/* ========== GRID PRINCIPAL ========== */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 min-h-[80vh] items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 min-h-[90vh] items-center">
           
-          {/* ========== SEÇÃO DE BUSCA ========== */}
+          {/* COLUNA DA ESQUERDA - IDÊNTICA À PÁGINA ESTADO */}
           <div className="flex flex-col items-center lg:items-start justify-center h-full">
             <div className="w-full max-w-lg relative">
               
-              {/* ========== BARRA DE PESQUISA ========== */}
+              {/* BARRA DE PESQUISA */}
               <div className="relative transition-colors duration-500">
                 <Search 
                   className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-theme transition-colors duration-500"
@@ -246,7 +243,7 @@ export default function PaginaMunicipio({ params }: PageProps) {
                 />
               </div>
 
-              {/* ========== BADGES DO ESTADO E MUNICÍPIO ========== */}
+              {/* BADGES DO ESTADO E MUNICÍPIO */}
               <div className="flex items-center gap-3 mt-6 transition-colors duration-500">
                 <div className="bg-primary text-white px-5 py-2 rounded-full text-base font-medium flex items-center gap-2 transition-colors duration-500">
                   {nomeEstadoCompleto}
@@ -268,7 +265,7 @@ export default function PaginaMunicipio({ params }: PageProps) {
                 </div>
               </div>
 
-              {/* ========== SUGESTÕES DE ESCOLAS ========== */}
+              {/* SUGESTÕES DE ESCOLAS */}
               {showSchoolSuggestions && (
                 <div className="absolute top-full left-0 right-0 mt-2 max-h-60 overflow-y-auto z-50 shadow-theme bg-card border border-theme rounded-lg transition-colors duration-500">
                   {escolasFiltradas.length > 0 ? (
@@ -298,7 +295,7 @@ export default function PaginaMunicipio({ params }: PageProps) {
                 </div>
               )}
 
-              {/* ========== ESCOLA SELECIONADA ========== */}
+              {/* ESCOLA SELECIONADA */}
               {escolaSelecionada && (
                 <div className="mt-6 bg-card rounded-xl p-4 border border-theme animate-fade-in">
                   <div className="flex items-start gap-4">
@@ -336,25 +333,16 @@ export default function PaginaMunicipio({ params }: PageProps) {
             </div>
           </div>
 
-          {/* ========== SEÇÃO DO MAPA ========== */}
+          {/* COLUNA DA DIREITA - MAPA IDÊNTICO À PÁGINA ESTADO */}
           <div className="flex items-center justify-end h-full w-full transition-colors duration-500">
-            <div className="relative h-full min-h-[85vh] w-[150%] -mr-56">
-              {svgMunicipio ? (
-                <div
-                  ref={mapContainerRef}
-                  className="w-full h-full svg-map-container"
-                />
-              ) : (
-                <div className="h-96 flex flex-col items-center justify-center text-gray-theme bg-gray-100 dark:bg-gray-800 rounded-lg w-full">
-                  <div className="text-center">
-                    <School size={48} className="mx-auto mb-4 opacity-50" />
-                    <p>Mapa não disponível</p>
-                    <p className="text-sm mt-2">Município não encontrado na base do IBGE</p>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
+  {/* mt-8 para descer o mapa */}
+  <div className="relative h-[65vh] w-[150%] -mr-56 transform -translate-x-20" style={{ marginTop: '18rem' }}>
+    <div 
+      ref={mapContainerRef}
+      className="w-full h-full"
+    />
+  </div>
+</div>
 
         </div>
       </div>

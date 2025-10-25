@@ -31,7 +31,6 @@ export default function PaginaEstado({ params }: PageProps) {
   const [todosMunicipios, setTodosMunicipios] = useState<string[]>([]);
   const svgRef = useRef<SVGSVGElement>(null);
 
-  // Retorna nome do estado baseado na sigla
   const getNomeEstado = (sigla: string): string => {
     const estados: { [key: string]: string } = {
       'ac': 'Acre', 'al': 'Alagoas', 'ap': 'Amapá', 'am': 'Amazonas', 'ba': 'Bahia',
@@ -47,7 +46,6 @@ export default function PaginaEstado({ params }: PageProps) {
 
   const nomeEstado = getNomeEstado(sigla);
 
-  // Carrega municípios da API do IBGE
   useEffect(() => {
     const carregarMunicipiosIBGE = async () => {
       try {
@@ -76,7 +74,6 @@ export default function PaginaEstado({ params }: PageProps) {
     }
   }, [sigla]);
 
-  // Filtra municípios baseado na busca
   const municipiosFiltrados = useMemo(() => {
     if (!searchTerm.trim()) {
       return todosMunicipios;
@@ -86,7 +83,6 @@ export default function PaginaEstado({ params }: PageProps) {
     );
   }, [searchTerm, todosMunicipios]);
 
-  // Redireciona para página do município
   const redirecionarParaMunicipio = (municipio: string) => {
     const municipioFormatado = municipio
       .normalize('NFD')
@@ -97,7 +93,6 @@ export default function PaginaEstado({ params }: PageProps) {
     router.push(`/municipios/${sigla.toLowerCase()}-${municipioFormatado}`);
   };
 
-  // Carrega dados geoespaciais do estado
   useEffect(() => {
     async function carregarGeoData() {
       try {
@@ -119,14 +114,12 @@ export default function PaginaEstado({ params }: PageProps) {
     }
   }, [sigla]);
 
-  // Desenha mapa quando dados carregam
   useEffect(() => {
     if (geoData && svgRef.current) {
       desenharMapa();
     }
   }, [geoData]);
 
-  // Função principal para desenhar o mapa
   function desenharMapa() {
     if (!geoData || !svgRef.current) return;
 
@@ -183,7 +176,6 @@ export default function PaginaEstado({ params }: PageProps) {
       });
   }
 
-  // Retorna código do estado para URL do GeoJSON
   function getCodigoEstado(sigla: string): string {
     const codigos: { [key: string]: string } = {
       'ac': '12', 'al': '27', 'ap': '16', 'am': '13', 'ba': '29',
@@ -196,7 +188,6 @@ export default function PaginaEstado({ params }: PageProps) {
     return codigos[sigla.toLowerCase()] || '35';
   }
 
-  // Retorna centro geográfico de cada estado
   function getCentroEstado(sigla: string): [number, number] {
     const centros: { [key: string]: [number, number] } = {
       'sp': [-48.5, -22.0], 'rj': [-42.5, -22.0], 'mg': [-44.5, -18.5],
@@ -212,7 +203,6 @@ export default function PaginaEstado({ params }: PageProps) {
     return centros[sigla.toLowerCase()] || [-47.5, -15.5];
   }
 
-  // Retorna escala otimizada para cada estado
   function getEscalaEstado(sigla: string): number {
     const escalas: { [key: string]: number } = {
       'sp': 6500, 'rj': 11000, 'mg': 5000, 'ba': 3800,
@@ -226,7 +216,6 @@ export default function PaginaEstado({ params }: PageProps) {
     return escalas[sigla.toLowerCase()] || 5000;
   }
 
-  // Tela de loading
   if (loading) {
     return (
       <div className="min-h-screen bg-background text-text flex items-center justify-center transition-colors duration-500">
@@ -236,11 +225,10 @@ export default function PaginaEstado({ params }: PageProps) {
   }
 
   return (
-    <main className="min-h-screen bg-background text-text transition-colors duration-500">
+    <main className="min-h-screen bg-background text-text transition-colors duration-500 overflow-x-hidden">
       <div className="max-w-[95%] sm:max-w-[90%] md:max-w-[85%] mx-auto px-3 sm:px-4 py-6 md:py-16">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 min-h-[80vh] items-center">
           
-          {/* Seção de Busca */}
           <div className="flex flex-col items-center lg:items-start justify-center h-full">
             <div className="w-full max-w-lg relative">
               
@@ -263,7 +251,6 @@ export default function PaginaEstado({ params }: PageProps) {
                 />
               </div>
 
-              {/* Badge do Estado */}
               <div className="flex items-center gap-3 mt-6 transition-colors duration-500">
                 <div className="bg-primary text-white px-5 py-2 rounded-full text-base font-medium flex items-center gap-2 transition-colors duration-500">
                   {nomeEstado}
@@ -276,7 +263,6 @@ export default function PaginaEstado({ params }: PageProps) {
                 </div>
               </div>
 
-              {/* Sugestões de Municípios */}
               {showSuggestions && (
                 <div className="absolute top-full left-0 right-0 mt-2 max-h-60 overflow-y-auto z-50 shadow-theme bg-card border border-theme rounded-lg transition-colors duration-500">
                   {municipiosFiltrados.length > 0 ? (
@@ -306,7 +292,6 @@ export default function PaginaEstado({ params }: PageProps) {
             </div>
           </div>
 
-          {/* Seção do Mapa */}
           <div className="flex items-center justify-end h-full w-full transition-colors duration-500">
             <div className="relative h-full min-h-[85vh] w-[150%] -mr-56">
               <svg 
