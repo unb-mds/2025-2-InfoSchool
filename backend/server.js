@@ -6,6 +6,7 @@ const brasilRoutes = require("./src/routes/maps/brasil.js");
 const estadosRoutes = require("./src/routes/maps/estado.js");
 const municipioRoutes = require("./src/routes/maps/municipio.js");
 const dashboardRoutes = require("./src/routes/dashboard/index.js");
+const rag = require("./src/routes/public/rag.js");
 
 const app = Fastify();
 
@@ -29,4 +30,15 @@ app.setErrorHandler((error, request, reply) => {
 app.listen({ port: 3000 }, (err, address) => {
   if (err) throw err;
   console.log(`Servidor rodando em http://localhost:3000`);
+});
+
+app.get("/rag/health", async (request, reply) => {
+  return {
+    status: "RAG Service Running",
+    timestamp: new Date().toISOString(),
+  };
+});
+
+app.get("/", async (request, reply) => {
+  return { message: "API Censo Escolar RAG funcionando!" };
 });
