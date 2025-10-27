@@ -21,6 +21,24 @@ interface MunicipioData {
   }>;
 }
 
+const geoDataCache = new Map();
+
+function useDebounce<T>(value: T, delay: number): T {
+  const [debouncedValue, setDebouncedValue] = useState<T>(value);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [value, delay]);
+
+  return debouncedValue;
+}
+
 export default function PaginaEstado({ params }: PageProps) {
   const { sigla } = use(params);
   const router = useRouter();
@@ -29,7 +47,10 @@ export default function PaginaEstado({ params }: PageProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [todosMunicipios, setTodosMunicipios] = useState<string[]>([]);
+  const [mapError, setMapError] = useState(false);
   const svgRef = useRef<SVGSVGElement>(null);
+
+  const debouncedSearchTerm = useDebounce(searchTerm, 300);
 
   const getNomeEstado = (sigla: string): string => {
     const estados: { [key: string]: string } = {
@@ -75,13 +96,13 @@ export default function PaginaEstado({ params }: PageProps) {
   }, [sigla]);
 
   const municipiosFiltrados = useMemo(() => {
-    if (!searchTerm.trim()) {
+    if (!debouncedSearchTerm.trim()) {
       return todosMunicipios;
     }
     return todosMunicipios.filter(municipio =>
-      municipio.toLowerCase().includes(searchTerm.toLowerCase())
+      municipio.toLowerCase().includes(debouncedSearchTerm.toLowerCase())
     );
-  }, [searchTerm, todosMunicipios]);
+  }, [debouncedSearchTerm, todosMunicipios]);
 
   const redirecionarParaMunicipio = (municipio: string) => {
     const municipioFormatado = municipio
@@ -96,6 +117,14 @@ export default function PaginaEstado({ params }: PageProps) {
   useEffect(() => {
     async function carregarGeoData() {
       try {
+        const cacheKey = sigla.toLowerCase();
+        
+        if (geoDataCache.has(cacheKey)) {
+          setGeoData(geoDataCache.get(cacheKey));
+          setMapError(false);
+          return;
+        }
+
         const codigo = getCodigoEstado(sigla);
         const url = `/geojson/counties/counties-${sigla.toLowerCase()}-${codigo}.json`;
         
@@ -105,9 +134,13 @@ export default function PaginaEstado({ params }: PageProps) {
         
         const data = await response.json();
         console.log('Dados carregados:', data.features.length, 'municípios');
+        
+        geoDataCache.set(cacheKey, data);
         setGeoData(data);
+        setMapError(false);
       } catch (err) {
         console.error('Erro ao carregar mapa:', err);
+        setMapError(true);
       }
     }
 
@@ -296,10 +329,21 @@ export default function PaginaEstado({ params }: PageProps) {
 
           <div className="flex items-center justify-end h-full w-full transition-colors duration-500">
             <div className="relative h-full min-h-[85vh] w-[150%] -mr-56">
-              <svg 
-                ref={svgRef}
-                className="transition-opacity duration-300"
-              />
+              {mapError ? (
+                <div className="flex items-center justify-center h-full bg-card border border-theme rounded-lg p-8">
+                  <div className="text-center">
+                    <p className="text-lg mb-2">🗺️ Mapa temporariamente indisponível</p>
+                    <p className="text-gray-theme text-sm">
+                      Não foi possível carregar o mapa de {nomeEstado}
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                <svg 
+                  ref={svgRef}
+                  className="transition-opacity duration-300"
+                />
+              )}
             </div>
           </div>
 
