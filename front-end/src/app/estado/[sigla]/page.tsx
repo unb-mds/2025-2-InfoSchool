@@ -97,12 +97,14 @@ export default function PaginaEstado({ params }: PageProps) {
     async function carregarGeoData() {
       try {
         const codigo = getCodigoEstado(sigla);
-        const url = `https://raw.githubusercontent.com/filipemeneses/geojson-brazil/master/meshes/counties/counties-${sigla.toLowerCase()}-${codigo}.json`;
+        const url = `/geojson/counties/counties-${sigla.toLowerCase()}-${codigo}.json`;
         
+        console.log('Carregando GeoJSON de:', url);
         const response = await fetch(url);
         if (!response.ok) throw new Error(`Erro ${response.status}`);
         
         const data = await response.json();
+        console.log('Dados carregados:', data.features.length, 'municípios');
         setGeoData(data);
       } catch (err) {
         console.error('Erro ao carregar mapa:', err);
