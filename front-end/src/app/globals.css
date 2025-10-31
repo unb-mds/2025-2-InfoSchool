@@ -1,3 +1,4 @@
+/* src/app/globals.css */
 /* FORÇAR CARREGAMENTO DAS FONTES ANTES DE TUDO */
 @font-face {
   font-family: 'Harys World';
@@ -55,6 +56,49 @@ body {
   padding: 0;
   min-height: 100vh;
   transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* CONTAINER RESPONSIVO PROFISSIONAL - APENAS ISSO FOI ADICIONADO */
+.container-responsive {
+  width: 100%;
+  max-width: 95vw;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+@media (min-width: 640px) {
+  .container-responsive {
+    max-width: 90vw;
+    padding: 0 1.5rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .container-responsive {
+    max-width: 85vw;
+    padding: 0 2rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container-responsive {
+    max-width: 80vw;
+    padding: 0 2rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .container-responsive {
+    max-width: 1200px;
+    padding: 0 2rem;
+  }
+}
+
+@media (min-width: 1536px) {
+  .container-responsive {
+    max-width: 1400px;
+    padding: 0 2rem;
+  }
 }
 
 /* Classes utilitárias para usar as variáveis */

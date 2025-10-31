@@ -1,4 +1,3 @@
-// src/modules/shared/components/Header/Header.tsx
 'use client';
 import { useState, useMemo, useCallback } from 'react';
 import { useTheme } from '../ThemeProvider/ThemeProvider';
@@ -70,12 +69,12 @@ export default function Header() {
 
   return (
     <header className="bg-header border-theme border-b sticky top-0 z-50 transition-colors duration-500">
-      <div className="max-w-[80%] mx-auto px-4 py-1 md:py-2"> 
+      <div className="container-responsive py-2 md:py-3">
         <div className="flex justify-between items-center">
           
           <a 
             href="/inicial"
-            className="flex items-center gap-1 md:gap-2 hover:scale-110 transition-transform duration-500 active:scale-105 cursor-pointer"
+            className="flex items-center gap-1 md:gap-2 hover:scale-110 transition-transform duration-500 active:scale-105 cursor-pointer flex-shrink-0"
           >
             <h1 
               className="font-bold leading-none text-[28px] sm:text-[36px] md:text-[48px] transition-colors duration-500"
@@ -93,7 +92,7 @@ export default function Header() {
           </a>
 
           {isHomePage && (
-            <div className="flex-1 max-w-2xl mx-8 relative">
+            <div className="flex-1 max-w-2xl mx-4 lg:mx-8 relative">
               <div className="relative transition-colors duration-500">
                 <Search 
                   className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-theme transition-colors duration-500"

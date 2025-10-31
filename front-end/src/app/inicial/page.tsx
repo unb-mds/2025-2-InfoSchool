@@ -50,10 +50,10 @@ export default function Inicial() {
             </ScrollAnimation>
           </div>
           
-          {/* IMAGEM TV */}
+          {/* IMAGEM TV - CORREÇÃO: centralizar em mobile */}
           <div className="flex-1 lg:flex-[0.4] flex justify-center w-full">
             <ScrollAnimation direction="up" duration={600} delay={400}>
-              <div className="w-full max-w-[300px] sm:max-w-[400px] lg:max-w-[550px]">
+              <div className="w-full max-w-[300px] sm:max-w-[400px] lg:max-w-[550px] mx-auto flex justify-center">
                 <img 
                   src="/images/Tv.svg"
                   alt="Ilustração educação" 
@@ -160,8 +160,8 @@ export default function Inicial() {
         {/* LINHA DIVISÓRIA */}
         <div className="border-t border-theme my-12 md:my-16 transition-colors duration-500"></div>
 
-        {/* GRID DE DESENVOLVEDORES - MANTIDO ORIGINAL */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4 justify-items-center w-full">
+        {/* GRID DE DESENVOLVEDORES - CORREÇÃO: centralizar */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4 justify-items-center">
           
           {/* DESENVOLVEDOR 1 - Leonardo - AZUL */}
           <ScrollAnimation direction="up" duration={500} delay={200}>
@@ -238,8 +238,8 @@ interface DeveloperCardProps {
 
 function DeveloperCard({ photo, name, role, borderColor }: DeveloperCardProps) {
   return (
-    <div className="text-center w-full px-1 sm:px-0">
-      <div className="bg-card rounded-2xl p-4 sm:p-5 w-full max-w-[280px] sm:max-w-full h-56 sm:h-64 flex flex-col items-center justify-center transform sm:hover:scale-105 transition-all duration-500"
+    <div className="text-center w-full flex justify-center">
+      <div className="bg-card rounded-2xl p-4 sm:p-5 w-full max-w-[280px] sm:max-w-[300px] h-56 sm:h-64 flex flex-col items-center justify-center transform sm:hover:scale-105 transition-all duration-500"
            style={{ boxShadow: '30px 30px 70px rgba(0, 0, 0, 0.5)' }}>
         <div className="mb-3 sm:mb-4">
           <img 
