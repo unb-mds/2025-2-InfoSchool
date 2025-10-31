@@ -1,8 +1,17 @@
 // src/app/inicial/page.tsx
 'use client';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrophy, faLocationDot, faRobot } from '@fortawesome/free-solid-svg-icons';
+import { faLocationDot, faRobot } from '@fortawesome/free-solid-svg-icons';
 import { ScrollAnimation } from '@/modules/shared/components';
+
+const DEVELOPERS = [
+  { photo: "/photos/dev1.jpg", name: "Leonardo da Silva", borderColor: "border-blue-500" },
+  { photo: "/photos/dev2.jpg", name: "João Leles", borderColor: "border-green-500" },
+  { photo: "/photos/dev3.jpg", name: "Fábio Alessandro", borderColor: "border-purple-500" },
+  { photo: "/photos/dev4.jpg", name: "Davi Ursulino", borderColor: "border-yellow-500" },
+  { photo: "/photos/dev5.jpg", name: "Pedro Gomes", borderColor: "border-red-500" },
+  { photo: "/photos/dev6.jpg", name: "Pedro Augusto", borderColor: "border-pink-500" },
+];
 
 export default function Inicial() {
   return (
@@ -56,7 +65,7 @@ export default function Inicial() {
         </div>
       </section>
 
-      {/* ========== SEÇÃO COMO FUNCIONA - 3 CARDS ========== */}
+      {/* ========== SEÇÃO COMO FUNCIONA - 2 CARDS ========== */}
       <section className="max-w-[95%] sm:max-w-[90%] md:max-w-[85%] lg:max-w-[80%] mx-auto px-3 sm:px-4 py-6 md:py-16">
         <ScrollAnimation direction="up" duration={500} delay={100}>
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-8 md:mb-12 transition-colors duration-500"
@@ -65,8 +74,8 @@ export default function Inicial() {
           </h2>
         </ScrollAnimation>
         
-        {/* GRID DE CARDS - MAIS ALTOS E LARGOS */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5 md:gap-6 lg:gap-8 justify-items-center">
+        {/* GRID DE CARDS - AGORA SÓ 2 CARDS */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6 lg:gap-8 justify-items-center max-w-4xl mx-auto">
           
           {/* CARD 1 - CAMINHO NORMAL */}
           <ScrollAnimation direction="up" duration={500} delay={150}>
@@ -95,36 +104,9 @@ export default function Inicial() {
             </a>
           </ScrollAnimation>
 
-          {/* CARD 2 - VER RANKING */}
+          {/* CARD 2 - CAMINHO DA IA */}
           <ScrollAnimation direction="up" duration={500} delay={200}>
             <div className="w-full flex justify-center">
-              <div className="bg-card-alt rounded-2xl p-5 sm:p-6 text-center transition-all duration-500 w-full max-w-[320px] sm:max-w-[340px] h-[280px] sm:h-[300px] flex flex-col justify-center items-center cursor-pointer transform hover:scale-105 active:scale-95 shadow-2xl hover:shadow-3xl"
-                   style={{ boxShadow: '20px 20px 50px rgba(0, 0, 0, 0.6)' }}>
-                <span className="mb-4 transition-colors duration-500">
-                  <FontAwesomeIcon 
-                    icon={faTrophy} 
-                    className="text-primary"
-                    style={{ width: "36px", height: "36px" }} 
-                  />
-                </span>
-                <h3 className="mb-3 text-xl sm:text-2xl text-text transition-colors duration-500 font-bold"
-                    style={{ 
-                      fontFamily: "'Rammetto One', cursive",
-                      textShadow: '0 0 40px currentColor'
-                    }}>
-                  Veja o ranking
-                </h3>
-                <p className="text-text text-sm sm:text-base transition-colors duration-500 px-3 leading-relaxed"
-                   style={{ fontFamily: "'Sansita', sans-serif" }}>
-                  Você pode ver quais escolas estão no topo de cada categoria
-                </p>
-              </div>
-            </div>
-          </ScrollAnimation>
-
-          {/* CARD 3 - CAMINHO DA IA */}
-          <ScrollAnimation direction="up" duration={500} delay={250}>
-            <div className="w-full flex justify-center sm:col-span-2 xl:col-span-1">
               <div className="bg-card-alt rounded-2xl p-5 sm:p-6 text-center transition-all duration-500 w-full max-w-[320px] sm:max-w-[340px] h-[280px] sm:h-[300px] flex flex-col justify-center items-center cursor-pointer transform hover:scale-105 active:scale-95 shadow-2xl hover:shadow-3xl"
                    style={{ boxShadow: '20px 20px 50px rgba(0, 0, 0, 0.6)' }}>
                 <span className="mb-4 transition-colors duration-500">
