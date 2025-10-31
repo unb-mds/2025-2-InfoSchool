@@ -134,7 +134,8 @@ export default function Inicial() {
       </section>
 
       {/* ========== SEÇÃO SOBRE NÓS - DESCRIÇÃO E DESENVOLVEDORES ========== */}
-      <section id="sobre-nos-section" className="max-w-[95%] sm:max-w-[90%] md:max-w-[85%] mx-auto px-3 sm:px-4 py-8 md:py-12 lg:py-20">
+      {/* CORREÇÃO: mudei de md:max-w-[85%] para md:max-w-[80%] */}
+      <section id="sobre-nos-section" className="max-w-[95%] sm:max-w-[90%] md:max-w-[80%] mx-auto px-3 sm:px-4 py-8 md:py-12 lg:py-20">
         <ScrollAnimation direction="up" duration={500} delay={100}>
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-12 md:mb-16 transition-colors duration-500"
               style={{ fontFamily: "'Rammetto One', cursive" }}>
@@ -160,8 +161,8 @@ export default function Inicial() {
         {/* LINHA DIVISÓRIA */}
         <div className="border-t border-theme my-12 md:my-16 transition-colors duration-500"></div>
 
-        {/* GRID DE DESENVOLVEDORES - CORREÇÃO: centralizar */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4 justify-items-center">
+        {/* GRID DE DESENVOLVEDORES - VOLTEI PARA O TAMANHO ORIGINAL (GRANDE) */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4 justify-items-center w-full">
           
           {/* DESENVOLVEDOR 1 - Leonardo - AZUL */}
           <ScrollAnimation direction="up" duration={500} delay={200}>
@@ -238,8 +239,8 @@ interface DeveloperCardProps {
 
 function DeveloperCard({ photo, name, role, borderColor }: DeveloperCardProps) {
   return (
-    <div className="text-center w-full flex justify-center">
-      <div className="bg-card rounded-2xl p-4 sm:p-5 w-full max-w-[280px] sm:max-w-[300px] h-56 sm:h-64 flex flex-col items-center justify-center transform sm:hover:scale-105 transition-all duration-500"
+    <div className="text-center w-full px-1 sm:px-0">
+      <div className="bg-card rounded-2xl p-4 sm:p-5 w-full max-w-[280px] sm:max-w-full h-56 sm:h-64 flex flex-col items-center justify-center transform sm:hover:scale-105 transition-all duration-500"
            style={{ boxShadow: '30px 30px 70px rgba(0, 0, 0, 0.5)' }}>
         <div className="mb-3 sm:mb-4">
           <img 

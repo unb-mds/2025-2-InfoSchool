@@ -69,7 +69,7 @@ export default function Header() {
 
   return (
     <header className="bg-header border-theme border-b sticky top-0 z-50 transition-colors duration-500">
-      <div className="container-responsive py-2 md:py-3">
+      <div className="max-w-[95%] sm:max-w-[90%] md:max-w-[80%] mx-auto px-3 sm:px-4 py-2 md:py-3">
         <div className="flex justify-between items-center">
           
           <a 
