@@ -1,4 +1,3 @@
-// src/app/inicial/page.tsx
 'use client';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLocationDot, faRobot } from '@fortawesome/free-solid-svg-icons';
@@ -14,6 +13,10 @@ const DEVELOPERS = [
 ];
 
 export default function Inicial() {
+  const handleExplorarEscolas = () => {
+    window.location.href = '/explorar-escolas';
+  };
+
   return (
     <div className="min-h-screen bg-background text-text transition-colors duration-500">
       
@@ -42,10 +45,12 @@ export default function Inicial() {
             
             <ScrollAnimation direction="up" duration={500} delay={300}>
               <div className="text-center lg:text-left">
-                <button className="bg-primary text-white rounded-[25px] hover:bg-[#1a6fd8] transition-all duration-500 px-6 sm:px-8 md:px-10 py-3 md:py-4 text-lg sm:text-xl font-semibold hover:scale-105 active:scale-100 w-full sm:w-auto cursor-pointer"
-                  style={{ fontFamily: "'Rammetto One', cursive"}}>
-                  Explorar escolas
-                </button>
+                  <button 
+                    onClick={handleExplorarEscolas}
+                    className="bg-primary text-white rounded-[25px] hover:bg-[#1a6fd8] transition-all duration-500 px-6 sm:px-8 md:px-10 py-3 md:py-4 text-lg sm:text-xl font-semibold hover:scale-105 active:scale-100 w-full sm:w-auto cursor-pointer"
+                    style={{ fontFamily: "'Rammetto One', cursive"}}>
+                    Explorar escolas
+                  </button>
               </div>
             </ScrollAnimation>
           </div>
