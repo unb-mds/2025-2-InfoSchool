@@ -229,7 +229,6 @@ export default function PaginaEstado({ params }: PageProps) {
       .attr('fill', fillColor)
       .attr('stroke', strokeColor)
       .attr('stroke-width', isMobile ? 0.2 : 0.3)
-      .style('transition', 'all 500ms ease-in-out')
       .on('mouseover', function(event, d: any) {
         if (!isMobile) {
           d3.select(this)
@@ -433,7 +432,7 @@ export default function PaginaEstado({ params }: PageProps) {
               ) : (
                 <svg 
                   ref={svgRef}
-                  className="w-full h-full transition-all duration-500"
+                  className="w-full h-full transition-opacity duration-500"
                 />
               )}
             </div>
