@@ -139,7 +139,6 @@ export default function Inicial() {
       </section>
 
       {/* ========== SEÇÃO SOBRE NÓS - DESCRIÇÃO E DESENVOLVEDORES ========== */}
-      {/* CORREÇÃO: mudei de md:max-w-[85%] para md:max-w-[80%] */}
       <section id="sobre-nos-section" className="max-w-[95%] sm:max-w-[90%] md:max-w-[80%] mx-auto px-3 sm:px-4 py-8 md:py-12 lg:py-20">
         <ScrollAnimation direction="up" duration={500} delay={100}>
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-12 md:mb-16 transition-colors duration-500"
@@ -166,8 +165,8 @@ export default function Inicial() {
         {/* LINHA DIVISÓRIA */}
         <div className="border-t border-theme my-12 md:my-16 transition-colors duration-500"></div>
 
-        {/* GRID DE DESENVOLVEDORES - VOLTEI PARA O TAMANHO ORIGINAL (GRANDE) */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4 justify-items-center w-full">
+        {/* GRID DE DESENVOLVEDORES*/}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8 justify-items-center w-full">
           
           {/* DESENVOLVEDOR 1 - Leonardo - AZUL */}
           <ScrollAnimation direction="up" duration={500} delay={200}>
@@ -244,22 +243,22 @@ interface DeveloperCardProps {
 
 function DeveloperCard({ photo, name, role, borderColor }: DeveloperCardProps) {
   return (
-    <div className="text-center w-full px-1 sm:px-0">
-      <div className="bg-card rounded-2xl p-4 sm:p-5 w-full max-w-[280px] sm:max-w-full h-56 sm:h-64 flex flex-col items-center justify-center transform sm:hover:scale-105 transition-all duration-500"
+    <div className="text-center w-full">
+      <div className="bg-card rounded-2xl p-6 md:p-8 w-full h-64 md:h-72 flex flex-col items-center justify-center transform hover:scale-105 transition-all duration-500"
            style={{ boxShadow: '30px 30px 70px rgba(0, 0, 0, 0.5)' }}>
-        <div className="mb-3 sm:mb-4">
+        <div className="mb-4">
           <img 
             src={photo} 
             alt={name} 
-            className={`w-32 h-32 rounded-full object-cover border-2 ${borderColor} transition-colors duration-500`}
+            className={`w-36 h-36 rounded-full object-cover border-2 ${borderColor} transition-colors duration-500`}
           />
         </div>
         <div className="space-y-2">
-          <span className="text-lg sm:text-xl font-bold text-text block transition-colors duration-500"
+          <span className="text-xl md:text-2xl font-bold text-text block transition-colors duration-500"
                 style={{ fontFamily: "'Rammetto One', cursive" }}>
             {name}
           </span>
-          <span className="text-text text-sm sm:text-base transition-colors duration-500">{role}</span>
+          <span className="text-text text-base md:text-lg transition-colors duration-500">{role}</span>
         </div>
       </div>
     </div>
