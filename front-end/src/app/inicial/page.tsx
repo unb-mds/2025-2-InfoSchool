@@ -1,10 +1,22 @@
-// src/app/inicial/page.tsx
 'use client';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrophy, faLocationDot, faRobot } from '@fortawesome/free-solid-svg-icons';
+import { faLocationDot, faRobot } from '@fortawesome/free-solid-svg-icons';
 import { ScrollAnimation } from '@/modules/shared/components';
 
+const DEVELOPERS = [
+  { photo: "/photos/dev1.jpg", name: "Leonardo da Silva", borderColor: "border-blue-500" },
+  { photo: "/photos/dev2.jpg", name: "João Leles", borderColor: "border-green-500" },
+  { photo: "/photos/dev3.jpg", name: "Fábio Alessandro", borderColor: "border-purple-500" },
+  { photo: "/photos/dev4.jpg", name: "Davi Ursulino", borderColor: "border-yellow-500" },
+  { photo: "/photos/dev5.jpg", name: "Pedro Gomes", borderColor: "border-red-500" },
+  { photo: "/photos/dev6.jpg", name: "Pedro Augusto", borderColor: "border-pink-500" },
+];
+
 export default function Inicial() {
+  const handleExplorarEscolas = () => {
+    window.location.href = '/explorar-escolas';
+  };
+
   return (
     <div className="min-h-screen bg-background text-text transition-colors duration-500">
       
@@ -33,18 +45,20 @@ export default function Inicial() {
             
             <ScrollAnimation direction="up" duration={500} delay={300}>
               <div className="text-center lg:text-left">
-                <button className="bg-primary text-white rounded-[25px] hover:bg-[#1a6fd8] transition-all duration-500 px-6 sm:px-8 md:px-10 py-3 md:py-4 text-lg sm:text-xl font-semibold hover:scale-105 active:scale-100 w-full sm:w-auto cursor-pointer"
-                  style={{ fontFamily: "'Rammetto One', cursive"}}>
-                  Explorar escolas
-                </button>
+                  <button 
+                    onClick={handleExplorarEscolas}
+                    className="bg-primary text-white rounded-[25px] hover:bg-[#1a6fd8] transition-all duration-500 px-6 sm:px-8 md:px-10 py-3 md:py-4 text-lg sm:text-xl font-semibold hover:scale-105 active:scale-100 w-full sm:w-auto cursor-pointer"
+                    style={{ fontFamily: "'Rammetto One', cursive"}}>
+                    Explorar escolas
+                  </button>
               </div>
             </ScrollAnimation>
           </div>
           
-          {/* IMAGEM TV */}
+          {/* IMAGEM TV - CORREÇÃO: centralizar em mobile */}
           <div className="flex-1 lg:flex-[0.4] flex justify-center w-full">
             <ScrollAnimation direction="up" duration={600} delay={400}>
-              <div className="w-full max-w-[300px] sm:max-w-[400px] lg:max-w-[550px]">
+              <div className="w-full max-w-[300px] sm:max-w-[400px] lg:max-w-[550px] mx-auto flex justify-center">
                 <img 
                   src="/images/Tv.svg"
                   alt="Ilustração educação" 
@@ -56,7 +70,7 @@ export default function Inicial() {
         </div>
       </section>
 
-      {/* ========== SEÇÃO COMO FUNCIONA - 3 CARDS ========== */}
+      {/* ========== SEÇÃO COMO FUNCIONA - 2 CARDS ========== */}
       <section className="max-w-[95%] sm:max-w-[90%] md:max-w-[85%] lg:max-w-[80%] mx-auto px-3 sm:px-4 py-6 md:py-16">
         <ScrollAnimation direction="up" duration={500} delay={100}>
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-8 md:mb-12 transition-colors duration-500"
@@ -65,8 +79,8 @@ export default function Inicial() {
           </h2>
         </ScrollAnimation>
         
-        {/* GRID DE CARDS - MAIS ALTOS E LARGOS */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5 md:gap-6 lg:gap-8 justify-items-center">
+        {/* GRID DE CARDS - AGORA SÓ 2 CARDS */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6 lg:gap-8 justify-items-center max-w-4xl mx-auto">
           
           {/* CARD 1 - CAMINHO NORMAL */}
           <ScrollAnimation direction="up" duration={500} delay={150}>
@@ -95,36 +109,9 @@ export default function Inicial() {
             </a>
           </ScrollAnimation>
 
-          {/* CARD 2 - VER RANKING */}
+          {/* CARD 2 - CAMINHO DA IA */}
           <ScrollAnimation direction="up" duration={500} delay={200}>
             <div className="w-full flex justify-center">
-              <div className="bg-card-alt rounded-2xl p-5 sm:p-6 text-center transition-all duration-500 w-full max-w-[320px] sm:max-w-[340px] h-[280px] sm:h-[300px] flex flex-col justify-center items-center cursor-pointer transform hover:scale-105 active:scale-95 shadow-2xl hover:shadow-3xl"
-                   style={{ boxShadow: '20px 20px 50px rgba(0, 0, 0, 0.6)' }}>
-                <span className="mb-4 transition-colors duration-500">
-                  <FontAwesomeIcon 
-                    icon={faTrophy} 
-                    className="text-primary"
-                    style={{ width: "36px", height: "36px" }} 
-                  />
-                </span>
-                <h3 className="mb-3 text-xl sm:text-2xl text-text transition-colors duration-500 font-bold"
-                    style={{ 
-                      fontFamily: "'Rammetto One', cursive",
-                      textShadow: '0 0 40px currentColor'
-                    }}>
-                  Veja o ranking
-                </h3>
-                <p className="text-text text-sm sm:text-base transition-colors duration-500 px-3 leading-relaxed"
-                   style={{ fontFamily: "'Sansita', sans-serif" }}>
-                  Você pode ver quais escolas estão no topo de cada categoria
-                </p>
-              </div>
-            </div>
-          </ScrollAnimation>
-
-          {/* CARD 3 - CAMINHO DA IA */}
-          <ScrollAnimation direction="up" duration={500} delay={250}>
-            <div className="w-full flex justify-center sm:col-span-2 xl:col-span-1">
               <div className="bg-card-alt rounded-2xl p-5 sm:p-6 text-center transition-all duration-500 w-full max-w-[320px] sm:max-w-[340px] h-[280px] sm:h-[300px] flex flex-col justify-center items-center cursor-pointer transform hover:scale-105 active:scale-95 shadow-2xl hover:shadow-3xl"
                    style={{ boxShadow: '20px 20px 50px rgba(0, 0, 0, 0.6)' }}>
                 <span className="mb-4 transition-colors duration-500">
@@ -152,7 +139,7 @@ export default function Inicial() {
       </section>
 
       {/* ========== SEÇÃO SOBRE NÓS - DESCRIÇÃO E DESENVOLVEDORES ========== */}
-      <section id="sobre-nos-section" className="max-w-[95%] sm:max-w-[90%] md:max-w-[85%] mx-auto px-3 sm:px-4 py-8 md:py-12 lg:py-20">
+      <section id="sobre-nos-section" className="max-w-[95%] sm:max-w-[90%] md:max-w-[80%] mx-auto px-3 sm:px-4 py-8 md:py-12 lg:py-20">
         <ScrollAnimation direction="up" duration={500} delay={100}>
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-12 md:mb-16 transition-colors duration-500"
               style={{ fontFamily: "'Rammetto One', cursive" }}>
@@ -178,8 +165,8 @@ export default function Inicial() {
         {/* LINHA DIVISÓRIA */}
         <div className="border-t border-theme my-12 md:my-16 transition-colors duration-500"></div>
 
-        {/* GRID DE DESENVOLVEDORES - MANTIDO ORIGINAL */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4 justify-items-center w-full">
+        {/* GRID DE DESENVOLVEDORES*/}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8 justify-items-center w-full">
           
           {/* DESENVOLVEDOR 1 - Leonardo - AZUL */}
           <ScrollAnimation direction="up" duration={500} delay={200}>
@@ -256,22 +243,22 @@ interface DeveloperCardProps {
 
 function DeveloperCard({ photo, name, role, borderColor }: DeveloperCardProps) {
   return (
-    <div className="text-center w-full px-1 sm:px-0">
-      <div className="bg-card rounded-2xl p-4 sm:p-5 w-full max-w-[280px] sm:max-w-full h-56 sm:h-64 flex flex-col items-center justify-center transform sm:hover:scale-105 transition-all duration-500"
+    <div className="text-center w-full">
+      <div className="bg-card rounded-2xl p-6 md:p-8 w-full h-64 md:h-72 flex flex-col items-center justify-center transform hover:scale-105 transition-all duration-500"
            style={{ boxShadow: '30px 30px 70px rgba(0, 0, 0, 0.5)' }}>
-        <div className="mb-3 sm:mb-4">
+        <div className="mb-4">
           <img 
             src={photo} 
             alt={name} 
-            className={`w-32 h-32 rounded-full object-cover border-2 ${borderColor} transition-colors duration-500`}
+            className={`w-36 h-36 rounded-full object-cover border-2 ${borderColor} transition-colors duration-500`}
           />
         </div>
         <div className="space-y-2">
-          <span className="text-lg sm:text-xl font-bold text-text block transition-colors duration-500"
+          <span className="text-xl md:text-2xl font-bold text-text block transition-colors duration-500"
                 style={{ fontFamily: "'Rammetto One', cursive" }}>
             {name}
           </span>
-          <span className="text-text text-sm sm:text-base transition-colors duration-500">{role}</span>
+          <span className="text-text text-base md:text-lg transition-colors duration-500">{role}</span>
         </div>
       </div>
     </div>
