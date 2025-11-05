@@ -1,12 +1,8 @@
 'use client';
-import { useState, useEffect, use, useRef, useMemo } from 'react';
-import { Search, X } from 'lucide-react';
+import { useState, useEffect, useRef, useMemo } from 'react';
+import { Search, X, School } from 'lucide-react';
 import * as d3 from 'd3';
-import { useRouter } from 'next/navigation';
-
-interface PageProps {
-  params: Promise<{ sigla: string }>;
-}
+import { useRouter, useParams } from 'next/navigation';
 
 interface MunicipioData {
   type: string;
@@ -21,8 +17,17 @@ interface MunicipioData {
   }>;
 }
 
-export default function PaginaEstado({ params }: PageProps) {
-  const { sigla } = use(params);
+interface Escola {
+  id: string;
+  codigo_inep: string;
+  nome: string;
+  municipio: string;
+  tipo: string;
+}
+
+export default function PaginaEstado() {
+  const params = useParams();
+  const sigla = params.sigla as string;
   const router = useRouter();
   const [geoData, setGeoData] = useState<MunicipioData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -30,6 +35,10 @@ export default function PaginaEstado({ params }: PageProps) {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [todosMunicipios, setTodosMunicipios] = useState<string[]>([]);
   const svgRef = useRef<SVGSVGElement>(null);
+  const [municipioSelecionado, setMunicipioSelecionado] = useState<string | null>(null);
+  const [escolasDoMunicipio, setEscolasDoMunicipio] = useState<Escola[]>([]);
+  const [showEscolas, setShowEscolas] = useState(false);
+  const [loadingEscolas, setLoadingEscolas] = useState(false);
 
   const getNomeEstado = (sigla: string): string => {
     const estados: { [key: string]: string } = {
@@ -45,6 +54,73 @@ export default function PaginaEstado({ params }: PageProps) {
   };
 
   const nomeEstado = getNomeEstado(sigla);
+
+  const buscarEscolasDoMunicipio = async (municipio: string): Promise<Escola[]> => {
+    // Simula uma requisição API
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        const gerarCodigoINEP = (municipio: string, sufixo: number): string => {
+          let hash = 0;
+          for (let i = 0; i < municipio.length; i++) {
+            hash = ((hash << 5) - hash) + municipio.charCodeAt(i);
+            hash = hash & hash;
+          }
+          const codigoBase = Math.abs(hash).toString().padStart(6, '0').slice(0, 6);
+          const codigoCompleto = codigoBase + sufixo.toString().padStart(2, '0');
+          return codigoCompleto.slice(0, 8);
+        };
+
+        const escolas = [
+          {
+            id: `${municipio}-1`,
+            codigo_inep: gerarCodigoINEP(municipio, 1),
+            nome: `Escola Estadual ${municipio}`,
+            municipio: municipio,
+            tipo: 'Estadual'
+          },
+          {
+            id: `${municipio}-2`, 
+            codigo_inep: gerarCodigoINEP(municipio, 2),
+            nome: `Colégio Municipal ${municipio}`,
+            municipio: municipio,
+            tipo: 'Municipal'
+          },
+          {
+            id: `${municipio}-3`,
+            codigo_inep: gerarCodigoINEP(municipio, 3),
+            nome: `Escola Particular ${municipio}`,
+            municipio: municipio,
+            tipo: 'Privada'
+          }
+        ];
+        resolve(escolas);
+      }, 500);
+    });
+  };
+
+  const handleMunicipioClick = async (municipio: string) => {
+    console.log('📍 Município selecionado:', municipio);
+    setMunicipioSelecionado(municipio);
+    setLoadingEscolas(true);
+    setShowEscolas(false);
+    
+    try {
+      const escolas = await buscarEscolasDoMunicipio(municipio);
+      console.log('🎓 Escolas carregadas:', escolas);
+      setEscolasDoMunicipio(escolas);
+      setShowEscolas(true);
+    } catch (error) {
+      console.error('Erro ao buscar escolas:', error);
+    } finally {
+      setLoadingEscolas(false);
+    }
+  };
+
+  const handleEscolaClick = (codigo_inep: string) => {
+    console.log('🚀 Navegando para dashboard:', codigo_inep);
+    console.log('📋 URL completa:', `/dashboard/${codigo_inep}`);
+    router.push(`/dashboard/${codigo_inep}`);
+  };
 
   useEffect(() => {
     const carregarMunicipiosIBGE = async () => {
@@ -245,6 +321,7 @@ export default function PaginaEstado({ params }: PageProps) {
                   onChange={(e) => {
                     setSearchTerm(e.target.value);
                     setShowSuggestions(true);
+                    setShowEscolas(false);
                   }}
                   onFocus={() => setShowSuggestions(true)}
                   onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
@@ -261,6 +338,20 @@ export default function PaginaEstado({ params }: PageProps) {
                     <X size={14} />
                   </button>
                 </div>
+                {municipioSelecionado && (
+                  <div className="bg-primary text-white px-5 py-2 rounded-full text-base font-medium flex items-center gap-2 transition-colors duration-500">
+                    {municipioSelecionado}
+                    <button
+                      onClick={() => {
+                        setMunicipioSelecionado(null);
+                        setShowEscolas(false);
+                      }}
+                      className="text-white hover:bg-white/20 transition-colors duration-200 w-5 h-5 flex items-center justify-center rounded-full"
+                    >
+                      <X size={14} />
+                    </button>
+                  </div>
+                )}
               </div>
 
               {showSuggestions && (
@@ -271,19 +362,62 @@ export default function PaginaEstado({ params }: PageProps) {
                         key={index}
                         className="w-full text-left px-4 py-3 border-b border-theme last:border-b-0 hover:bg-card-alt text-text transition-colors duration-500"
                         onClick={() => {
-                          redirecionarParaMunicipio(municipio);
+                          handleMunicipioClick(municipio);
                           setShowSuggestions(false);
                           setSearchTerm('');
                         }}
                       >
                         <div className="flex justify-between items-center">
                           <span className="transition-colors duration-500">{municipio}</span>
+                          <span className="text-xs text-gray-theme">Ver escolas →</span>
                         </div>
                       </button>
                     ))
                   ) : (
                     <div className="px-4 py-3 text-center text-gray-theme transition-colors duration-500">
                       Nenhum município encontrado
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {showEscolas && (
+                <div className="mt-6 bg-card rounded-xl p-4 border border-theme animate-fade-in">
+                  <div className="flex items-center gap-3 mb-4">
+                    <School className="text-primary" size={24} />
+                    <div>
+                      <h3 className="font-semibold text-lg">Escolas em {municipioSelecionado}</h3>
+                      <p className="text-sm text-gray-theme">{escolasDoMunicipio.length} escolas encontradas</p>
+                    </div>
+                  </div>
+                  
+                  {loadingEscolas ? (
+                    <div className="text-center py-4 text-gray-theme">Carregando escolas...</div>
+                  ) : (
+                    <div className="space-y-3 max-h-60 overflow-y-auto">
+                      {escolasDoMunicipio.map((escola) => (
+                        <button
+                          key={escola.id}
+                          onClick={() => handleEscolaClick(escola.codigo_inep)}
+                          className="w-full text-left p-3 border border-theme rounded-lg hover:bg-card-alt transition-colors duration-200 group"
+                        >
+                          <div className="flex justify-between items-start">
+                            <div className="font-medium text-text group-hover:text-primary transition-colors">
+                              {escola.nome}
+                            </div>
+                            <span className={`px-2 py-1 rounded text-xs ${
+                              escola.tipo === 'Estadual' ? 'bg-blue-100 text-blue-800' :
+                              escola.tipo === 'Municipal' ? 'bg-green-100 text-green-800' :
+                              'bg-purple-100 text-purple-800'
+                            }`}>
+                              {escola.tipo}
+                            </span>
+                          </div>
+                          <div className="text-xs text-gray-theme mt-1">
+                            Código INEP: {escola.codigo_inep}
+                          </div>
+                        </button>
+                      ))}
                     </div>
                   )}
                 </div>
