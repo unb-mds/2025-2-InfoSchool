@@ -1,73 +1,9 @@
 'use client';
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { Search, MapPin, Calendar, School, Filter, Building } from 'lucide-react';
 
-const ESCOLAS_MOCK = [
-  {
-    id: 1,
-    nome: "Colégio Exemplo",
-    estado: "DF",
-    municipio: "Brasília",
-    tipo: "Privada",
-    ano: 2023
-  },
-  {
-    id: 2,
-    nome: "Escola Municipal Alpha",
-    estado: "SP", 
-    municipio: "São Paulo",
-    tipo: "Municipal",
-    ano: 2023
-  },
-  {
-    id: 3,
-    nome: "Colégio Estadual Beta",
-    estado: "RJ",
-    municipio: "Rio de Janeiro",
-    tipo: "Estadual",
-    ano: 2023
-  },
-  {
-    id: 4,
-    nome: "Escola Municipal Gama",
-    estado: "MG",
-    municipio: "Belo Horizonte", 
-    tipo: "Municipal",
-    ano: 2023
-  },
-  {
-    id: 5,
-    nome: "Colégio Particular Delta",
-    estado: "SP",
-    municipio: "Campinas",
-    tipo: "Privada",
-    ano: 2023
-  },
-  {
-    id: 6,
-    nome: "Escola Estadual Epsilon",
-    estado: "RS",
-    municipio: "Porto Alegre",
-    tipo: "Estadual", 
-    ano: 2023
-  },
-  {
-    id: 7,
-    nome: "Instituto Federal Zeta",
-    estado: "MG",
-    municipio: "Uberlândia",
-    tipo: "Federal",
-    ano: 2023
-  },
-  {
-    id: 8,
-    nome: "Colégio Particular Ômega",
-    estado: "RJ",
-    municipio: "Niterói",
-    tipo: "Privada",
-    ano: 2023
-  }
-];
+// --- CONSTANTES ---
+const PAGE_SIZE = 50; 
 
 const ESTADOS_BRASIL = [
   'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 
@@ -79,16 +15,38 @@ const ANOS = Array.from({length: 31}, (_, i) => 2025 - i);
 const TIPOS_ESCOLA = ['Municipal', 'Estadual', 'Federal', 'Privada'];
 
 export default function ExplorarEscolas() {
+  // --- ESTADOS DE FILTRO E PAGINAÇÃO ---
   const [searchTerm, setSearchTerm] = useState('');
   const [filtroEstado, setFiltroEstado] = useState('');
   const [filtroMunicipio, setFiltroMunicipio] = useState('');
-  const [filtroAno, setFiltroAno] = useState(2023);
+  const [filtroAno, setFiltroAno] = useState(2023); 
   const [filtroTipo, setFiltroTipo] = useState('');
   const [showFilters, setShowFilters] = useState(false);
+  
+  // --- ESTADOS DE MUNICÍPIOS ---
   const [municipios, setMunicipios] = useState<string[]>([]);
   const [loadingMunicipios, setLoadingMunicipios] = useState(false);
 
-  useEffect(() => {
+  interface Escola {
+    co_entidade: string;
+    NO_ENTIDADE: string;
+    NO_MUNICIPIO: string;
+    SG_UF: string;
+    tipo_escola: string;
+    ano: number;
+  }
+
+  // --- ESTADOS DE DADOS REAIS E PAGINAÇÃO (Novos) ---
+  const [escolas, setEscolas] = useState<Escola[]>([]); 
+  const [loading, setLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalEscolas, setTotalEscolas] = useState(0); 
+  const [error, setError] = useState(null);
+
+  // --- FUNÇÕES DE LÓGICA ---
+
+  // Lógica de Carregamento de Municípios do IBGE (Mantida)
+    useEffect(() => {
     const carregarMunicipiosIBGE = async () => {
       if (!filtroEstado) {
         setMunicipios([]);
@@ -124,20 +82,64 @@ export default function ExplorarEscolas() {
     carregarMunicipiosIBGE();
   }, [filtroEstado]);
 
-  const escolasFiltradas = useMemo(() => {
-    return ESCOLAS_MOCK.filter(escola => {
-      const matchSearch = searchTerm === '' || 
-        escola.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        escola.municipio.toLowerCase().includes(searchTerm.toLowerCase());
-      
-      const matchEstado = !filtroEstado || escola.estado === filtroEstado;
-      const matchMunicipio = !filtroMunicipio || escola.municipio === filtroMunicipio;
-      const matchAno = escola.ano === filtroAno;
-      const matchTipo = !filtroTipo || escola.tipo === filtroTipo;
+  // Função central para buscar os dados do BigQuery (Backend)
+  const buscarEscolas = useCallback(async () => {
+    setLoading(true);
+    setError(null);
 
-      return matchSearch && matchEstado && matchMunicipio && matchAno && matchTipo;
-    });
-  }, [searchTerm, filtroEstado, filtroMunicipio, filtroAno, filtroTipo]);
+    // 1. CONSTRÓI OS PARÂMETROS DA URL
+    const params = new URLSearchParams();
+    
+    if (searchTerm) params.append('termo', searchTerm);
+    if (filtroEstado) params.append('estado', filtroEstado);
+    if (filtroMunicipio) params.append('municipio', filtroMunicipio);
+    if (filtroAno) params.append('ano', filtroAno.toString());
+    if (filtroTipo) params.append('tipo', filtroTipo);
+    
+    // Paginação
+    params.append('pagina', currentPage.toString());
+    params.append('limite', PAGE_SIZE.toString());
+
+    try {
+      // 2. CORREÇÃO DA URL: USANDO O PREFIXO /API/ESCOLAS
+      const url = `/api/explorar-escolas?${params.toString()}`; 
+      
+      const response = await fetch(url);
+      if (!response.ok) {
+          const text = await response.text();
+          throw new Error(`Erro ${response.status}: O servidor retornou HTML em vez de JSON. Conteúdo: ${text.substring(0, 50)}...`);
+      }
+      
+      const data = await response.json();
+      
+      // 3. ATUALIZA ESTADOS COM DADOS REAIS DO BACKEND
+      setEscolas(data.dados || []);      
+      setTotalEscolas(Number(data.total) || 0); 
+      
+    } catch (err) {
+      console.error('Erro ao buscar escolas:', err);
+      setError(err.message || 'Falha ao conectar com o servidor.');
+      setEscolas([]);
+      setTotalEscolas(0);
+    } finally {
+      setLoading(false);
+    }
+  }, [searchTerm, filtroEstado, filtroMunicipio, filtroAno, filtroTipo, currentPage]); 
+
+  // 4. DISPARA A BUSCA
+  useEffect(() => {
+    buscarEscolas();
+  }, [buscarEscolas]);
+
+  // 5. ZERA A PÁGINA QUANDO OS FILTROS MUDAM
+  useEffect(() => {
+    if (currentPage !== 1) {
+        setCurrentPage(1);
+    } else {
+        buscarEscolas(); 
+    }
+  }, [searchTerm, filtroEstado, filtroMunicipio, filtroAno, filtroTipo]); 
+
 
   const limparFiltros = () => {
     setFiltroEstado('');
@@ -145,39 +147,41 @@ export default function ExplorarEscolas() {
     setFiltroAno(2023);
     setFiltroTipo('');
     setSearchTerm('');
+    setCurrentPage(1);
   };
 
   const temFiltrosAtivos = filtroEstado || filtroMunicipio || filtroAno !== 2023 || filtroTipo || searchTerm;
+  const totalPaginas = Math.ceil(totalEscolas / PAGE_SIZE);
 
   return (
     <div className="min-h-screen bg-background text-text transition-colors duration-500">
       
       <section className="max-w-[95%] sm:max-w-[90%] md:max-w-[80%] mx-auto px-3 sm:px-4 py-8 md:py-16 transition-colors duration-500">
-        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-center mb-4 md:mb-6 transition-colors duration-500"
+        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-center mb-4 md:mb-6"
             style={{ fontFamily: "'Rammetto One', cursive" }}>
           Explorar Escolas
         </h1>
-        <p className="text-lg sm:text-xl md:text-2xl text-center text-text/80 mb-8 max-w-3xl mx-auto leading-relaxed transition-colors duration-500"
+        <p className="text-lg sm:text-xl md:text-2xl text-center text-text/80 mb-8 max-w-3xl mx-auto leading-relaxed"
            style={{ fontFamily: "'Sansita', sans-serif" }}>
           Encontre escolas em todo o Brasil com base em localização, ano e tipo
         </p>
       </section>
 
-      <section className="max-w-[95%] sm:max-w-[90%] md:max-w-[80%] mx-auto px-3 sm:px-4 py-6 transition-colors duration-500">
+      <section className="max-w-[95%] sm:max-w-[90%] md:max-w-[80%] mx-auto px-3 sm:px-4 py-6">
         
-        <div className="bg-card rounded-2xl p-4 sm:p-6 mb-6 shadow-2xl transition-colors duration-500">
-          <div className="flex flex-col sm:flex-row gap-4 items-center transition-colors duration-500">
-            <div className="flex-1 w-full relative transition-colors duration-500">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-text/60 transition-colors duration-500" size={20} />
+        <div className="bg-card rounded-2xl p-4 sm:p-6 mb-6 shadow-2xl">
+          {/* --- BARRA DE PESQUISA --- */}
+          <div className="flex flex-col sm:flex-row gap-4 items-center">
+            <div className="flex-1 w-full relative">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-text/60" size={20} />
               <input
                 type="text"
                 placeholder="Pesquisar escolas por nome ou município..."
-                className="w-full h-12 rounded-full pl-12 pr-6 focus:outline-none focus:ring-2 focus:ring-primary bg-card-alt border border-theme text-text transition-colors duration-500"
+                className="w-full h-12 rounded-full pl-12 pr-6 focus:outline-none focus:ring-2 focus:ring-primary bg-card-alt border border-theme text-text"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
-
             <button
               onClick={() => setShowFilters(!showFilters)}
               className="sm:hidden bg-primary text-white rounded-full px-6 py-3 hover:bg-[#1a6fd8] transition-all duration-500 flex items-center gap-2 hover:scale-105 active:scale-95"
@@ -187,16 +191,17 @@ export default function ExplorarEscolas() {
             </button>
           </div>
 
+          {/* --- FILTROS AVANÇADOS --- */}
           <div className={`${showFilters ? 'block' : 'hidden'} sm:block mt-6 transition-all duration-500`}>
-            <div className="grid grid-cols-1 md:grid-cols-5 gap-4 transition-colors duration-500">
+            <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
               
-              <div className="transition-colors duration-500">
-                <label className="block text-sm font-medium mb-2 flex items-center gap-2 text-text transition-colors duration-500">
-                  <MapPin size={16} className="text-primary transition-colors duration-500" />
-                  Estado
+              {/* FILTRO ESTADO */}
+              <div>
+                <label className="block text-sm font-medium mb-2 flex items-center gap-2 text-text">
+                  <MapPin size={16} className="text-primary" /> Estado
                 </label>
                 <select
-                  className="w-full rounded-lg p-3 bg-card-alt border border-theme text-text focus:outline-none focus:ring-2 focus:ring-primary transition-colors duration-500"
+                  className="w-full rounded-lg p-3 bg-card-alt border border-theme text-text focus:outline-none focus:ring-2 focus:ring-primary"
                   value={filtroEstado}
                   onChange={(e) => {
                     setFiltroEstado(e.target.value);
@@ -210,13 +215,13 @@ export default function ExplorarEscolas() {
                 </select>
               </div>
 
-              <div className="transition-colors duration-500">
-                <label className="block text-sm font-medium mb-2 flex items-center gap-2 text-text transition-colors duration-500">
-                  <MapPin size={16} className="text-primary transition-colors duration-500" />
-                  Município
+              {/* FILTRO MUNICÍPIO */}
+              <div>
+                <label className="block text-sm font-medium mb-2 flex items-center gap-2 text-text">
+                  <MapPin size={16} className="text-primary" /> Município
                 </label>
                 <select
-                  className="w-full rounded-lg p-3 bg-card-alt border border-theme text-text focus:outline-none focus:ring-2 focus:ring-primary transition-colors duration-500 disabled:opacity-50"
+                  className="w-full rounded-lg p-3 bg-card-alt border border-theme text-text focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-50"
                   value={filtroMunicipio}
                   onChange={(e) => setFiltroMunicipio(e.target.value)}
                   disabled={!filtroEstado || loadingMunicipios}
@@ -232,13 +237,13 @@ export default function ExplorarEscolas() {
                 </select>
               </div>
 
-              <div className="transition-colors duration-500">
-                <label className="block text-sm font-medium mb-2 flex items-center gap-2 text-text transition-colors duration-500">
-                  <Calendar size={16} className="text-primary transition-colors duration-500" />
-                  Ano
+              {/* FILTRO ANO */}
+              <div>
+                <label className="block text-sm font-medium mb-2 flex items-center gap-2 text-text">
+                  <Calendar size={16} className="text-primary" /> Ano
                 </label>
                 <select
-                  className="w-full rounded-lg p-3 bg-card-alt border border-theme text-text focus:outline-none focus:ring-2 focus:ring-primary transition-colors duration-500"
+                  className="w-full rounded-lg p-3 bg-card-alt border border-theme text-text focus:outline-none focus:ring-2 focus:ring-primary"
                   value={filtroAno}
                   onChange={(e) => setFiltroAno(Number(e.target.value))}
                 >
@@ -248,13 +253,13 @@ export default function ExplorarEscolas() {
                 </select>
               </div>
 
-              <div className="transition-colors duration-500">
-                <label className="block text-sm font-medium mb-2 flex items-center gap-2 text-text transition-colors duration-500">
-                  <Building size={16} className="text-primary transition-colors duration-500" />
-                  Tipo
+              {/* FILTRO TIPO */}
+              <div>
+                <label className="block text-sm font-medium mb-2 flex items-center gap-2 text-text">
+                  <Building size={16} className="text-primary" /> Tipo
                 </label>
                 <select
-                  className="w-full rounded-lg p-3 bg-card-alt border border-theme text-text focus:outline-none focus:ring-2 focus:ring-primary transition-colors duration-500"
+                  className="w-full rounded-lg p-3 bg-card-alt border border-theme text-text focus:outline-none focus:ring-2 focus:ring-primary"
                   value={filtroTipo}
                   onChange={(e) => setFiltroTipo(e.target.value)}
                 >
@@ -265,7 +270,8 @@ export default function ExplorarEscolas() {
                 </select>
               </div>
 
-              <div className="flex items-end transition-colors duration-500">
+              {/* BOTÃO LIMPAR GERAL */}
+              <div className="flex items-end">
                 <button
                   onClick={limparFiltros}
                   disabled={!temFiltrosAtivos}
@@ -278,11 +284,15 @@ export default function ExplorarEscolas() {
           </div>
         </div>
 
-        <div className="mb-6 flex justify-between items-center transition-colors duration-500">
-          <p className="text-text text-lg transition-colors duration-500">
-            {escolasFiltradas.length} escola{escolasFiltradas.length !== 1 ? 's' : ''} encontrada{escolasFiltradas.length !== 1 ? 's' : ''}
+        {/* --- CONTAGEM DE RESULTADOS E MENSAGENS --- */}
+        <div className="mb-6 flex justify-between items-center">
+          <p className="text-text text-lg">
+            {loading 
+                ? 'Buscando...' 
+                : `${totalEscolas} escola${totalEscolas !== 1 ? 's' : ''} encontrada${totalEscolas !== 1 ? 's' : ''}`
+            }
           </p>
-          {temFiltrosAtivos && (
+          {temFiltrosAtivos && !loading && (
             <button
               onClick={limparFiltros}
               className="text-sm text-primary hover:text-[#1a6fd8] transition-colors duration-500"
@@ -292,68 +302,102 @@ export default function ExplorarEscolas() {
           )}
         </div>
 
-        <div className="space-y-4 md:space-y-6 transition-colors duration-500">
-          {escolasFiltradas.map((escola, index) => (
-            <div
-              key={escola.id}
-              className="bg-card rounded-2xl p-4 sm:p-6 shadow-2xl hover:shadow-3xl transition-all duration-500 hover:scale-[1.02] cursor-pointer border border-theme"
-            >
-              <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 transition-colors duration-500">
-                
-                <div className="flex-1 transition-colors duration-500">
-                  <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-4 gap-2 transition-colors duration-500">
-                    <h3 className="text-xl sm:text-2xl font-bold text-primary transition-colors duration-500">
-                      {escola.nome}
-                    </h3>
-                    <div className="flex items-center gap-3 transition-colors duration-500">
-                      <div className="text-sm text-text/70 transition-colors duration-500">
-                        {escola.ano}
+        {/* --- EXIBIÇÃO DE ERRO E LOADING --- */}
+        {error && <div className="text-center text-xl text-red-500 py-12 bg-card rounded-2xl my-6">
+            <p>Falha ao carregar dados:</p>
+                  key={escolas.co_entidade || index}
+        </div>}
+
+        {loading && <div className="text-center py-12">Carregando dados do BigQuery...</div>}
+
+        {/* --- LISTA DE ESCOLAS (RENDERIZAÇÃO) --- */}
+        {!loading && !error && (
+            <div className="space-y-4 md:space-y-6">
+              {escolas.map((escola, index) => (
+                <div 
+                  key={escola.id || index}
+                  className="bg-card rounded-2xl p-4 sm:p-6 shadow-2xl hover:shadow-3xl transition-all duration-500 hover:scale-[1.02] cursor-pointer border border-theme"
+                >
+                  <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                    <div className="flex-1">
+                      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-4 gap-2">
+                        <h3 className="text-xl sm:text-2xl font-bold text-primary">
+                          {escola.NO_ENTIDADE || 'Nome Indisponível'}
+                        </h3>
+                        <div className="flex items-center gap-3">
+                          <div className="text-sm text-text/70">
+                            {escola.ano || filtroAno}
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 text-sm">
+                        <div className="flex items-center gap-2">
+                          <MapPin size={16} className="text-text/60" />
+                          {/* CORREÇÃO: USANDO O OBJETO 'escola' e CHAVES MINÚSCULAS (Padrão JS) */}
+                          <span className="text-text">{escola.NO_MUNICIPIO || 'N/A'} - {escola.SG_UF || 'N/A'}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <School size={16} className="text-text/60" />
+                          <span className="text-text">{escola.TP_DEPENDENCIA || 'N/A'}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Building size={16} className="text-text/60" />
+                          <span className="text-text">ID: {escola.co_entidade || 'SLA'}</span>
+                        </div>
                       </div>
                     </div>
                   </div>
-                  
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 text-sm transition-colors duration-500">
-                    <div className="flex items-center gap-2 transition-colors duration-500">
-                      <MapPin size={16} className="text-text/60 transition-colors duration-500" />
-                      <span className="text-text transition-colors duration-500">{escola.municipio} - {escola.estado}</span>
-                    </div>
-                    <div className="flex items-center gap-2 transition-colors duration-500">
-                      <School size={16} className="text-text/60 transition-colors duration-500" />
-                      <span className="text-text transition-colors duration-500">{escola.tipo}</span>
-                    </div>
-                    <div className="flex items-center gap-2 transition-colors duration-500">
-                      <Building size={16} className="text-text/60 transition-colors duration-500" />
-                      <span className="text-text transition-colors duration-500">{escola.ano}</span>
-                    </div>
-                  </div>
                 </div>
-              </div>
-            </div>
-          ))}
+              ))}
 
-          {escolasFiltradas.length === 0 && (
-            <div className="text-center py-12 bg-card rounded-2xl shadow-2xl transition-colors duration-500">
-              <School size={64} className="mx-auto text-text/40 mb-4 transition-colors duration-500" />
-              <h3 className="text-xl sm:text-2xl font-bold text-text/70 mb-2 transition-colors duration-500">
-                Nenhuma escola encontrada
-              </h3>
-              <p className="text-text/60 max-w-md mx-auto mb-4 transition-colors duration-500">
-                {temFiltrosAtivos 
-                  ? "Tente ajustar os filtros para encontrar mais escolas."
-                  : "Não há escolas cadastradas para os critérios atuais."
-                }
-              </p>
-              {temFiltrosAtivos && (
-                <button
-                  onClick={limparFiltros}
-                  className="bg-primary text-white rounded-full px-6 py-3 hover:bg-[#1a6fd8] transition-all duration-500 hover:scale-105 active:scale-95"
-                >
-                  Limpar Filtros
-                </button>
+              {/* MENSAGEM DE NENHUMA ESCOLA ENCONTRADA */}
+              {escolas.length === 0 && totalEscolas === 0 && (
+                <div className="text-center py-12 bg-card rounded-2xl shadow-2xl">
+                  <School size={64} className="mx-auto text-text/40 mb-4" />
+                  <h3 className="text-xl sm:text-2xl font-bold text-text/70 mb-2">
+                    Nenhuma escola encontrada
+                  </h3>
+                  <p className="text-text/60 max-w-md mx-auto mb-4">
+                    Tente ajustar os filtros ou limpá-los.
+                  </p>
+                  {temFiltrosAtivos && (
+                    <button
+                      onClick={limparFiltros}
+                      className="bg-primary text-white rounded-full px-6 py-3 hover:bg-[#1a6fd8] transition-all duration-500 hover:scale-105 active:scale-95"
+                    >
+                      Limpar Filtros
+                    </button>
+                  )}
+                </div>
               )}
             </div>
-          )}
-        </div>
+        )}
+        
+        {/* --- CONTROLES DE PAGINAÇÃO --- */}
+        {!loading && !error && totalPaginas > 1 && (
+            <div className="flex justify-center items-center gap-4 mt-8">
+                <button
+                    onClick={() => setCurrentPage(currentPage - 1)}
+                    disabled={currentPage === 1}
+                    className="bg-primary text-white rounded-lg px-4 py-2 disabled:opacity-50 transition-colors"
+                >
+                    ← Anterior
+                </button>
+                
+                <span className="text-text">
+                    Página {currentPage} de {totalPaginas}
+                </span>
+
+                <button
+                    onClick={() => setCurrentPage(currentPage + 1)}
+                    disabled={currentPage === totalPaginas}
+                    className="bg-primary text-white rounded-lg px-4 py-2 disabled:opacity-50 transition-colors"
+                >
+                    Próxima →
+                </button>
+            </div>
+        )}
       </section>
     </div>
   );

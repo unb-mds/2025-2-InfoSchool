@@ -15,4 +15,19 @@ const nextConfig: NextConfig = {
   skipTrailingSlashRedirect: true,
 };
 
+/** @type {import('next').NextConfig} */
+const nextConfig: import('next').NextConfig = {
+  // Configuração para o Proxy
+  async rewrites() {
+    return [
+      {
+        source: '/api/:path*',
+        destination: 'http://localhost:3001/api/:path*',
+      },
+    ];
+  },
+};
+
+module.exports = nextConfig;
+
 export default nextConfig;
