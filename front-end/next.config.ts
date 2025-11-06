@@ -13,10 +13,6 @@ const nextConfig: NextConfig = {
   },
   trailingSlash: false,
   skipTrailingSlashRedirect: true,
-};
-
-/** @type {import('next').NextConfig} */
-const nextConfig: import('next').NextConfig = {
   // Configuração para o Proxy
   async rewrites() {
     return [
@@ -27,7 +23,5 @@ const nextConfig: import('next').NextConfig = {
     ];
   },
 };
-
-module.exports = nextConfig;
 
 export default nextConfig;
