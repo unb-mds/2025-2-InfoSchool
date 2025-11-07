@@ -1,53 +1,69 @@
-// Usando PostgreSQL com pgvector ou MongoDB com vetores
-const { Pool } = require("pg");
+// src/services/vector-store.service.js
+const { MemoryVectorStore } = require("langchain/vectorstores/memory");
+const { OpenAIEmbeddings } = require("@langchain/openai-embeddings");
+const { Document } = require("langchain/document");
+const { ENV } = require("../config/environment");
 
 class VectorStoreService {
   constructor() {
-    this.pool = new Pool({
-      connectionString: process.env.DATABASE_URL,
+    this.embeddings = new OpenAIEmbeddings({
+      openAIApiKey: ENV.OPENAI_API_KEY,
     });
-    this.initVectorExtension();
+    this.vectorStore = null;
   }
 
-  async initVectorExtension() {
-    try {
-      await this.pool.query("CREATE EXTENSION IF NOT EXISTS vector");
-      await this.pool.query(`
-                CREATE TABLE IF NOT EXISTS school_embeddings (
-                    id SERIAL PRIMARY KEY,
-                    school_id VARCHAR(50),
-                    embedding vector(1536),
-                    document_text TEXT,
-                    metadata JSONB,
-                    created_at TIMESTAMP DEFAULT NOW()
-                )
-            `);
-    } catch (error) {
-      console.error("Erro inicializando vector store:", error);
+  async initialize(documents) {
+    console.log("🔄 Inicializando Vector Store...");
+    this.vectorStore = await MemoryVectorStore.fromDocuments(
+      documents,
+      this.embeddings
+    );
+    console.log("✅ Vector Store inicializado");
+    return this.vectorStore;
+  }
+
+  async search(query, k = 5) {
+    if (!this.vectorStore) {
+      throw new Error("Vector Store não inicializado");
     }
+
+    const results = await this.vectorStore.similaritySearch(query, k);
+    return results;
   }
 
-  async storeEmbedding(schoolId, embedding, documentText, metadata) {
-    const query = `
-            INSERT INTO school_embeddings (school_id, embedding, document_text, metadata)
-            VALUES ($1, $2, $3, $4)
-        `;
+  // Converter dados estruturados para documentos
+  createDocumentsFromData(dados) {
+    return dados.map((escola) => {
+      const content = this.formatEscolaContent(escola);
 
-    await this.pool.query(query, [schoolId, embedding, documentText, metadata]);
+      return new Document({
+        pageContent: content,
+        metadata: {
+          id_escola: escola.id_escola,
+          nome_escola: escola.nome_escola,
+          municipio: escola.municipio,
+          uf: escola.uf,
+          etapa_ensino: escola.etapa_ensino,
+          ideb: escola.ideb,
+        },
+      });
+    });
   }
 
-  async similaritySearch(embedding, limit = 5) {
-    const query = `
-            SELECT school_id, document_text, metadata,
-                   embedding <-> $1 as similarity
-            FROM school_embeddings
-            ORDER BY similarity ASC
-            LIMIT $2
-        `;
-
-    const result = await this.pool.query(query, [embedding, limit]);
-    return result.rows;
+  formatEscolaContent(escola) {
+    return `
+      Escola: ${escola.nome_escola}
+      Localização: ${escola.municipio} - ${escola.uf}
+      Etapa de Ensino: ${escola.etapa_ensino}
+      Número de Matrículas: ${escola.num_matriculas}
+      IDEB: ${escola.ideb || "Não informado"}
+      Laboratório de Informática: ${
+        escola.possui_laboratorio_informatica ? "Sim" : "Não"
+      }
+      Internet: ${escola.possui_internet ? "Sim" : "Não"}
+      Número de Docentes: ${escola.num_docentes}
+    `.trim();
   }
 }
 
-module.exports = VectorStoreService;
+module.exports = new VectorStoreService();
