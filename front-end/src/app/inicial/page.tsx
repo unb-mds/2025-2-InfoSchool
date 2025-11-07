@@ -111,7 +111,7 @@ export default function Inicial() {
 
           {/* CARD 2 - CAMINHO DA IA */}
           <ScrollAnimation direction="up" duration={500} delay={200}>
-            <div className="w-full flex justify-center">
+            <a href="/rag" className="w-full flex justify-center">
               <div className="bg-card-alt rounded-2xl p-5 sm:p-6 text-center transition-all duration-500 w-full max-w-[320px] sm:max-w-[340px] h-[280px] sm:h-[300px] flex flex-col justify-center items-center cursor-pointer transform hover:scale-105 active:scale-95 shadow-2xl hover:shadow-3xl"
                    style={{ boxShadow: '20px 20px 50px rgba(0, 0, 0, 0.6)' }}>
                 <span className="mb-4 transition-colors duration-500">
@@ -133,7 +133,7 @@ export default function Inicial() {
                   Você pode digitar ou falar o que deseja e ir direto ao dashboard com as informações.
                 </p>
               </div>
-            </div>
+            </a>
           </ScrollAnimation>
         </div>
       </section>
