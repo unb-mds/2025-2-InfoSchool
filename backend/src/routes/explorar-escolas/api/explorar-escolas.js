@@ -79,7 +79,6 @@ const getEscolas = async (fastify, options) => {
                       WHEN 4 THEN 'Privada'
                     ELSE 'Não Informado'
                     END AS TP_DEPENDENCIA
-
                 FROM
                     ${tabelaCenso} 
                 ${whereCondition}
