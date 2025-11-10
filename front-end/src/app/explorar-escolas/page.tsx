@@ -31,7 +31,7 @@ const ESTADOS_BRASIL = [
   'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO'
 ];
 
-const ANOS = Array.from({length: 31}, (_, i) => 2024 - i);
+const ANOS = Array.from({length: 18}, (_, i) => 2024 - i);
 const TIPOS_ESCOLA = ['Municipal', 'Estadual', 'Federal', 'Privada'];
 
 
