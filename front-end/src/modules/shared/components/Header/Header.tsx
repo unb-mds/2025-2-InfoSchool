@@ -150,7 +150,7 @@ export default function Header() {
               Sobre nós
             </button>
             <button 
-              onClick={() => console.log('Usar IA')}
+              onClick={() => router.push('/rag')}
               className="bg-primary text-white rounded-[20px] hover:bg-[#1a6fd8] transition-all duration-500 flex items-center justify-center w-[160px] lg:w-[190px] h-[30px] lg:h-[32px] hover:scale-110 active:scale-105 cursor-pointer"
               style={{ fontFamily: "'Rammetto One', cursive" }}
             >
@@ -192,7 +192,7 @@ export default function Header() {
               Sobre nós
             </button>
             <button 
-              onClick={() => console.log('Usar IA (mobile)')}
+              onClick={() => router.push('/rag')}
               className="bg-primary text-white rounded-[20px] hover:bg-[#1a6fd8] transition-all duration-500 w-full py-2 hover:scale-105 active:scale-100 text-base cursor-pointer"
               style={{ fontFamily: "'Rammetto One', cursive" }}
             >
