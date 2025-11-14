@@ -1,6 +1,6 @@
 const { ChatOpenAI } = require("@langchain/openai");
 const { HumanMessage, SystemMessage } = require("@langchain/core/messages");
-const bigQueryService = require("./bigQueryServices");
+const bigQueryService = require("./mockBigQueryServices");
 const vectorStoreService = require("./vectorStoreServices");
 const { ENV } = require("../config/environment");
 
