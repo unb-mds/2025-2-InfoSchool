@@ -2,14 +2,12 @@
 require("dotenv").config();
 
 const ENV = {
-  // Google Cloud
-  GOOGLE_CLOUD_PROJECT: process.env.GOOGLE_CLOUD_PROJECT,
-  GOOGLE_APPLICATION_CREDENTIALS: process.env.GOOGLE_APPLICATION_CREDENTIALS,
-
   // OpenAI
   OPENAI_API_KEY: process.env.OPENAI_API_KEY,
 
-  // BigQuery
+  // Google Cloud
+  GOOGLE_CLOUD_PROJECT: process.env.GOOGLE_CLOUD_PROJECT,
+  GOOGLE_APPLICATION_CREDENTIALS: process.env.GOOGLE_APPLICATION_CREDENTIALS,
   BIGQUERY_DATASET: process.env.BIGQUERY_DATASET,
   BIGQUERY_TABLE: process.env.BIGQUERY_TABLE,
 
@@ -18,8 +16,8 @@ const ENV = {
   NODE_ENV: process.env.NODE_ENV || "development",
 };
 
-// Validação básica
-const required = ["GOOGLE_CLOUD_PROJECT", "OPENAI_API_KEY"];
+// Validação
+const required = ["OPENAI_API_KEY", "GOOGLE_CLOUD_PROJECT"];
 const missing = required.filter((key) => !ENV[key]);
 
 if (missing.length > 0) {

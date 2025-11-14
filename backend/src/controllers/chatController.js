@@ -1,8 +1,8 @@
-const RAGService = require("../services/ragService");
+const HybridRAGService = require("../services/hybrid-ragService");
 
 class ChatController {
   constructor() {
-    this.ragService = new RAGService();
+    this.ragService = HybridRAGService;
   }
 
   async chat(req, res) {
@@ -15,15 +15,16 @@ class ChatController {
         });
       }
 
-      const result = await this.ragService.processQuestion(question, schoolId);
+      const result = await this.ragService.processQuery(question, schoolId);
 
       res.json({
         success: true,
         question,
-        answer: result.answer,
+        answer: result.resposta,
+        intent: result.intent,
         sources: result.sources,
         statistics: result.statistics,
-        intent: result.intent,
+        filters: result.filtros,
         timestamp: new Date().toISOString(),
       });
     } catch (error) {
@@ -38,9 +39,9 @@ class ChatController {
   async searchSchools(req, res) {
     try {
       const { city, state, adminType, page = 1, limit = 20 } = req.query;
-
       const filters = { city, state, adminType };
-      const schools = await this.ragService.bigQuery.searchSchools(filters);
+
+      const schools = await bigQueryService.getDadosEscolas(filters);
 
       res.json({
         success: true,
