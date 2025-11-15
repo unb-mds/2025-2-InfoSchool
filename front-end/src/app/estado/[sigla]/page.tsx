@@ -41,8 +41,8 @@ function useDebounce<T>(value: T, delay: number): T {
 
 function useWindowSize() {
   const [windowSize, setWindowSize] = useState({
-    width: typeof window !== 'undefined' ? window.innerWidth : 1200,
-    height: typeof window !== 'undefined' ? window.innerHeight : 800,
+    width: 1200,
+    height: 800,
   });
 
   useEffect(() => {
@@ -54,6 +54,8 @@ function useWindowSize() {
     };
 
     window.addEventListener('resize', handleResize);
+    handleResize();
+    
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
@@ -70,8 +72,9 @@ export default function PaginaEstado({ params }: PageProps) {
   const [todosMunicipios, setTodosMunicipios] = useState<string[]>([]);
   const [mapError, setMapError] = useState(false);
   const svgRef = useRef<SVGSVGElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
-  const { width: windowWidth } = useWindowSize();
+  const { width: windowWidth, height: windowHeight } = useWindowSize();
   const isMobile = windowWidth < 768;
   const isTablet = windowWidth >= 768 && windowWidth < 1024;
 
@@ -154,12 +157,10 @@ export default function PaginaEstado({ params }: PageProps) {
         const codigo = getCodigoEstado(sigla);
         const url = `/geojson/counties/counties-${sigla.toLowerCase()}-${codigo}.json`;
         
-        console.log('Carregando GeoJSON de:', url);
         const response = await fetch(url);
         if (!response.ok) throw new Error(`Erro ${response.status}`);
         
         const data = await response.json();
-        console.log('Dados carregados:', data.features.length, 'municípios');
         
         geoDataCache.set(cacheKey, data);
         setGeoData(data);
@@ -178,35 +179,39 @@ export default function PaginaEstado({ params }: PageProps) {
   }, [sigla]);
 
   useEffect(() => {
-    if (geoData && svgRef.current) {
+    if (geoData && svgRef.current && containerRef.current) {
       desenharMapa();
     }
-  }, [geoData, windowWidth]);
+  }, [geoData, windowWidth, windowHeight]);
 
   function desenharMapa() {
-    if (!geoData || !svgRef.current) return;
+    if (!geoData || !svgRef.current || !containerRef.current) return;
 
     const svg = d3.select(svgRef.current);
     svg.selectAll("*").remove();
 
-    // Dimensões responsivas sem quebrar o mapa
-    const width = isMobile ? Math.min(windowWidth - 40, 400) : 
-                  isTablet ? 600 : 
-                  800;
+    const container = containerRef.current;
+    const containerWidth = container.clientWidth;
+    const containerHeight = container.clientHeight;
+
+    const width = isMobile ? Math.min(containerWidth, 350) : 
+                  isTablet ? Math.min(containerWidth, 500) : 
+                  Math.min(containerWidth, 650);
     
-    const height = isMobile ? 350 : 
-                   isTablet ? 450 : 
-                   600;
+    const height = isMobile ? Math.min(containerHeight, 320) : 
+                   isTablet ? Math.min(containerHeight, 420) : 
+                   Math.min(containerHeight, 520);
 
     svg.attr('width', width)
-       .attr('height', height);
+       .attr('height', height)
+       .attr('viewBox', `0 0 ${width} ${height}`)
+       .attr('preserveAspectRatio', 'xMidYMid meet');
 
     const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
 
-    // Mantém a mesma lógica de projeção que estava funcionando
     const projection = d3.geoMercator()
       .center(getCentroEstado(sigla))
-      .scale(getEscalaEstadoResponsiva(sigla))
+      .scale(getEscalaEstado(sigla, width, height))
       .translate([width / 2, height / 2]);
 
     const path = d3.geoPath().projection(projection);
@@ -228,19 +233,19 @@ export default function PaginaEstado({ params }: PageProps) {
       .attr('d', (d: any) => path(d))
       .attr('fill', fillColor)
       .attr('stroke', strokeColor)
-      .attr('stroke-width', isMobile ? 0.2 : 0.3)
+      .attr('stroke-width', isMobile ? 0.15 : 0.25)
       .on('mouseover', function(event, d: any) {
         if (!isMobile) {
           d3.select(this)
             .attr('fill', hoverColor)
-            .attr('stroke-width', isMobile ? 0.5 : 1);
+            .attr('stroke-width', isMobile ? 0.3 : 0.5);
         }
       })
       .on('mouseout', function(event, d: any) {
         if (!isMobile) {
           d3.select(this)
             .attr('fill', fillColor)
-            .attr('stroke-width', isMobile ? 0.2 : 0.3);
+            .attr('stroke-width', isMobile ? 0.15 : 0.25);
         }
       })
       .on('click', function(event, d: any) {
@@ -248,30 +253,6 @@ export default function PaginaEstado({ params }: PageProps) {
           redirecionarParaMunicipio(d.properties.nome);
         }
       });
-
-    // Sistema de fallback seguro
-    setTimeout(() => {
-      const bbox = (svg.node() as SVGSVGElement).getBBox();
-      if (bbox.width === 0 || bbox.height === 0) {
-        console.log('Mapa vazio, ajustando projeção...');
-        ajustarProjecaoAlternativa(sigla, svg, geoData, width, height);
-      }
-    }, 100);
-  }
-
-  function ajustarProjecaoAlternativa(sigla: string, svg: any, geoData: MunicipioData, width: number, height: number) {
-    const centroAlternativo = getCentroEstadoAlternativo(sigla);
-    const escalaAlternativa = getEscalaEstadoAlternativa(sigla);
-    
-    const projection = d3.geoMercator()
-      .center(centroAlternativo)
-      .scale(escalaAlternativa)
-      .translate([width / 2, height / 2]);
-
-    const path = d3.geoPath().projection(projection);
-
-    svg.selectAll('path.municipio')
-      .attr('d', (d: any) => path(d));
   }
 
   function getCodigoEstado(sigla: string): string {
@@ -288,53 +269,77 @@ export default function PaginaEstado({ params }: PageProps) {
 
   function getCentroEstado(sigla: string): [number, number] {
     const centros: { [key: string]: [number, number] } = {
-      'sp': [-48.0, -22.5], 'rj': [-42.5, -22.0], 'mg': [-44.5, -18.5],
-      'ba': [-41.5, -12.5], 'pr': [-51.0, -24.5], 'rs': [-53.0, -30.0],
-      'sc': [-50.5, -27.0], 'go': [-49.0, -15.0], 'mt': [-55.0, -13.0],
-      'ms': [-54.5, -20.0], 'es': [-40.5, -19.5], 'pe': [-38.0, -8.5],
-      'ce': [-39.5, -5.5], 'pa': [-52.0, -3.0], 'ma': [-45.0, -4.0],
-      'pi': [-42.5, -8.0], 'rn': [-36.5, -5.5], 'pb': [-36.5, -7.0],
-      'se': [-37.5, -10.5], 'al': [-36.5, -9.5], 'to': [-48.0, -9.0],
-      'ro': [-63.5, -11.0], 'ac': [-70.5, -9.0], 'rr': [-61.5, 2.5],
-      'ap': [-51.5, 1.5], 'df': [-47.5, -15.5], 'am': [-63.0, -4.0]
+      'ac': [-70.5, -9.0], 
+      'al': [-36.3, -9.3],
+      'ap': [-51.5, 1.5], 
+      'am': [-65.0, -4.0],
+      'ba': [-41.5, -12.5], 
+      'ce': [-39.5, -5.5], 
+      'df': [-47.5, -15.8],
+      'es': [-40.5, -19.5],
+      'go': [-48.5, -15.2],
+      'ma': [-45.0, -4.0], 
+      'mt': [-55.0, -13.0], 
+      'ms': [-54.5, -20.0],
+      'mg': [-45.0, -18.0],
+      'pa': [-50.0, -4.5], 
+      'pb': [-36.5, -7.0], 
+      'pr': [-50.0, -24.0],
+      'pe': [-38.0, -8.5], 
+      'pi': [-42.5, -8.0], 
+      'rj': [-41.8, -22.0],
+      'rn': [-36.3, -5.3],
+      'rs': [-53.0, -30.0], 
+      'ro': [-63.5, -11.0], 
+      'rr': [-61.5, 2.5], 
+      'sc': [-50.0, -27.0],
+      'se': [-37.5, -10.5], 
+      'sp': [-48.0, -22.5], 
+      'to': [-47.5, -9.5]
     };
     return centros[sigla.toLowerCase()] || [-47.5, -15.5];
   }
 
-  function getCentroEstadoAlternativo(sigla: string): [number, number] {
-    const centrosAlternativos: { [key: string]: [number, number] } = {
-      'am': [-60.0, -5.0], 'pa': [-52.0, -5.0], 'mt': [-55.0, -12.0], 'ro': [-62.5, -11.0],
-    };
-    return centrosAlternativos[sigla.toLowerCase()] || getCentroEstado(sigla);
-  }
-
-  function getEscalaEstadoResponsiva(sigla: string): number {
+  function getEscalaEstado(sigla: string, width: number, height: number): number {
     const escalasBase: { [key: string]: number } = {
-      'sp': 6000, 'rj': 11000, 'mg': 5000, 'ba': 3800, 'pr': 6000, 'rs': 4000,
-      'sc': 7500, 'go': 5200, 'mt': 3000, 'ms': 4700, 'es': 9500, 'pe': 6000,
-      'ce': 5800, 'pa': 2500, 'ma': 4000, 'pi': 4000, 'rn': 6900, 'pb': 6900,
-      'se': 8000, 'al': 8000, 'to': 4000, 'ro': 4000, 'ac': 4700, 'rr': 4700,
-      'ap': 5800, 'df': 15000, 'am': 2200
+      'ac': 4000, 
+      'al': 9400,
+      'am': 1600,
+      'ap': 5000, 
+      'ba': 3300,
+      'ce': 5000, 
+      'df': 16000,
+      'es': 8500, 
+      'go': 3800,
+      'ma': 3400, 
+      'mg': 2950,
+      'ms': 4200, 
+      'mt': 2600, 
+      'pa': 1900, 
+      'pb': 7000,
+      'pe': 5200, 
+      'pi': 3400, 
+      'pr': 3800,
+      'rj': 5800,
+      'rn': 6500,
+      'ro': 3400, 
+      'rr': 4000, 
+      'rs': 3600, 
+      'sc': 4200,
+      'se': 10000, 
+      'sp': 5400, 
+      'to': 3600
     };
     
-    const escalaBase = escalasBase[sigla.toLowerCase()] || 5000;
+    let escalaBase = escalasBase[sigla.toLowerCase()] || 4700;
     
-    // Ajuste responsivo simples e seguro
-    if (isMobile) return escalaBase * 0.7;
-    if (isTablet) return escalaBase * 0.9;
+    if (isMobile) escalaBase *= 0.6;
+    else if (isTablet) escalaBase *= 0.8;
+    
+    const fatorTamanho = Math.min(width, height) / 500;
+    escalaBase *= Math.max(0.6, Math.min(fatorTamanho, 1.1));
+    
     return escalaBase;
-  }
-
-  function getEscalaEstadoAlternativa(sigla: string): number {
-    const escalasAlternativas: { [key: string]: number } = {
-      'am': 2000, 'pa': 2000, 'mt': 2500,
-    };
-    const escalaAlt = escalasAlternativas[sigla.toLowerCase()] || getEscalaEstadoResponsiva(sigla);
-    
-    // Aplica o mesmo ajuste responsivo
-    if (isMobile) return escalaAlt * 0.7;
-    if (isTablet) return escalaAlt * 0.9;
-    return escalaAlt;
   }
 
   if (loading) {
@@ -346,18 +351,14 @@ export default function PaginaEstado({ params }: PageProps) {
   }
 
   return (
-    <main className="min-h-screen bg-background text-text transition-colors duration-500 overflow-x-hidden">
-      <div className="max-w-[95%] sm:max-w-[90%] md:max-w-[85%] mx-auto px-4 sm:px-6 py-8 md:py-12 transition-colors duration-500">
-        
-        {/* Layout Responsivo com Espaçamento Adequado */}
-        <div className={`flex flex-col ${isMobile ? 'gap-12' : 'lg:grid lg:grid-cols-2 lg:gap-16 xl:gap-20'} min-h-[70vh] items-center justify-center transition-colors duration-500`}>
+    <main className="min-h-screen bg-background text-text transition-all duration-500 overflow-x-hidden">
+      <div className="max-w-[95%] sm:max-w-[90%] md:max-w-[80%] mx-auto px-3 sm:px-4 py-6 md:py-16">
+        <div className={`flex flex-col ${isMobile ? 'gap-8' : 'lg:grid lg:grid-cols-2 lg:gap-12'} min-h-[70vh] items-center justify-center transition-colors duration-500`}>
           
-          {/* Seção de Pesquisa - Sempre visível */}
-          <div className={`flex flex-col items-center ${isMobile ? 'w-full' : 'lg:items-start justify-center'} h-full transition-colors duration-500`}>
-            <div className="w-full max-w-lg relative">
+          <div className={`flex flex-col items-center ${isMobile ? 'w-full order-1' : 'lg:items-start justify-center'} h-full transition-colors duration-500`}>
+            <div className="w-full max-w-md relative">
               
-              {/* Barra de Pesquisa */}
-              <div className="relative transition-colors duration-500">
+              <div className="relative">
                 <Search 
                   className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-theme transition-colors duration-500"
                   size={20}
@@ -365,7 +366,7 @@ export default function PaginaEstado({ params }: PageProps) {
                 <input
                   type="text"
                   placeholder="Digite o nome do município..."
-                  className="w-full h-14 sm:h-16 rounded-full pl-12 pr-6 focus:outline-none focus:ring-2 focus:ring-primary text-base sm:text-lg bg-card border border-theme text-text transition-colors duration-500"
+                  className="w-full h-14 rounded-full pl-12 pr-6 focus:outline-none focus:ring-2 focus:ring-primary text-lg bg-card border border-theme text-text transition-all duration-500"
                   value={searchTerm}
                   onChange={(e) => {
                     setSearchTerm(e.target.value);
@@ -373,42 +374,47 @@ export default function PaginaEstado({ params }: PageProps) {
                   }}
                   onFocus={() => setShowSuggestions(true)}
                   onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && municipiosFiltrados.length > 0) {
+                      redirecionarParaMunicipio(municipiosFiltrados[0]);
+                    }
+                  }}
                 />
               </div>
 
-              {/* Badge do Estado */}
               <div className="flex items-center gap-3 mt-6 transition-colors duration-500">
                 <div className="bg-primary text-white px-5 py-2 rounded-full text-base font-medium flex items-center gap-2 transition-colors duration-500">
                   {nomeEstado}
                   <button
                     onClick={() => router.push('/mapa')}
-                    className="text-white hover:bg-white/20 transition-colors duration-500 w-5 h-5 flex items-center justify-center rounded-full"
+                    className="text-white hover:bg-white/20 transition-colors duration-200 w-5 h-5 flex items-center justify-center rounded-full"
                   >
                     <X size={14} />
                   </button>
                 </div>
               </div>
 
-              {/* Sugestões de Pesquisa */}
               {showSuggestions && (
-                <div className="absolute top-full left-0 right-0 mt-2 max-h-60 overflow-y-auto z-50 shadow-lg bg-card border border-theme rounded-lg transition-colors duration-500">
+                <div className="absolute top-full left-0 right-0 mt-2 max-h-60 overflow-y-auto z-50 shadow-theme bg-card border border-theme rounded-lg transition-all duration-500">
                   {municipiosFiltrados.length > 0 ? (
                     municipiosFiltrados.map((municipio, index) => (
                       <button
                         key={index}
-                        className="w-full text-left px-4 py-3 border-b border-theme last:border-b-0 hover:bg-card-alt text-text text-sm sm:text-base transition-colors duration-500"
+                        className="w-full text-left px-4 py-3 border-b border-theme last:border-b-0 hover:bg-card-alt cursor-pointer transition-colors duration-500"
                         onClick={() => {
-                          redirecionarParaMunicipio(municipio);
+                          setSearchTerm(municipio);
                           setShowSuggestions(false);
-                          setSearchTerm('');
+                          redirecionarParaMunicipio(municipio);
                         }}
                       >
-                        {municipio}
+                        <div className="flex justify-between items-center">
+                          <span className="text-text transition-colors duration-500">{municipio}</span>
+                        </div>
                       </button>
                     ))
                   ) : (
-                    <div className="px-4 py-3 text-center text-gray-theme text-sm sm:text-base transition-colors duration-500">
-                      Nenhum município encontrado
+                    <div className="px-4 py-3 text-center text-gray-theme transition-colors duration-500">
+                      Nenhum município encontrado para "{searchTerm}"
                     </div>
                   )}
                 </div>
@@ -416,12 +422,18 @@ export default function PaginaEstado({ params }: PageProps) {
 
             </div>
           </div>
-
-          {/* Seção do Mapa - Centralizada e com Espaçamento */}
-          <div className={`flex items-center justify-center ${isMobile ? 'w-full mt-8' : 'lg:justify-end'} h-full w-full transition-colors duration-500`}>
-            <div className={`relative ${isMobile ? 'w-full h-80' : isTablet ? 'w-full h-96' : 'w-full h-[500px]'} transition-colors duration-500 flex items-center justify-center`}>
+          
+          <div className={`flex items-center justify-center ${isMobile ? 'w-full order-2 mt-4' : 'lg:justify-end'} h-full w-full transition-colors duration-500`}>
+            <div 
+              ref={containerRef}
+              className="relative w-full h-full flex items-center justify-center overflow-visible"
+              style={{
+                minHeight: isMobile ? '50vh' : '60vh',
+                maxHeight: isMobile ? '50vh' : '70vh'
+              }}
+            >
               {mapError ? (
-                <div className="flex items-center justify-center h-full bg-card border border-theme rounded-lg p-6 sm:p-8 transition-colors duration-500 w-full">
+                <div className="flex items-center justify-center h-full bg-card border border-theme rounded-lg p-8 transition-colors duration-500 w-full">
                   <div className="text-center">
                     <p className="text-lg mb-2 transition-colors duration-500">🗺️ Mapa temporariamente indisponível</p>
                     <p className="text-gray-theme text-sm transition-colors duration-500">
@@ -433,6 +445,10 @@ export default function PaginaEstado({ params }: PageProps) {
                 <svg 
                   ref={svgRef}
                   className="w-full h-full transition-opacity duration-500"
+                  style={{ 
+                    maxWidth: '100%',
+                    maxHeight: '100%'
+                  }}
                 />
               )}
             </div>
