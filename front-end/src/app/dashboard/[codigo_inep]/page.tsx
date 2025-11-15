@@ -4,18 +4,17 @@ import { useRouter, useParams } from 'next/navigation';
 import { 
   School, MapPin, Phone, Mail, Users, UserCheck, BookOpen, 
   TrendingUp, Award, Clock, Building, Wifi, Utensils, Laptop, 
-  ArrowLeft, Home 
+  ArrowLeft, Home, Download, BarChart3, Target, Calendar,
+  Lightbulb, Cpu, Library, GraduationCap, PieChart,
+  Activity, Shield, Heart, 
 } from 'lucide-react';
+
 
 // Service compatível com os códigos da página do estado
 const DashboardService = {
   getDadosEscola: async (codigo_inep: string) => {
-    // Garante que o código tenha 8 dígitos (como na página do estado)
     const codigoLimpo = codigo_inep.replace(/\D/g, '').padStart(8, '0').slice(0, 8);
     
-    console.log('📊 Gerando dados para código INEP:', codigoLimpo);
-    
-    // Gera hash consistente baseado no código
     let hash = 0;
     for (let i = 0; i < codigoLimpo.length; i++) {
       hash = ((hash << 5) - hash) + codigoLimpo.charCodeAt(i);
@@ -23,7 +22,6 @@ const DashboardService = {
     }
     hash = Math.abs(hash);
     
-    // Lista de municípios compatível
     const municipios = [
       'São Paulo', 'Rio de Janeiro', 'Belo Horizonte', 'Porto Alegre', 'Salvador',
       'Fortaleza', 'Recife', 'Curitiba', 'Goiânia', 'Belém', 'Campinas', 'Santos',
@@ -34,13 +32,11 @@ const DashboardService = {
     const municipioIndex = hash % municipios.length;
     const municipio = municipios[municipioIndex];
     
-    // Determina tipo da escola baseado no último dígito
     const ultimoDigito = parseInt(codigoLimpo.slice(-1));
     let tipoEscola = 'Estadual';
     if (ultimoDigito === 2) tipoEscola = 'Municipal';
     if (ultimoDigito === 3) tipoEscola = 'Particular';
     
-    // Dados consistentes
     return {
       escola: {
         codigo_inep: codigoLimpo,
@@ -53,14 +49,18 @@ const DashboardService = {
         situacao: 'em funcionamento' as const,
         turno: ['diurno', 'integral'] as ('diurno' | 'noturno' | 'integral')[],
         municipio: municipio,
-        estado: ['SP', 'RJ', 'MG', 'RS', 'BA', 'CE', 'PE', 'PR', 'GO', 'PA'][hash % 10]
+        estado: ['SP', 'RJ', 'MG', 'RS', 'BA', 'CE', 'PE', 'PR', 'GO', 'PA'][hash % 10],
+        diretora: `Maria Silva ${municipio.split(' ')[0]}`
       },
       metricas: {
         alunos: 600 + (hash % 400),
         professores: 25 + (hash % 20),
         turmas: 12 + (hash % 10),
         ideb: 5.5 + (hash % 30) / 10,
-        salas: 18 + (hash % 15)
+        salas: 18 + (hash % 15),
+        aprovacao: 85 + (hash % 15),
+        frequencia: 90 + (hash % 8),
+        evasao: 2 + (hash % 5)
       },
       infraestrutura: {
         laboratorios: true,
@@ -69,6 +69,8 @@ const DashboardService = {
         computadores: 30 + (hash % 40),
         internet: true,
         alimentacao: true,
+        acessibilidade: hash % 2 === 0,
+        auditorio: hash % 4 === 0,
         cotas: {
           ppi: true,
           renda: true,
@@ -76,27 +78,32 @@ const DashboardService = {
         }
       },
       dadosTemporais: [
-        { ano: 2019, alunos: 500 + (hash % 300), ideb: 5.0 + (hash % 30) / 10, professores: 20 },
-        { ano: 2020, alunos: 525 + (hash % 300), ideb: 5.2 + (hash % 30) / 10, professores: 22 },
-        { ano: 2021, alunos: 550 + (hash % 300), ideb: 5.3 + (hash % 30) / 10, professores: 23 },
-        { ano: 2022, alunos: 575 + (hash % 300), ideb: 5.4 + (hash % 30) / 10, professores: 24 },
-        { ano: 2023, alunos: 600 + (hash % 300), ideb: 5.5 + (hash % 30) / 10, professores: 25 }
+        { ano: 2019, alunos: 500 + (hash % 300), ideb: 5.0 + (hash % 30) / 10, professores: 20, aprovacao: 80 },
+        { ano: 2020, alunos: 525 + (hash % 300), ideb: 5.2 + (hash % 30) / 10, professores: 22, aprovacao: 82 },
+        { ano: 2021, alunos: 550 + (hash % 300), ideb: 5.3 + (hash % 30) / 10, professores: 23, aprovacao: 83 },
+        { ano: 2022, alunos: 575 + (hash % 300), ideb: 5.4 + (hash % 30) / 10, professores: 24, aprovacao: 84 },
+        { ano: 2023, alunos: 600 + (hash % 300), ideb: 5.5 + (hash % 30) / 10, professores: 25, aprovacao: 85 }
       ],
       destaques: {
         melhor_indicador: "IDEB acima da média estadual",
         evolucao_destaque: "Crescimento de 12% no IDEB desde 2019",
         comparacao_municipal: 10 + (hash % 10),
-        comparacao_estadual: 5 + (hash % 8)
+        comparacao_estadual: 5 + (hash % 8),
+        pontos_fortes: [
+          "Infraestrutura moderna",
+          "Corpo docente qualificado",
+          "Projetos inovadores"
+        ]
       }
     };
   }
 };
 
-// Componente Header
+// Componente Header com tema correto
 function DashboardHeader({ escola, onBack }: { escola: any; onBack: () => void }) {
   return (
     <div className="bg-card border-b border-theme">
-      <div className="max-w-7xl mx-auto px-4 py-4">
+      <div className="container-responsive py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             <button 
@@ -183,20 +190,21 @@ function IdentificacaoEscola({ escola }: { escola: any }) {
   );
 }
 
-// Componente de Métricas
+// Componente de Métricas 
 function MetricasEscola({ metricas }: { metricas: any }) {
   const cards = [
     { icon: Users, label: 'Alunos', value: metricas.alunos, color: 'text-blue-500' },
     { icon: UserCheck, label: 'Professores', value: metricas.professores, color: 'text-green-500' },
     { icon: BookOpen, label: 'Turmas', value: metricas.turmas, color: 'text-purple-500' },
-    { icon: TrendingUp, label: 'IDEB', value: metricas.ideb, color: 'text-orange-500' },
-    { icon: Building, label: 'Salas', value: metricas.salas, color: 'text-indigo-500' }
+    { icon: TrendingUp, label: 'IDEB', value: metricas.ideb.toFixed(1), color: 'text-orange-500' },
+    { icon: Building, label: 'Salas', value: metricas.salas, color: 'text-indigo-500' },
+    { icon: Target, label: 'Aprovação', value: `${metricas.aprovacao}%`, color: 'text-emerald-500' }
   ];
 
   return (
     <div className="bg-card rounded-xl p-6 border border-theme shadow-sm">
       <h2 className="text-lg font-semibold text-text mb-4">Métricas da Escola</h2>
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
         {cards.map(({ icon: Icon, label, value, color }, index) => (
           <div key={index} className="text-center p-4 bg-card-alt rounded-lg border border-theme">
             <Icon className={`mx-auto mb-2 ${color}`} size={24} />
@@ -211,7 +219,7 @@ function MetricasEscola({ metricas }: { metricas: any }) {
   );
 }
 
-// Componente de Infraestrutura
+// Componente de Infraestrutura 
 function InfraestruturaEscola({ infraestrutura }: { infraestrutura: any }) {
   const itens = [
     { icon: Laptop, label: 'Laboratórios', disponivel: infraestrutura.laboratorios },
@@ -275,7 +283,7 @@ function InfraestruturaEscola({ infraestrutura }: { infraestrutura: any }) {
   );
 }
 
-// Componente de Análise Temporal
+// Componente de Análise Temporal 
 function AnaliseTemporal({ dadosTemporais }: { dadosTemporais: any[] }) {
   const [anoSelecionado, setAnoSelecionado] = useState(2023);
   const anos = dadosTemporais.map(d => d.ano);
@@ -325,7 +333,7 @@ function AnaliseTemporal({ dadosTemporais }: { dadosTemporais: any[] }) {
   );
 }
 
-// Componente de Destaques
+// Componente de Destaques 
 function DestaquesEscola({ destaques }: { destaques: any }) {
   return (
     <div className="bg-card rounded-xl p-6 border border-theme shadow-sm">
@@ -376,25 +384,19 @@ export default function DashboardEscola() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    console.log('🎯 Dashboard iniciado com código INEP:', codigo_inep);
-    
     async function carregarDados() {
       try {
         setLoading(true);
         setError(null);
         
-        // Validação do código INEP
         const codigoLimpo = codigo_inep.replace(/\D/g, '');
         if (codigoLimpo.length !== 8) {
           throw new Error(`Código INEP inválido: ${codigo_inep}`);
         }
         
-        console.log('📦 Buscando dados para escola...');
         const dadosEscola = await DashboardService.getDadosEscola(codigoLimpo);
-        console.log('✅ Dados carregados com sucesso:', dadosEscola);
         setDados(dadosEscola);
       } catch (error) {
-        console.error('❌ Erro ao carregar dados:', error);
         setError(error instanceof Error ? error.message : 'Erro desconhecido');
       } finally {
         setLoading(false);
@@ -411,7 +413,7 @@ export default function DashboardEscola() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background text-text flex items-center justify-center transition-colors duration-500">
+      <div className="min-h-screen bg-background text-text flex items-center justify-center">
         <div className="text-xl">Carregando dashboard da escola {codigo_inep}...</div>
       </div>
     );
@@ -419,7 +421,7 @@ export default function DashboardEscola() {
 
   if (error || !dados) {
     return (
-      <div className="min-h-screen bg-background text-text flex items-center justify-center transition-colors duration-500">
+      <div className="min-h-screen bg-background text-text flex items-center justify-center">
         <div className="text-center max-w-md">
           <div className="text-xl text-red-500 mb-4">Erro ao carregar dados da escola</div>
           <div className="text-gray-theme mb-6">{error}</div>
@@ -435,10 +437,10 @@ export default function DashboardEscola() {
   }
 
   return (
-    <main className="min-h-screen bg-background text-text transition-colors duration-500 overflow-x-hidden">
+    <main className="min-h-screen bg-background text-text overflow-x-hidden">
       <DashboardHeader escola={dados.escola} onBack={() => router.back()} />
       
-      <div className="max-w-7xl mx-auto px-4 py-8">
+      <div className="container-responsive py-8">
         <div className="mb-8">
           <IdentificacaoEscola escola={dados.escola} />
         </div>
@@ -452,18 +454,71 @@ export default function DashboardEscola() {
 
           <div className="space-y-8">
             <DestaquesEscola destaques={dados.destaques} />
-            
+
             <div className="bg-card rounded-xl p-6 border border-theme shadow-sm">
-              <h3 className="text-lg font-semibold text-text mb-4">Ações Rápidas</h3>
-              <div className="space-y-2">
-                <button className="w-full text-left p-3 hover:bg-card-alt rounded-lg transition-colors duration-200 text-text">
-                  📊 Comparar com outras escolas
+              <div className="flex items-center gap-3 mb-6">
+                <div className="p-2 bg-primary/10 rounded-lg">
+                  <TrendingUp className="text-primary" size={20} />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-text">Ações Rápidas</h3>
+                  <p className="text-sm text-gray-theme">Acesse funcionalidades principais</p>
+                </div>
+              </div>
+              
+              <div className="space-y-3">
+                {/* Comparar Escolas */}
+                <button className="w-full flex items-center gap-4 p-4 hover:bg-card-alt rounded-xl border border-theme transition-all duration-200 group hover:border-primary/30">
+                  <div className="p-2 bg-blue-100 rounded-lg group-hover:scale-110 transition-transform">
+                    <BarChart3 className="text-blue-500" size={20} />
+                  </div>
+                  <div className="flex-1 text-left">
+                    <div className="font-semibold text-text group-hover:text-primary transition-colors">
+                      Comparar com outras escolas
+                    </div>
+                    <div className="text-sm text-gray-theme mt-1">
+                      Análise de indicadores comparativos
+                    </div>
+                  </div>
+                  <div className="text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity">
+                    →
+                  </div>
                 </button>
-                <button className="w-full text-left p-3 hover:bg-card-alt rounded-lg transition-colors duration-200 text-text">
-                  📥 Baixar relatório
+
+                {/* Baixar Relatório */}
+                <button className="w-full flex items-center gap-4 p-4 hover:bg-card-alt rounded-xl border border-theme transition-all duration-200 group hover:border-primary/30">
+                  <div className="p-2 bg-green-100 rounded-lg group-hover:scale-110 transition-transform">
+                    <Download className="text-green-500" size={20} />
+                  </div>
+                  <div className="flex-1 text-left">
+                    <div className="font-semibold text-text group-hover:text-primary transition-colors">
+                      Baixar relatório
+                    </div>
+                    <div className="text-sm text-gray-theme mt-1">
+                      Exportar dados em PDF e Excel
+                    </div>
+                  </div>
+                  <div className="text-green-500 opacity-0 group-hover:opacity-100 transition-opacity">
+                    →
+                  </div>
                 </button>
-                <button className="w-full text-left p-3 hover:bg-card-alt rounded-lg transition-colors duration-200 text-text">
-                  📈 Ver histórico completo
+
+                {/* Histórico Completo */}
+                <button className="w-full flex items-center gap-4 p-4 hover:bg-card-alt rounded-xl border border-theme transition-all duration-200 group hover:border-primary/30">
+                  <div className="p-2 bg-purple-100 rounded-lg group-hover:scale-110 transition-transform">
+                    <TrendingUp className="text-purple-500" size={20} />
+                  </div>
+                  <div className="flex-1 text-left">
+                    <div className="font-semibold text-text group-hover:text-primary transition-colors">
+                      Ver histórico completo
+                    </div>
+                    <div className="text-sm text-gray-theme mt-1">
+                      Séries históricas desde 1995
+                    </div>
+                  </div>
+                  <div className="text-purple-500 opacity-0 group-hover:opacity-100 transition-opacity">
+                    →
+                  </div>
                 </button>
               </div>
             </div>
