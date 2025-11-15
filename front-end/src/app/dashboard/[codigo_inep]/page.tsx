@@ -288,45 +288,107 @@ function AnaliseTemporal({ dadosTemporais }: { dadosTemporais: any[] }) {
   const [anoSelecionado, setAnoSelecionado] = useState(2023);
   const anos = dadosTemporais.map(d => d.ano);
   const dadosAnoAtual = dadosTemporais.find(d => d.ano === anoSelecionado);
+
+  // Calcular evolução
+  const evolucaoAlunos = dadosAnoAtual ? 
+    ((dadosAnoAtual.alunos - dadosTemporais[0].alunos) / dadosTemporais[0].alunos * 100).toFixed(1) : 0;
   
+  const evolucaoIDEB = dadosAnoAtual ? 
+    (dadosAnoAtual.ideb - dadosTemporais[0].ideb).toFixed(1) : 0;
+
   return (
     <div className="bg-card rounded-xl p-6 border border-theme shadow-sm">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-semibold text-text">Análise Temporal</h2>
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-3">
+          <div className="p-2 bg-primary/10 rounded-lg">
+            <TrendingUp className="text-primary" size={20} />
+          </div>
+          <div>
+            <h2 className="text-lg font-semibold text-text">Análise Temporal</h2>
+            <p className="text-sm text-gray-theme">Evolução dos indicadores 2019-2023</p>
+          </div>
+        </div>
+        
         <select 
           value={anoSelecionado}
           onChange={(e) => setAnoSelecionado(Number(e.target.value))}
-          className="bg-card-alt border border-theme rounded-lg px-3 py-2 text-text focus:outline-none focus:ring-2 focus:ring-primary transition-colors duration-200"
+          className="bg-card-alt border border-theme rounded-lg px-3 py-2 text-text text-sm focus:outline-none focus:ring-2 focus:ring-primary transition-colors duration-200"
         >
           {anos.map(ano => (
             <option key={ano} value={ano}>{ano}</option>
           ))}
         </select>
       </div>
-      
-      <div className="bg-card-alt rounded-lg p-4 border border-theme">
-        <div className="text-center text-gray-theme mb-4">
-          📊 Gráfico de evolução será implementado aqui
+
+      {/* Visualização Simples de Evolução */}
+      <div className="bg-card-alt rounded-lg p-4 border border-theme mb-6">
+        <div className="flex items-center justify-between mb-4">
+          <span className="text-sm font-medium text-text">Evolução do IDEB</span>
+          <span className={`text-sm font-medium ${Number(evolucaoIDEB) > 0 ? 'text-green-500' : 'text-red-500'}`}>
+            {Number(evolucaoIDEB) > 0 ? '+' : ''}{evolucaoIDEB} pontos
+          </span>
         </div>
-        <div className="mt-4 grid grid-cols-3 gap-4 text-center">
-          <div>
-            <div className="text-2xl font-bold text-text">
-              {dadosAnoAtual?.alunos.toLocaleString('pt-BR')}
+        
+        {/* Gráfico simplificado com barras */}
+        <div className="space-y-2">
+          {dadosTemporais.map((item, index) => (
+            <div key={item.ano} className="flex items-center gap-3">
+              <span className="text-xs text-gray-theme w-8">{item.ano}</span>
+              <div className="flex-1 bg-gray-200 rounded-full h-3">
+                <div 
+                  className="h-3 rounded-full bg-primary transition-all duration-500"
+                  style={{ 
+                    width: `${(item.ideb / 10) * 100}%` 
+                  }}
+                ></div>
+              </div>
+              <span className="text-xs font-medium text-text w-8">{item.ideb.toFixed(1)}</span>
             </div>
-            <div className="text-sm text-gray-theme">Alunos</div>
+          ))}
+        </div>
+      </div>
+
+      {/* Métricas do Ano Selecionado */}
+      <div className="grid grid-cols-3 gap-4">
+        <div className="text-center p-4 bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg border border-blue-200">
+          <div className="text-2xl font-bold text-blue-600">
+            {dadosAnoAtual?.alunos.toLocaleString('pt-BR')}
           </div>
-          <div>
-            <div className="text-2xl font-bold text-text">
-              {dadosAnoAtual?.ideb}
-            </div>
-            <div className="text-sm text-gray-theme">IDEB</div>
+          <div className="text-sm text-blue-700 font-medium">Alunos</div>
+          <div className={`text-xs mt-1 ${Number(evolucaoAlunos) > 0 ? 'text-green-600' : 'text-red-600'}`}>
+            {Number(evolucaoAlunos) > 0 ? '+' : ''}{evolucaoAlunos}%
           </div>
-          <div>
-            <div className="text-2xl font-bold text-text">
-              {dadosAnoAtual?.professores.toLocaleString('pt-BR')}
-            </div>
-            <div className="text-sm text-gray-theme">Professores</div>
+        </div>
+        
+        <div className="text-center p-4 bg-gradient-to-br from-green-50 to-green-100 rounded-lg border border-green-200">
+          <div className="text-2xl font-bold text-green-600">
+            {dadosAnoAtual?.ideb.toFixed(1)}
           </div>
+          <div className="text-sm text-green-700 font-medium">IDEB</div>
+          <div className={`text-xs mt-1 ${Number(evolucaoIDEB) > 0 ? 'text-green-600' : 'text-red-600'}`}>
+            {Number(evolucaoIDEB) > 0 ? '+' : ''}{evolucaoIDEB} pts
+          </div>
+        </div>
+        
+        <div className="text-center p-4 bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg border border-purple-200">
+          <div className="text-2xl font-bold text-purple-600">
+            {dadosAnoAtual?.professores.toLocaleString('pt-BR')}
+          </div>
+          <div className="text-sm text-purple-700 font-medium">Professores</div>
+          <div className="text-xs text-purple-600 mt-1">
+            +{dadosAnoAtual ? dadosAnoAtual.professores - dadosTemporais[0].professores : 0}
+          </div>
+        </div>
+      </div>
+
+      {/* Legenda */}
+      <div className="mt-4 p-3 bg-primary/5 rounded-lg border border-primary/20">
+        <div className="flex items-center gap-2 text-sm">
+          <TrendingUp size={16} className="text-primary" />
+          <span className="text-text font-medium">Tendência:</span>
+          <span className="text-gray-theme">
+            {Number(evolucaoIDEB) > 0 ? 'Crescimento positivo' : 'Estabilidade'} nos indicadores
+          </span>
         </div>
       </div>
     </div>
