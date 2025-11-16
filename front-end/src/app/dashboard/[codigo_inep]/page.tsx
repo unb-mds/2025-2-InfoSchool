@@ -28,6 +28,280 @@ import {
 
 
 // Service compatível com os códigos da página do estado
+const generatePDF = (escola: any, metricas: any, infraestrutura: any, destaques: any, dadosTemporais: any[]) => {
+  const baseUrl = window.location.origin;
+  const now = new Date();
+  const dataHora = now.toLocaleDateString('pt-BR') + ' às ' + now.toLocaleTimeString('pt-BR');
+  
+  // Template HTML do PDF
+  const content = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="UTF-8">
+      <title>Relatório Completo - ${escola.nome}</title>
+      <style>
+        body { 
+          font-family: Arial, sans-serif; 
+          margin: 40px; 
+          color: #333;
+          background: white;
+        }
+        .header { 
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          border-bottom: 2px solid #2C80FF; 
+          padding-bottom: 20px; 
+          margin-bottom: 30px;
+        }
+        .logo-container {
+          display: flex;
+          align-items: center;
+          gap: 15px;
+        }
+        .logo-text { 
+          font-size: 24px; 
+          font-weight: bold; 
+          color: #2C80FF; 
+        }
+        .school-name { 
+          font-size: 20px; 
+          font-weight: bold; 
+          margin: 5px 0; 
+        }
+        .report-title {
+          font-size: 18px;
+          font-weight: bold;
+          color: #2C80FF;
+          margin: 10px 0;
+        }
+        .section { 
+          margin: 25px 0; 
+        }
+        .section-title { 
+          font-size: 16px; 
+          font-weight: bold; 
+          color: #2C80FF; 
+          margin-bottom: 10px;
+          border-bottom: 1px solid #2C80FF;
+          padding-bottom: 5px;
+        }
+        .info-grid { 
+          display: grid; 
+          grid-template-columns: 1fr 1fr; 
+          gap: 15px; 
+          margin-top: 10px;
+        }
+        .footer { 
+          margin-top: 40px; 
+          text-align: center; 
+          font-size: 12px; 
+          color: #666; 
+          border-top: 1px solid #2C80FF;
+          padding-top: 20px;
+        }
+        table { 
+          width: 100%; 
+          border-collapse: collapse; 
+          margin: 10px 0; 
+        }
+        th, td { 
+          border: 1px solid #2C80FF; 
+          padding: 8px; 
+          text-align: left; 
+        }
+        th { 
+          background-color: #2C80FF; 
+          color: white;
+          font-weight: bold;
+        }
+        .actions {
+          text-align: center;
+          margin: 30px 0;
+          padding: 20px;
+          background: #f8f9fa;
+          border-radius: 10px;
+          border: 2px solid #2C80FF;
+        }
+        .print-btn {
+          background: #2C80FF;
+          color: white;
+          border: none;
+          padding: 12px 24px;
+          border-radius: 6px;
+          cursor: pointer;
+          font-size: 16px;
+          font-weight: bold;
+          margin: 0 10px;
+        }
+        .close-btn {
+          background: #6c757d;
+          color: white;
+          border: none;
+          padding: 12px 24px;
+          border-radius: 6px;
+          cursor: pointer;
+          font-size: 16px;
+          font-weight: bold;
+          margin: 0 10px;
+        }
+        @media print {
+          .actions {
+            display: none;
+          }
+        }
+      </style>
+    </head>
+    <body>
+      <div class="actions">
+        <h3>Relatório Gerado com Sucesso! 📄</h3>
+        <p>Use o botão abaixo para imprimir ou salvar como PDF</p>
+        <button class="print-btn" onclick="window.print()">
+          🖨️ Imprimir/Salvar PDF
+        </button>
+        <button class="close-btn" onclick="window.close()">
+          ❌ Fechar Esta Aba
+        </button>
+      </div>
+
+      <div class="header">
+        <div class="logo-container">
+          <div class="logo-text">InfoSchool</div>
+        </div>
+        <div class="school-info">
+          <div class="school-name">${escola.nome}</div>
+          <div class="report-title">Relatório Completo da Escola</div>
+          <div>Gerado em: ${dataHora}</div>
+        </div>
+      </div>
+
+      <!-- DADOS DA ESCOLA -->
+      <div class="section">
+        <div class="section-title">Informações da Escola</div>
+        <div class="info-grid">
+          <div><strong>Código INEP:</strong> ${escola.codigo_inep}</div>
+          <div><strong>Rede:</strong> ${escola.rede}</div>
+          <div><strong>Município:</strong> ${escola.municipio}</div>
+          <div><strong>Estado:</strong> ${escola.estado}</div>
+          <div><strong>Endereço:</strong> ${escola.endereco}</div>
+          <div><strong>Telefone:</strong> ${escola.telefone}</div>
+          <div><strong>Email:</strong> ${escola.email}</div>
+          <div><strong>Situação:</strong> ${escola.situacao}</div>
+          <div><strong>Turnos:</strong> ${escola.turno.join(', ')}</div>
+        </div>
+      </div>
+
+      <!-- MÉTRICAS -->
+      <div class="section">
+        <div class="section-title">Métricas Principais</div>
+        <table>
+          <tr>
+            <th>Indicador</th>
+            <th>Valor</th>
+          </tr>
+          <tr><td>Total de Alunos</td><td>${metricas.alunos.toLocaleString('pt-BR')}</td></tr>
+          <tr><td>Professores</td><td>${metricas.professores.toLocaleString('pt-BR')}</td></tr>
+          <tr><td>Turmas</td><td>${metricas.turmas.toLocaleString('pt-BR')}</td></tr>
+          <tr><td>Salas de Aula</td><td>${metricas.salas.toLocaleString('pt-BR')}</td></tr>
+          <tr><td>Nota IDEB</td><td>${metricas.ideb.toFixed(1)}</td></tr>
+          <tr><td>Taxa de Aprovação</td><td>${metricas.aprovacao}%</td></tr>
+          <tr><td>Frequência Média</td><td>${metricas.frequencia}%</td></tr>
+          <tr><td>Taxa de Evasão</td><td>${metricas.evasao}%</td></tr>
+        </table>
+      </div>
+
+      <!-- INFRAESTRUTURA -->
+      <div class="section">
+        <div class="section-title">Infraestrutura</div>
+        <table>
+          <tr>
+            <th>Recurso</th>
+            <th>Disponibilidade</th>
+          </tr>
+          <tr><td>Laboratórios</td><td>${infraestrutura.laboratorios ? '✅ Disponível' : '❌ Indisponível'}</td></tr>
+          <tr><td>Biblioteca</td><td>${infraestrutura.biblioteca ? '✅ Disponível' : '❌ Indisponível'}</td></tr>
+          <tr><td>Quadra Esportiva</td><td>${infraestrutura.quadra ? '✅ Disponível' : '❌ Indisponível'}</td></tr>
+          <tr><td>Internet</td><td>${infraestrutura.internet ? '✅ Disponível' : '❌ Indisponível'}</td></tr>
+          <tr><td>Alimentação</td><td>${infraestrutura.alimentacao ? '✅ Disponível' : '❌ Indisponível'}</td></tr>
+          <tr><td>Acessibilidade</td><td>${infraestrutura.acessibilidade ? '✅ Disponível' : '❌ Indisponível'}</td></tr>
+          <tr><td>Auditório</td><td>${infraestrutura.auditorio ? '✅ Disponível' : '❌ Indisponível'}</td></tr>
+          <tr><td>Computadores</td><td>${infraestrutura.computadores.toLocaleString('pt-BR')} unidades</td></tr>
+        </table>
+      </div>
+
+      <!-- SISTEMA DE COTAS -->
+      <div class="section">
+        <div class="section-title">Sistema de Cotas</div>
+        <table>
+          <tr>
+            <th>Tipo de Cota</th>
+            <th>Disponível</th>
+          </tr>
+          <tr><td>PPI (Pretos, Pardos e Indígenas)</td><td>${infraestrutura.cotas.ppi ? '✅ Sim' : '❌ Não'}</td></tr>
+          <tr><td>Baixa Renda</td><td>${infraestrutura.cotas.renda ? '✅ Sim' : '❌ Não'}</td></tr>
+          <tr><td>PCD (Pessoas com Deficiência)</td><td>${infraestrutura.cotas.pcd ? '✅ Sim' : '❌ Não'}</td></tr>
+        </table>
+      </div>
+
+      <!-- DESTAQUES -->
+      <div class="section">
+        <div class="section-title">Destaques e Indicadores</div>
+        <div class="info-grid">
+          <div><strong>Melhor Indicador:</strong><br>${destaques.melhor_indicador}</div>
+          <div><strong>Evolução Destacada:</strong><br>${destaques.evolucao_destaque}</div>
+          <div><strong>Comparação Municipal:</strong><br>+${destaques.comparacao_municipal}% acima da média</div>
+          <div><strong>Comparação Estadual:</strong><br>+${destaques.comparacao_estadual}% acima da média</div>
+        </div>
+        
+        <div style="margin-top: 15px;">
+          <strong>Pontos Fortes:</strong>
+          <ul>
+            ${destaques.pontos_fortes.map((ponto: string) => `<li>${ponto}</li>`).join('')}
+        </ul>
+        </div>
+      </div>
+
+      <!-- EVOLUÇÃO TEMPORAL -->
+      <div class="section">
+        <div class="section-title">Evolução Temporal (2019-2023)</div>
+        <table>
+          <tr>
+            <th>Ano</th>
+            <th>Alunos</th>
+            <th>IDEB</th>
+            <th>Professores</th>
+            <th>Aprovação</th>
+          </tr>
+          ${dadosTemporais.map(item => `
+            <tr>
+              <td>${item.ano}</td>
+              <td>${item.alunos.toLocaleString('pt-BR')}</td>
+              <td>${item.ideb.toFixed(1)}</td>
+              <td>${item.professores.toLocaleString('pt-BR')}</td>
+              <td>${item.aprovacao}%</td>
+            </tr>
+          `).join('')}
+        </table>
+      </div>
+
+      <div class="footer">
+        <div>Fonte: Censo Escolar - INEP/MEC</div>
+        <div>InfoSchool - Plataforma de Consulta Educacional</div>
+        <div>Relatório gerado automaticamente pelo sistema</div>
+      </div>
+    </body>
+    </html>
+  `;
+
+  // Abre em NOVA ABA (não substitui a atual)
+  const newTab = window.open('', '_blank');
+  if (newTab) {
+    newTab.document.write(content);
+    newTab.document.close();
+  }
+};
+
 const DashboardService = {
   getDadosEscola: async (codigo_inep: string) => {
     const codigoLimpo = codigo_inep.replace(/\D/g, '').padStart(8, '0').slice(0, 8);
@@ -837,42 +1111,48 @@ export default function DashboardEscola() {
                   </div>
                 </a>
 
-                {/* EXPORTAR RELATORIO */}
-                <button
-                  onClick={() => {
-                    if (confirm("Deseja baixar o relatório completo em PDF?")) {
-                      console.log("Baixando relatório...");
-                    }
-                  }}
-                  className="
-                    w-full flex items-center gap-3 sm:gap-4 
-                    p-3 sm:p-4 cursor-pointer
-                    bg-card-alt 
-                    rounded-xl 
-                    border border-theme
-                    transition-all duration-200 
-                    hover:bg-black/10 dark:hover:bg-white/10
-                    hover:shadow-md 
-                    group
-                  "
-                >
-                  <div className="p-2 bg-green-100 rounded-lg group-hover:scale-110 transition-transform duration-200 flex-shrink-0">
-                    <Download className="text-green-500 w-5 h-5 sm:w-6 sm:h-6" />
-                  </div>
-
-                  <div className="flex-1 text-left min-w-0">
-                    <div className="font-semibold text-text text-sm sm:text-base group-hover:text-green-500 transition-colors">
-                      Exportar relatório
+                {/* EXPORTAR RELATORIO - ATUALIZADO */}
+                  <button
+                    onClick={() => {
+                      if (confirm("Deseja gerar o relatório completo em PDF?\n\nO relatório será aberto em uma nova aba para impressão.")) {
+                        generatePDF(
+                          dados.escola, 
+                          dados.metricas, 
+                          dados.infraestrutura, 
+                          dados.destaques, 
+                          dados.dadosTemporais
+                        );
+                      }
+                    }}
+                    className="
+                      w-full flex items-center gap-3 sm:gap-4 
+                      p-3 sm:p-4 cursor-pointer
+                      bg-card-alt 
+                      rounded-xl 
+                      border border-theme
+                      transition-all duration-200 
+                      hover:bg-black/10 dark:hover:bg-white/10
+                      hover:shadow-md 
+                      group
+                    "
+                  >
+                    <div className="p-2 bg-green-100 rounded-lg group-hover:scale-110 transition-transform duration-200 flex-shrink-0">
+                      <Download className="text-green-500 w-5 h-5 sm:w-6 sm:h-6" />
                     </div>
-                    <div className="text-gray-theme mt-1 text-xs sm:text-sm">
-                      PDF e Excel com dados completos
-                    </div>
-                  </div>
 
-                  <div className="text-green-500 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex-shrink-0">
-                    ↓
-                  </div>
-                </button>
+                    <div className="flex-1 text-left min-w-0">
+                      <div className="font-semibold text-text text-sm sm:text-base group-hover:text-green-500 transition-colors">
+                        Exportar relatório
+                      </div>
+                      <div className="text-gray-theme mt-1 text-xs sm:text-sm">
+                        PDF completo com todos os dados
+                      </div>
+                    </div>
+
+                    <div className="text-green-500 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex-shrink-0">
+                      📄
+                    </div>
+                  </button>
 
                 {/* HISTÓRICO COMPLETO */}
                 <button
