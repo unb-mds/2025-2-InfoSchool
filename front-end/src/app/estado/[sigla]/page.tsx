@@ -353,9 +353,9 @@ export default function PaginaEstado({ params }: PageProps) {
   return (
     <main className="min-h-screen bg-background text-text transition-all duration-500 overflow-x-hidden">
       <div className="max-w-[95%] sm:max-w-[90%] md:max-w-[80%] mx-auto px-3 sm:px-4 py-6 md:py-16">
-        <div className={`flex flex-col ${isMobile ? 'gap-8' : 'lg:grid lg:grid-cols-2 lg:gap-12'} min-h-[70vh] items-center justify-center transition-colors duration-500`}>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 min-h-[70vh] items-center">
           
-          <div className={`flex flex-col items-center ${isMobile ? 'w-full order-1' : 'lg:items-start justify-center'} h-full transition-colors duration-500`}>
+          <div className="flex flex-col items-center lg:items-start justify-center h-full">
             <div className="w-full max-w-md relative">
               
               <div className="relative">

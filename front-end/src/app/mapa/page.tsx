@@ -99,14 +99,8 @@ export default function MapaPage() {
       `}</style>
       
       <main className="min-h-screen bg-background text-text transition-all duration-500 overflow-x-hidden">
-        <div className={`max-w-[95%] sm:max-w-[90%] md:max-w-[85%] lg:max-w-[80%] mx-auto px-3 sm:px-4 ${
-          isSmallMobile || isMediumMobile ? 'py-4' : 'py-6 md:py-16'
-        }`}>
-          <div className={`flex flex-col ${
-            isSmallMobile || isMediumMobile ? 'gap-4' : 
-            isTablet ? 'gap-8' : 
-            'lg:grid lg:grid-cols-2 lg:gap-12'
-          } min-h-[70vh] items-center justify-center`}>
+        <div className="max-w-[95%] sm:max-w-[90%] md:max-w-[80%] mx-auto px-3 sm:px-4 py-6 md:py-16">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 min-h-[70vh] items-center">
             
             <div className="flex flex-col items-center lg:items-start justify-center h-full">
               <div className="w-full max-w-md relative">
@@ -136,6 +130,8 @@ export default function MapaPage() {
                     }}
                   />
                 </div>
+
+                <div className="h-35 mt-6"></div>
 
                 {showSuggestions && (
                   <div className="absolute top-full left-0 right-0 mt-2 max-h-60 overflow-y-auto overflow-x-hidden z-50 shadow-theme bg-card border border-theme rounded-lg transition-all duration-500">
@@ -169,7 +165,6 @@ export default function MapaPage() {
               </div>
             </div>
             
-            {/* Mapa do Brasil */}
             <div className="flex items-center justify-end h-full w-full overflow-visible">
               <div className={`relative h-full flex items-center justify-center overflow-visible ${
                 isSmallMobile 
