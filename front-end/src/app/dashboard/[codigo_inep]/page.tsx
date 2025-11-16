@@ -271,15 +271,41 @@ function MetricasEscola({ metricas }: { metricas: any }) {
   ];
 
   return (
-    <div className="bg-card rounded-xl p-4 sm:p-6 border border-theme shadow-sm">
+            <div
+          className="
+            bg-card 
+            rounded-2xl 
+            p-4 sm:p-6 
+            border border-white/10 
+            shadow-[0_0_20px_-5px_rgba(0,0,0,0.35)]
+            backdrop-blur-sm
+            transition-all duration-300
+            hover:shadow-[0_0_35px_-5px_rgba(0,0,0,0.55)]
+            hover:bg-card/80 
+          "
+        >
+
+
       <h2 className="text-lg font-semibold text-text mb-4">Métricas da Escola</h2>
+
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
         {cards.map(({ icon: Icon, label, value, color }, index) => (
-          <div key={index} className="text-center p-3 sm:p-4 bg-card-alt rounded-lg border border-theme">
+          <div
+            key={index}
+            className="
+              text-center p-3 sm:p-4 rounded-lg border border-theme bg-card-alt
+              transition-all duration-300 
+              hover:scale-[1.05] 
+              hover:bg-card 
+              hover:shadow-lg
+            "
+          >
             <Icon className={`mx-auto mb-1 sm:mb-2 ${color} w-5 h-5 sm:w-6 sm:h-6`} />
+
             <div className="text-lg sm:text-xl lg:text-2xl font-bold text-text">
               {typeof value === 'number' ? value.toLocaleString('pt-BR') : value}
             </div>
+
             <div className="text-xs sm:text-sm text-gray-theme mt-1">{label}</div>
           </div>
         ))}
@@ -288,60 +314,111 @@ function MetricasEscola({ metricas }: { metricas: any }) {
   );
 }
 
+
+
 // Componente de Infraestrutura - MANTIDO
 function InfraestruturaEscola({ infraestrutura }: { infraestrutura: any }) {
   const itens = [
-    { icon: Laptop, label: 'Laboratórios', disponivel: infraestrutura.laboratorios },
-    { icon: BookOpen, label: 'Biblioteca', disponivel: infraestrutura.biblioteca },
-    { icon: Building, label: 'Quadra', disponivel: infraestrutura.quadra },
-    { icon: Wifi, label: 'Internet', disponivel: infraestrutura.internet },
-    { icon: Utensils, label: 'Alimentação', disponivel: infraestrutura.alimentacao }
+    { icon: Laptop, label: "Laboratórios", disponivel: infraestrutura.laboratorios },
+    { icon: BookOpen, label: "Biblioteca", disponivel: infraestrutura.biblioteca },
+    { icon: Building, label: "Quadra", disponivel: infraestrutura.quadra },
+    { icon: Wifi, label: "Internet", disponivel: infraestrutura.internet },
+    { icon: Utensils, label: "Alimentação", disponivel: infraestrutura.alimentacao }
   ];
 
   return (
-    <div className="bg-card rounded-xl p-4 sm:p-6 border border-theme shadow-sm">
+    <div
+      className="
+        bg-card 
+        rounded-2xl 
+        p-4 sm:p-6 
+        border border-white/10 
+        shadow-[0_0_20px_-5px_rgba(0,0,0,0.35)]
+        backdrop-blur-sm
+        transition-all duration-300
+        hover:shadow-[0_0_35px_-5px_rgba(0,0,0,0.55)]
+        hover:bg-card/80
+      "
+    >
       <h2 className="text-lg font-semibold text-text mb-4">Infraestrutura</h2>
+
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
         {itens.map(({ icon: Icon, label, disponivel }, index) => (
-          <div key={index} className="text-center p-3 sm:p-4 bg-card-alt rounded-lg border border-theme">
-            <Icon 
-              className={`mx-auto mb-1 sm:mb-2 ${disponivel ? 'text-green-500' : 'text-red-400'} w-5 h-5 sm:w-6 sm:h-6`} 
+          <div
+            key={index}
+            className="
+              text-center p-3 sm:p-4 bg-card-alt rounded-lg border border-theme
+              transition-all duration-300
+              hover:bg-card 
+              hover:shadow-md
+            "
+          >
+            <Icon
+              className={`mx-auto mb-1 sm:mb-2 ${
+                disponivel ? "text-green-500" : "text-red-400"
+              } w-5 h-5 sm:w-6 sm:h-6`}
             />
-            <div className={`text-xs sm:text-sm font-medium ${disponivel ? 'text-text' : 'text-gray-theme'}`}>
+
+            <div
+              className={`text-xs sm:text-sm font-medium ${
+                disponivel ? "text-text" : "text-gray-theme"
+              }`}
+            >
               {label}
             </div>
-            <div className={`text-xs ${disponivel ? 'text-green-500' : 'text-red-400'}`}>
-              {disponivel ? 'Disponível' : 'Indisponível'}
+
+            <div className={`text-xs ${disponivel ? "text-green-500" : "text-red-400"}`}>
+              {disponivel ? "Disponível" : "Indisponível"}
             </div>
           </div>
         ))}
       </div>
-      
-      <div className="mt-4 p-3 sm:p-4 bg-card-alt rounded-lg border border-theme">
+
+      <div
+        className="
+          mt-4 p-3 sm:p-4 bg-card-alt rounded-lg border border-theme
+          transition-all duration-300
+          hover:bg-card 
+          hover:shadow-md
+        "
+      >
         <div className="flex flex-col xs:flex-row xs:items-center xs:justify-between gap-2">
           <div className="flex items-center gap-2">
             <Laptop className="text-blue-500 w-5 h-5" />
             <span className="text-sm font-medium text-text">Computadores para alunos</span>
           </div>
-          <span className="text-lg font-bold text-text">{infraestrutura.computadores.toLocaleString('pt-BR')}</span>
+
+          <span className="text-lg font-bold text-text">
+            {infraestrutura.computadores.toLocaleString("pt-BR")}
+          </span>
         </div>
       </div>
 
-      <div className="mt-4">
-        <h3 className="text-md font-semibold text-text mb-2">Sistema de Cotas</h3>
+      <div className="mt-4 p-4 bg-card-alt rounded-lg border border-theme shadow-sm 
+                hover:bg-black/5 dark:hover:bg-white/5 transition-all">
+        <div className="flex items-center gap-2 mb-3">
+          <Target className="text-purple-500 w-5 h-5" />
+          <h3 className="text-md font-semibold text-text">Sistema de Cotas</h3>
+        </div>
+
         <div className="flex flex-wrap gap-2">
           {infraestrutura.cotas.ppi && (
-            <span className="bg-purple-100 text-purple-800 px-2 py-1 rounded-full text-xs">
+            <span className="px-3 py-1 rounded-full text-xs font-medium
+                            bg-purple-500/10 text-purple-400 border border-purple-500/20">
               PPI
             </span>
           )}
+
           {infraestrutura.cotas.renda && (
-            <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs">
+            <span className="px-3 py-1 rounded-full text-xs font-medium
+                            bg-blue-500/10 text-blue-400 border border-blue-500/20">
               Renda
             </span>
           )}
+
           {infraestrutura.cotas.pcd && (
-            <span className="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs">
+            <span className="px-3 py-1 rounded-full text-xs font-medium
+                            bg-green-500/10 text-green-400 border border-green-500/20">
               PCD
             </span>
           )}
@@ -351,13 +428,13 @@ function InfraestruturaEscola({ infraestrutura }: { infraestrutura: any }) {
   );
 }
 
+
 // Componente de Análise Temporal - MELHORADO COM CARDS LADO A LADO
 function AnaliseTemporal({ dadosTemporais }: { dadosTemporais: any[] }) {
   const [anoSelecionado, setAnoSelecionado] = useState(2023);
   const anos = dadosTemporais.map(d => d.ano);
   const dadosAnoAtual = dadosTemporais.find(d => d.ano === anoSelecionado);
 
-  // Calcular evolução
   const evolucaoAlunos = dadosAnoAtual ? 
     ((dadosAnoAtual.alunos - dadosTemporais[0].alunos) / dadosTemporais[0].alunos * 100).toFixed(1) : 0;
   
@@ -368,18 +445,19 @@ function AnaliseTemporal({ dadosTemporais }: { dadosTemporais: any[] }) {
     ((dadosAnoAtual.professores - dadosTemporais[0].professores) / dadosTemporais[0].professores * 100).toFixed(1) : 0;
 
   return (
-    <div id="analise-temporal" className="bg-card rounded-xl p-4 sm:p-6 border border-theme shadow-sm">
+    <div
+      id="analise-temporal"
+      className="bg-card rounded-xl p-4 sm:p-6 border border-theme shadow-[0_0_25px_-6px_rgba(0,0,0,0.45)] transition-all"
+    >
       <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 sm:mb-6 gap-3">
         <div className="flex items-center gap-3">
-          <div className="p-2 bg-primary/10 rounded-lg">
-            <TrendingUp className="text-primary w-5 h-5 sm:w-6 sm:h-6" />
-          </div>
+          <TrendingUp className="text-primary w-5 h-5 sm:w-6 sm:h-6" />
+
           <div>
             <h2 className="text-lg font-semibold text-text">Análise Temporal</h2>
             <p className="text-sm text-gray-theme">Evolução dos indicadores 2019-2023</p>
           </div>
         </div>
-        
         <select 
           value={anoSelecionado}
           onChange={(e) => setAnoSelecionado(Number(e.target.value))}
@@ -391,18 +469,17 @@ function AnaliseTemporal({ dadosTemporais }: { dadosTemporais: any[] }) {
         </select>
       </div>
 
-      {/* Gráfico de Evolução - MELHORADO */}
-      <div className="bg-card-alt rounded-lg p-3 sm:p-4 border border-theme mb-4 sm:mb-6">
+      {/* Gráfico de Evolução */}
+      <div className="bg-card-alt rounded-lg p-4 border border-theme shadow-inner hover:bg-black/5 dark:hover:bg-white/5 transition-all mb-6">
         <div className="flex items-center justify-between mb-4">
           <span className="text-sm font-medium text-text">Evolução do IDEB (2019-2023)</span>
           <span className={`text-sm font-medium ${Number(evolucaoIDEB) > 0 ? 'text-green-500' : 'text-red-500'}`}>
             {Number(evolucaoIDEB) > 0 ? '+' : ''}{evolucaoIDEB} pontos
           </span>
         </div>
-        
-        {/* Gráfico simplificado com barras lado a lado */}
+
         <div className="flex items-end justify-between gap-2 h-32">
-          {dadosTemporais.map((item, index) => (
+          {dadosTemporais.map((item) => (
             <div key={item.ano} className="flex flex-col items-center flex-1">
               <div 
                 className="w-full bg-primary rounded-t-lg transition-all duration-500 hover:bg-primary/80 cursor-pointer"
@@ -416,64 +493,68 @@ function AnaliseTemporal({ dadosTemporais }: { dadosTemporais: any[] }) {
         </div>
       </div>
 
-      {/* Métricas do Ano Selecionado - CARDS LADO A LADO */}
+      {/* Cards de Métricas – Com o Tema Antigo */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-4 border border-blue-200">
+        
+        {/* Alunos */}
+        <div className="bg-card-alt rounded-xl p-4 border border-theme shadow-[0_0_20px_-5px_rgba(0,0,0,0.45)] transition-all">
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-2">
               <Users className="text-blue-500 w-5 h-5" />
-              <span className="font-semibold text-blue-800">Alunos</span>
+              <span className="font-semibold text-text">Alunos</span>
             </div>
-            <span className={`text-sm font-medium ${Number(evolucaoAlunos) > 0 ? 'text-green-600' : 'text-red-600'}`}>
+            <span className={`text-sm font-medium ${Number(evolucaoAlunos) > 0 ? 'text-green-500' : 'text-red-500'}`}>
               {Number(evolucaoAlunos) > 0 ? '+' : ''}{evolucaoAlunos}%
             </span>
           </div>
-          <div className="text-2xl font-bold text-blue-600 mb-1">
+          <div className="text-2xl font-bold text-text mb-1">
             {dadosAnoAtual?.alunos.toLocaleString('pt-BR')}
           </div>
-          <div className="text-xs text-blue-700">
+          <div className="text-xs text-gray-theme">
             vs 2019: {dadosTemporais[0]?.alunos.toLocaleString('pt-BR')}
           </div>
         </div>
-        
-        <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-4 border border-green-200">
+
+        {/* IDEB */}
+        <div className="bg-card-alt rounded-xl p-4 border border-theme shadow-[0_0_20px_-5px_rgba(0,0,0,0.45)] transition-all">
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-2">
               <TrendingUp className="text-green-500 w-5 h-5" />
-              <span className="font-semibold text-green-800">IDEB</span>
+              <span className="font-semibold text-text">IDEB</span>
             </div>
-            <span className={`text-sm font-medium ${Number(evolucaoIDEB) > 0 ? 'text-green-600' : 'text-red-600'}`}>
+            <span className={`text-sm font-medium ${Number(evolucaoIDEB) > 0 ? 'text-green-500' : 'text-red-500'}`}>
               {Number(evolucaoIDEB) > 0 ? '+' : ''}{evolucaoIDEB} pts
             </span>
           </div>
-          <div className="text-2xl font-bold text-green-600 mb-1">
+          <div className="text-2xl font-bold text-text mb-1">
             {dadosAnoAtual?.ideb.toFixed(1)}
           </div>
-          <div className="text-xs text-green-700">
+          <div className="text-xs text-gray-theme">
             vs 2019: {dadosTemporais[0]?.ideb.toFixed(1)}
           </div>
         </div>
-        
-        <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-4 border border-purple-200">
+
+        {/* Professores */}
+        <div className="bg-card-alt rounded-xl p-4 border border-theme shadow-[0_0_20px_-5px_rgba(0,0,0,0.45)] transition-all">
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-2">
               <UserCheck className="text-purple-500 w-5 h-5" />
-              <span className="font-semibold text-purple-800">Professores</span>
+              <span className="font-semibold text-text">Professores</span>
             </div>
-            <span className={`text-sm font-medium ${Number(evolucaoProfessores) > 0 ? 'text-green-600' : 'text-red-600'}`}>
+            <span className={`text-sm font-medium ${Number(evolucaoProfessores) > 0 ? 'text-green-500' : 'text-red-500'}`}>
               {Number(evolucaoProfessores) > 0 ? '+' : ''}{evolucaoProfessores}%
             </span>
           </div>
-          <div className="text-2xl font-bold text-purple-600 mb-1">
+          <div className="text-2xl font-bold text-text mb-1">
             {dadosAnoAtual?.professores.toLocaleString('pt-BR')}
           </div>
-          <div className="text-xs text-purple-700">
+          <div className="text-xs text-gray-theme">
             vs 2019: {dadosTemporais[0]?.professores.toLocaleString('pt-BR')}
           </div>
         </div>
       </div>
 
-      {/* Legenda de Tendência */}
+      {/* Tendência */}
       <div className="mt-4 p-3 bg-primary/5 rounded-lg border border-primary/20">
         <div className="flex items-center gap-2 text-sm">
           <TrendingUp className="text-primary w-4 h-4" />
@@ -487,46 +568,106 @@ function AnaliseTemporal({ dadosTemporais }: { dadosTemporais: any[] }) {
   );
 }
 
+
 // Componente de Destaques - MANTIDO
 function DestaquesEscola({ destaques }: { destaques: any }) {
   return (
-    <div className="bg-card rounded-xl p-4 sm:p-6 border border-theme shadow-sm">
+    <div
+  className="
+    bg-card
+    rounded-2xl
+    p-4 sm:p-6
+    border border-white/10
+    shadow-[0_0_20px_-5px_rgba(0,0,0,0.35)]
+    backdrop-blur-sm
+    transition-all duration-300
+    hover:shadow-[0_0_35px_-5px_rgba(0,0,0,0.55)]
+    hover:bg-card/80
+  "
+>
+
       <h2 className="text-lg font-semibold text-text mb-4 flex items-center gap-2">
         <Award className="text-yellow-500 w-5 h-5 sm:w-6 sm:h-6" />
         Destaques da Escola
       </h2>
-      
+
       <div className="space-y-3 sm:space-y-4">
-        <div className="bg-green-50 border border-green-200 rounded-lg p-3 sm:p-4">
+
+        {/* Melhor Indicador */}
+        <div
+          className="
+            bg-card-alt border border-theme rounded-lg
+            p-3 sm:p-4 transition-all duration-200 hover:shadow-md
+            hover:bg-black/5 dark:hover:bg-white/5
+          "
+        >
           <div className="flex items-center gap-2 mb-1">
-            <TrendingUp className="text-green-600 w-4 h-4 sm:w-5 sm:h-5" />
-            <span className="font-semibold text-green-800 text-sm sm:text-base">Melhor Indicador</span>
+            <TrendingUp className="text-green-500 w-4 h-4 sm:w-5 sm:h-5" />
+            <span className="font-semibold text-text text-sm sm:text-base">
+              Melhor Indicador
+            </span>
           </div>
-          <p className="text-green-700 text-xs sm:text-sm">{destaques.melhor_indicador}</p>
+          <p className="text-gray-theme text-xs sm:text-sm">
+            {destaques.melhor_indicador}
+          </p>
         </div>
-        
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 sm:p-4">
+
+        {/* Evolução */}
+        <div
+          className="
+            bg-card-alt border border-theme rounded-lg
+            p-3 sm:p-4 transition-all duration-200 hover:shadow-md
+            hover:bg-black/5 dark:hover:bg-white/5
+          "
+        >
           <div className="flex items-center gap-2 mb-1">
-            <Clock className="text-blue-600 w-4 h-4 sm:w-5 sm:h-5" />
-            <span className="font-semibold text-blue-800 text-sm sm:text-base">Evolução</span>
+            <Clock className="text-blue-500 w-4 h-4 sm:w-5 sm:h-5" />
+            <span className="font-semibold text-text text-sm sm:text-base">
+              Evolução
+            </span>
           </div>
-          <p className="text-blue-700 text-xs sm:text-sm">{destaques.evolucao_destaque}</p>
+          <p className="text-gray-theme text-xs sm:text-sm">
+            {destaques.evolucao_destaque}
+          </p>
         </div>
-        
+
+        {/* Comparações */}
         <div className="grid grid-cols-2 gap-3 sm:gap-4">
-          <div className="bg-purple-50 border border-purple-200 rounded-lg p-2 sm:p-3 text-center">
-            <div className="text-base sm:text-lg font-bold text-purple-800">+{destaques.comparacao_municipal}%</div>
-            <div className="text-xs text-purple-600">Acima da média municipal</div>
+
+          <div
+            className="
+              bg-card-alt border border-theme rounded-lg
+              p-2 sm:p-3 text-center transition-all duration-200 hover:shadow-md
+              hover:bg-black/5 dark:hover:bg-white/5
+            "
+          >
+            <div className="text-base sm:text-lg font-bold text-green-500">
+              +{destaques.comparacao_municipal}%
+            </div>
+            <div className="text-xs text-gray-theme">
+              Acima da média municipal
+            </div>
           </div>
-          <div className="bg-indigo-50 border border-indigo-200 rounded-lg p-2 sm:p-3 text-center">
-            <div className="text-base sm:text-lg font-bold text-indigo-800">+{destaques.comparacao_estadual}%</div>
-            <div className="text-xs text-indigo-600">Acima da média estadual</div>
+          <div
+            className="
+              bg-card-alt border border-theme rounded-lg
+              p-2 sm:p-3 text-center transition-all duration-200 hover:shadow-md
+              hover:bg-black/5 dark:hover:bg-white/5
+            "
+          >
+            <div className="text-base sm:text-lg font-bold text-green-500">
+              +{destaques.comparacao_estadual}%
+            </div>
+            <div className="text-xs text-gray-theme">
+              Acima da média estadual
+            </div>
           </div>
         </div>
       </div>
     </div>
   );
 }
+
 
 // Componente Principal - AJUSTADO COM O MESMO LAYOUT DO HEADER
 export default function DashboardEscola() {
