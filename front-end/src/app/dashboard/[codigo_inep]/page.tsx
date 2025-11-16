@@ -751,8 +751,22 @@ export default function DashboardEscola() {
           <div className="space-y-6 sm:space-y-8">
             <DestaquesEscola destaques={dados.destaques} />
 
-            {/* Ações Rápidas */}
-            <div className="bg-card rounded-xl p-4 sm:p-6 border border-theme shadow-sm">
+           {/* AÇÕES RÁPIDAS */}
+            <div 
+              className="
+                bg-card 
+                rounded-2xl 
+                p-4 sm:p-6 
+                border border-white/10 
+                shadow-[0_0_20px_-5px_rgba(0,0,0,0.35)]
+                backdrop-blur-sm
+                transition-all duration-300
+                hover:shadow-[0_0_35px_-5px_rgba(0,0,0,0.55)]
+                hover:bg-card/80
+              "
+            >
+
+              {/* Header */}
               <div className="flex items-center gap-3 mb-4 sm:mb-6">
                 <div className="p-2 bg-primary/10 rounded-lg">
                   <TrendingUp className="text-primary w-5 h-5 sm:w-6 sm:h-6" />
@@ -762,74 +776,109 @@ export default function DashboardEscola() {
                   <p className="text-sm text-gray-theme">Acesse funcionalidades principais</p>
                 </div>
               </div>
-              
+
               <div className="space-y-3">
-                {/* Comparar Escolas */}
-                <a 
+
+                {/* COMPARAR ESCOLAS */}
+                <a
                   href="/explorar"
-                  className="w-full flex items-center gap-3 sm:gap-4 p-3 sm:p-4 hover:bg-card-alt rounded-xl border border-theme transition-all duration-200 group hover:border-blue-500/50 hover:shadow-sm block"
+                  className="
+                    w-full flex items-center gap-3 sm:gap-4 
+                    p-3 sm:p-4 cursor-pointer
+                    bg-card-alt 
+                    rounded-xl 
+                    border border-theme
+                    transition-all duration-200 
+                    hover:bg-black/10 dark:hover:bg-white/10
+                    hover:shadow-md 
+                    group
+                  "
                 >
                   <div className="p-2 bg-blue-100 rounded-lg group-hover:scale-110 transition-transform duration-200 flex-shrink-0">
                     <BarChart3 className="text-blue-500 w-5 h-5 sm:w-6 sm:h-6" />
                   </div>
+
                   <div className="flex-1 text-left min-w-0">
-                    <div className="font-semibold text-text group-hover:text-blue-500 transition-colors text-sm sm:text-base">
+                    <div className="font-semibold text-text text-sm sm:text-base group-hover:text-blue-500 transition-colors">
                       Comparar escolas
                     </div>
                     <div className="text-gray-theme mt-1 text-xs sm:text-sm">
                       Use a ferramenta de exploração
                     </div>
                   </div>
+
                   <div className="text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex-shrink-0">
                     →
                   </div>
                 </a>
 
-                {/* Baixar Relatório */}
-                <button 
+                {/* EXPORTAR RELATORIO */}
+                <button
                   onClick={() => {
-                    if (confirm('Deseja baixar o relatório completo em PDF?')) {
-                      console.log('Baixando relatório...');
+                    if (confirm("Deseja baixar o relatório completo em PDF?")) {
+                      console.log("Baixando relatório...");
                     }
                   }}
-                  className="w-full flex items-center gap-3 sm:gap-4 p-3 sm:p-4 hover:bg-card-alt rounded-xl border border-theme transition-all duration-200 group hover:border-green-500/50 hover:shadow-sm"
+                  className="
+                    w-full flex items-center gap-3 sm:gap-4 
+                    p-3 sm:p-4 cursor-pointer
+                    bg-card-alt 
+                    rounded-xl 
+                    border border-theme
+                    transition-all duration-200 
+                    hover:bg-black/10 dark:hover:bg-white/10
+                    hover:shadow-md 
+                    group
+                  "
                 >
                   <div className="p-2 bg-green-100 rounded-lg group-hover:scale-110 transition-transform duration-200 flex-shrink-0">
                     <Download className="text-green-500 w-5 h-5 sm:w-6 sm:h-6" />
                   </div>
+
                   <div className="flex-1 text-left min-w-0">
-                    <div className="font-semibold text-text group-hover:text-green-500 transition-colors text-sm sm:text-base">
+                    <div className="font-semibold text-text text-sm sm:text-base group-hover:text-green-500 transition-colors">
                       Exportar relatório
                     </div>
                     <div className="text-gray-theme mt-1 text-xs sm:text-sm">
                       PDF e Excel com dados completos
                     </div>
                   </div>
+
                   <div className="text-green-500 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex-shrink-0">
                     ↓
                   </div>
                 </button>
 
-                {/* Histórico Completo */}
-                <button 
+                {/* HISTÓRICO COMPLETO */}
+                <button
                   onClick={() => {
-                    document.getElementById('analise-temporal')?.scrollIntoView({ 
-                      behavior: 'smooth' 
-                    });
+                    document.getElementById("analise-temporal")?.scrollIntoView({ behavior: "smooth" });
                   }}
-                  className="w-full flex items-center gap-3 sm:gap-4 p-3 sm:p-4 hover:bg-card-alt rounded-xl border border-theme transition-all duration-200 group hover:border-purple-500/50 hover:shadow-sm"
+                  className="
+                    w-full flex items-center gap-3 sm:gap-4 
+                    p-3 sm:p-4 cursor-pointer
+                    bg-card-alt 
+                    rounded-xl 
+                    border border-theme
+                    transition-all duration-200 
+                    hover:bg-black/10 dark:hover:bg-white/10
+                    hover:shadow-md 
+                    group
+                  "
                 >
                   <div className="p-2 bg-purple-100 rounded-lg group-hover:scale-110 transition-transform duration-200 flex-shrink-0">
                     <Calendar className="text-purple-500 w-5 h-5 sm:w-6 sm:h-6" />
                   </div>
+
                   <div className="flex-1 text-left min-w-0">
-                    <div className="font-semibold text-text group-hover:text-purple-500 transition-colors text-sm sm:text-base">
+                    <div className="font-semibold text-text text-sm sm:text-base group-hover:text-purple-500 transition-colors">
                       Histórico completo
                     </div>
                     <div className="text-gray-theme mt-1 text-xs sm:text-sm">
                       Análise temporal desde 2019
                     </div>
                   </div>
+
                   <div className="text-purple-500 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex-shrink-0">
                     📊
                   </div>
