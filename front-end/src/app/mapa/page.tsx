@@ -8,10 +8,6 @@ export default function MapaPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [isDark, setIsDark] = useState(false);
-  const [windowSize, setWindowSize] = useState({
-    width: 1200,
-    height: 800,
-  });
   const router = useRouter();
 
   const estadosBrasileiros = [
@@ -44,28 +40,6 @@ export default function MapaPage() {
     { nome: "Tocantins", sigla: "TO" }
   ];
 
-  // Detecta tamanho da tela
-  useEffect(() => {
-    const handleResize = () => {
-      setWindowSize({
-        width: window.innerWidth,
-        height: window.innerHeight,
-      });
-    };
-
-    window.addEventListener('resize', handleResize);
-    handleResize();
-    
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  // Breakpoints 
-  const isSmallMobile = windowSize.width < 480;  
-  const isMediumMobile = windowSize.width >= 480 && windowSize.width < 768;
-  const isTablet = windowSize.width >= 768 && windowSize.width < 1024;
-  const isLaptop = windowSize.width >= 1024 && windowSize.width < 1440;
-  const isDesktop = windowSize.width >= 1440;
-
   const filteredEstados = searchTerm
     ? estadosBrasileiros.filter(estado =>
         estado.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -95,6 +69,44 @@ export default function MapaPage() {
       <style jsx global>{`
         html, body {
           overflow-x: hidden !important;
+        }
+        
+        .mapa-container {
+          min-height: 40vh;
+          width: 100%;
+        }
+        
+        @media (min-width: 480px) {
+          .mapa-container {
+            min-height: 45vh;
+          }
+        }
+        
+        @media (min-width: 768px) {
+          .mapa-container {
+            min-height: 60vh;
+            width: 120%;
+            margin-right: -8rem;
+            transform: scale(1.1);
+          }
+        }
+        
+        @media (min-width: 1024px) {
+          .mapa-container {
+            min-height: 75vh;
+            width: 150%;
+            margin-right: -12rem;
+            transform: scale(1.2);
+          }
+        }
+        
+        @media (min-width: 1440px) {
+          .mapa-container {
+            min-height: 80vh;
+            width: 180%;
+            margin-right: -24rem;
+            transform: scale(1.33);
+          }
         }
       `}</style>
       
@@ -166,17 +178,7 @@ export default function MapaPage() {
             </div>
             
             <div className="flex items-center justify-end h-full w-full overflow-visible">
-              <div className={`relative h-full flex items-center justify-center overflow-visible ${
-                isSmallMobile 
-                  ? 'min-h-[40vh] w-full' 
-                  : isMediumMobile 
-                  ? 'min-h-[45vh] w-full'  
-                  : isTablet 
-                  ? 'min-h-[60vh] w-[120%] -mr-32'  
-                  : isLaptop
-                  ? 'min-h-[75vh] w-[150%] -mr-48'  
-                  : 'min-h-[80vh] w-[180%] -mr-96' 
-              }`}>
+              <div className="mapa-container relative flex items-center justify-center overflow-visible">
                 <Image
                   src="/images/brasil.png"
                   alt="Mapa do Brasil"
@@ -185,11 +187,6 @@ export default function MapaPage() {
                     objectFit: "contain"
                   }}
                   priority
-                  className={`transition-all duration-500 ${
-                    isSmallMobile || isMediumMobile ? 'scale-100' : 
-                    isTablet ? 'scale-110' : 
-                    'scale-133'
-                  }`}
                 />
               </div>
             </div>
