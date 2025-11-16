@@ -1,12 +1,8 @@
 'use client';
-import { useState, useEffect, use, useRef, useMemo } from 'react';
-import { Search, X } from 'lucide-react';
+import { useState, useEffect, useRef, useMemo } from 'react';
+import { Search, X, School } from 'lucide-react';
 import * as d3 from 'd3';
-import { useRouter } from 'next/navigation';
-
-interface PageProps {
-  params: Promise<{ sigla: string }>;
-}
+import { useRouter, useParams } from 'next/navigation';
 
 interface MunicipioData {
   type: string;
@@ -94,6 +90,73 @@ export default function PaginaEstado({ params }: PageProps) {
   };
 
   const nomeEstado = getNomeEstado(sigla);
+
+  const buscarEscolasDoMunicipio = async (municipio: string): Promise<Escola[]> => {
+    // Simula uma requisição API
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        const gerarCodigoINEP = (municipio: string, sufixo: number): string => {
+          let hash = 0;
+          for (let i = 0; i < municipio.length; i++) {
+            hash = ((hash << 5) - hash) + municipio.charCodeAt(i);
+            hash = hash & hash;
+          }
+          const codigoBase = Math.abs(hash).toString().padStart(6, '0').slice(0, 6);
+          const codigoCompleto = codigoBase + sufixo.toString().padStart(2, '0');
+          return codigoCompleto.slice(0, 8);
+        };
+
+        const escolas = [
+          {
+            id: `${municipio}-1`,
+            codigo_inep: gerarCodigoINEP(municipio, 1),
+            nome: `Escola Estadual ${municipio}`,
+            municipio: municipio,
+            tipo: 'Estadual'
+          },
+          {
+            id: `${municipio}-2`, 
+            codigo_inep: gerarCodigoINEP(municipio, 2),
+            nome: `Colégio Municipal ${municipio}`,
+            municipio: municipio,
+            tipo: 'Municipal'
+          },
+          {
+            id: `${municipio}-3`,
+            codigo_inep: gerarCodigoINEP(municipio, 3),
+            nome: `Escola Particular ${municipio}`,
+            municipio: municipio,
+            tipo: 'Privada'
+          }
+        ];
+        resolve(escolas);
+      }, 500);
+    });
+  };
+
+  const handleMunicipioClick = async (municipio: string) => {
+    console.log('📍 Município selecionado:', municipio);
+    setMunicipioSelecionado(municipio);
+    setLoadingEscolas(true);
+    setShowEscolas(false);
+    
+    try {
+      const escolas = await buscarEscolasDoMunicipio(municipio);
+      console.log('🎓 Escolas carregadas:', escolas);
+      setEscolasDoMunicipio(escolas);
+      setShowEscolas(true);
+    } catch (error) {
+      console.error('Erro ao buscar escolas:', error);
+    } finally {
+      setLoadingEscolas(false);
+    }
+  };
+
+  const handleEscolaClick = (codigo_inep: string) => {
+    console.log('🚀 Navegando para dashboard:', codigo_inep);
+    console.log('📋 URL completa:', `/dashboard/${codigo_inep}`);
+    router.push(`/dashboard/${codigo_inep}`);
+  };
 
   useEffect(() => {
     const carregarMunicipiosIBGE = async () => {
@@ -371,6 +434,7 @@ export default function PaginaEstado({ params }: PageProps) {
                   onChange={(e) => {
                     setSearchTerm(e.target.value);
                     setShowSuggestions(true);
+                    setShowEscolas(false);
                   }}
                   onFocus={() => setShowSuggestions(true)}
                   onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
@@ -392,6 +456,20 @@ export default function PaginaEstado({ params }: PageProps) {
                     <X size={14} />
                   </button>
                 </div>
+                {municipioSelecionado && (
+                  <div className="bg-primary text-white px-5 py-2 rounded-full text-base font-medium flex items-center gap-2 transition-colors duration-500">
+                    {municipioSelecionado}
+                    <button
+                      onClick={() => {
+                        setMunicipioSelecionado(null);
+                        setShowEscolas(false);
+                      }}
+                      className="text-white hover:bg-white/20 transition-colors duration-200 w-5 h-5 flex items-center justify-center rounded-full"
+                    >
+                      <X size={14} />
+                    </button>
+                  </div>
+                )}
               </div>
 
               {showSuggestions && (
