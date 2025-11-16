@@ -1080,7 +1080,7 @@ export default function DashboardEscola() {
 
                 {/* COMPARAR ESCOLAS */}
                 <a
-                  href="/explorar"
+                  href="/explorar-escolas"
                   className="
                     w-full flex items-center gap-3 sm:gap-4 
                     p-3 sm:p-4 cursor-pointer
@@ -1091,6 +1091,7 @@ export default function DashboardEscola() {
                     hover:bg-black/10 dark:hover:bg-white/10
                     hover:shadow-md 
                     group
+                    no-underline
                   "
                 >
                   <div className="p-2 bg-blue-100 rounded-lg group-hover:scale-110 transition-transform duration-200 flex-shrink-0">
@@ -1110,7 +1111,6 @@ export default function DashboardEscola() {
                     →
                   </div>
                 </a>
-
                 {/* EXPORTAR RELATORIO - ATUALIZADO */}
                   <button
                     onClick={() => {
