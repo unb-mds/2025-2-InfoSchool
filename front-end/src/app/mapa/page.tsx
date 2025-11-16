@@ -8,6 +8,10 @@ export default function MapaPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [isDark, setIsDark] = useState(false);
+  const [windowSize, setWindowSize] = useState({
+    width: 1200,
+    height: 800,
+  });
   const router = useRouter();
 
   const estadosBrasileiros = [
@@ -40,6 +44,28 @@ export default function MapaPage() {
     { nome: "Tocantins", sigla: "TO" }
   ];
 
+  // Detecta tamanho da tela
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowSize({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    };
+
+    window.addEventListener('resize', handleResize);
+    handleResize();
+    
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Breakpoints 
+  const isSmallMobile = windowSize.width < 480;  
+  const isMediumMobile = windowSize.width >= 480 && windowSize.width < 768;
+  const isTablet = windowSize.width >= 768 && windowSize.width < 1024;
+  const isLaptop = windowSize.width >= 1024 && windowSize.width < 1440;
+  const isDesktop = windowSize.width >= 1440;
+
   const filteredEstados = searchTerm
     ? estadosBrasileiros.filter(estado =>
         estado.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -51,22 +77,10 @@ export default function MapaPage() {
     router.push(`/estado/${sigla.toLowerCase()}`);
   };
 
-  const toggleTheme = () => {
-    const newTheme = !isDark;
-    setIsDark(newTheme);
-    
-    if (newTheme) {
-      document.documentElement.setAttribute('data-theme', 'dark');
-    } else {
-      document.documentElement.removeAttribute('data-theme');
-    }
-  };
-
   useEffect(() => {
     const currentTheme = document.documentElement.getAttribute('data-theme');
     setIsDark(currentTheme === 'dark');
     
-    // Remove barra horizontal global
     document.documentElement.style.overflowX = 'hidden';
     document.body.style.overflowX = 'hidden';
     
@@ -84,9 +98,15 @@ export default function MapaPage() {
         }
       `}</style>
       
-      <main className="min-h-screen bg-background text-text transition-all duration-500">
-        <div className="max-w-[95%] sm:max-w-[90%] md:max-w-[80%] mx-auto px-3 sm:px-4 py-6 md:py-16">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 min-h-[70vh] items-center">
+      <main className="min-h-screen bg-background text-text transition-all duration-500 overflow-x-hidden">
+        <div className={`max-w-[95%] sm:max-w-[90%] md:max-w-[85%] lg:max-w-[80%] mx-auto px-3 sm:px-4 ${
+          isSmallMobile || isMediumMobile ? 'py-4' : 'py-6 md:py-16'
+        }`}>
+          <div className={`flex flex-col ${
+            isSmallMobile || isMediumMobile ? 'gap-4' : 
+            isTablet ? 'gap-8' : 
+            'lg:grid lg:grid-cols-2 lg:gap-12'
+          } min-h-[70vh] items-center justify-center`}>
             
             <div className="flex flex-col items-center lg:items-start justify-center h-full">
               <div className="w-full max-w-md relative">
@@ -149,8 +169,19 @@ export default function MapaPage() {
               </div>
             </div>
             
+            {/* Mapa do Brasil */}
             <div className="flex items-center justify-end h-full w-full overflow-visible">
-              <div className="relative h-full min-h-[80vh] w-[120%] -mr-32 overflow-visible">
+              <div className={`relative h-full flex items-center justify-center overflow-visible ${
+                isSmallMobile 
+                  ? 'min-h-[40vh] w-full' 
+                  : isMediumMobile 
+                  ? 'min-h-[45vh] w-full'  
+                  : isTablet 
+                  ? 'min-h-[60vh] w-[120%] -mr-32'  
+                  : isLaptop
+                  ? 'min-h-[75vh] w-[150%] -mr-48'  
+                  : 'min-h-[80vh] w-[180%] -mr-96' 
+              }`}>
                 <Image
                   src="/images/brasil.png"
                   alt="Mapa do Brasil"
@@ -159,7 +190,11 @@ export default function MapaPage() {
                     objectFit: "contain"
                   }}
                   priority
-                  className="transition-all duration-500 scale-133"
+                  className={`transition-all duration-500 ${
+                    isSmallMobile || isMediumMobile ? 'scale-100' : 
+                    isTablet ? 'scale-110' : 
+                    'scale-133'
+                  }`}
                 />
               </div>
             </div>
