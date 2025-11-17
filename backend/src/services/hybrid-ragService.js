@@ -1,6 +1,6 @@
 const { ChatOpenAI } = require("@langchain/openai");
 const { HumanMessage, SystemMessage } = require("@langchain/core/messages");
-const bigQueryService = require("./mockBigQueryServices");
+const { BigQueryService } = require("./bigQueryServices"); 
 const vectorStoreService = require("./vectorStoreServices");
 const { ENV } = require("../config/environment");
 
@@ -15,6 +15,7 @@ class HybridRAGService {
     this.bm25Index = null;
     this.bm25Documents = [];
     this.initializationPromise = null;
+    this.bigQueryService = new BigQueryService();
   }
 
   async initialize() {
@@ -28,7 +29,7 @@ class HybridRAGService {
       console.log("🚀 Inicializando RAG Híbrido...");
 
       try {
-        const dados = await bigQueryService.getDadosEscolas();
+        const dados = await this.bigQueryService.getDadosEscolas();
         console.log(`📊 ${dados.length} registros carregados do BigQuery`);
 
         const documents = vectorStoreService.createDocumentsFromData(dados);
@@ -233,7 +234,7 @@ Responda APENAS com a categoria mais apropriada.`;
           break;
       }
 
-      return await bigQueryService.getDadosEscolas(queryFiltros);
+      return await this.bigQueryService.getDadosEscolas(queryFiltros);
     } catch (error) {
       console.error("❌ Erro na busca estruturada:", error);
       return [];
