@@ -1,4 +1,3 @@
-// src/app/municipios/[slug]/page.tsx
 'use client';
 import { useState, useEffect, useRef, use } from 'react';
 import { Search, X, School, MapPin, Phone } from 'lucide-react';
@@ -75,6 +74,28 @@ export default function PaginaMunicipio({ params }: PageProps) {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const [showSchoolSuggestions, setShowSchoolSuggestions] = useState(false);
   const [escolaSelecionada, setEscolaSelecionada] = useState<Escola | null>(null);
+  const [windowSize, setWindowSize] = useState({
+    width: 1200,
+    height: 800,
+  });
+
+  // Detecta tamanho da tela
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowSize({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    };
+
+    window.addEventListener('resize', handleResize);
+    handleResize();
+    
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const isMobile = windowSize.width < 768;
+  const isTablet = windowSize.width >= 768 && windowSize.width < 1024;
 
   const extrairDadosDoSlug = (slug: string) => {
     if (!slug) {
@@ -145,8 +166,6 @@ export default function PaginaMunicipio({ params }: PageProps) {
     }
   }, [slug, nomeMunicipio, siglaEstado]);
 
-  
-
   // Aplicar interatividade D3 ao SVG
   useEffect(() => {
     if (svgMunicipio && mapContainerRef.current) {
@@ -161,13 +180,21 @@ export default function PaginaMunicipio({ params }: PageProps) {
       const svgElement = container.querySelector('svg');
       if (!svgElement) return;
 
-      // Aplica estilos responsivos
-      svgElement.style.width = '80%';
-      svgElement.style.height = '80%';
-      svgElement.style.maxHeight = '50vh';
-         // ⬇️ ADICIONE ESTAS LINHAS PARA ALINHAMENTO ⬇️
-      svgElement.style.marginLeft = 'auto';
-      svgElement.style.marginRight = '0';
+      // Aplica estilos responsivos baseados no tamanho da tela
+      if (isMobile) {
+        svgElement.style.width = '100%';
+        svgElement.style.height = '40vh';
+      } else if (isTablet) {
+        svgElement.style.width = '100%';
+        svgElement.style.height = '50vh';
+      } else {
+        svgElement.style.width = '80%';
+        svgElement.style.height = '80%';
+        svgElement.style.maxHeight = '50vh';
+        svgElement.style.marginLeft = 'auto';
+        svgElement.style.marginRight = '0';
+      }
+      
       svgElement.style.display = 'block';
 
       const svg = d3.select(svgElement);
@@ -194,7 +221,7 @@ export default function PaginaMunicipio({ params }: PageProps) {
             .style('stroke-width', '0.3');
         });
     }
-  }, [svgMunicipio]);
+  }, [svgMunicipio, isMobile, isTablet]);
 
   // Filtrar escolas para a barra de sugestões
   useEffect(() => {
@@ -216,15 +243,21 @@ export default function PaginaMunicipio({ params }: PageProps) {
 
   return (
     <main className="min-h-screen bg-background text-text transition-colors duration-500 overflow-x-hidden">
-      <div className="max-w-[95%] sm:max-w-[90%] md:max-w-[85%] mx-auto px-3 sm:px-4 py-6 md:py-16">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 min-h-[90vh] items-center">
+      <div className={`max-w-[95%] sm:max-w-[90%] md:max-w-[80%] mx-auto px-3 sm:px-4 ${
+        isMobile ? 'py-4' : 'py-6 md:py-16'
+      }`}>
+        <div className={`flex flex-col ${
+          isMobile ? 'gap-8' : 'lg:grid lg:grid-cols-2 lg:gap-12'
+        } min-h-[70vh] items-center justify-center`}>
           
-          {/* COLUNA DA ESQUERDA - IDÊNTICA À PÁGINA ESTADO */}
-          <div className="flex flex-col items-center lg:items-start justify-center h-full">
-            <div className="w-full max-w-lg relative">
+          {/* COLUNA DA ESQUERDA - EXATAMENTE IGUAL ÀS OUTRAS PÁGINAS */}
+          <div className={`flex flex-col items-center ${
+            isMobile ? 'w-full order-1' : 'lg:items-start justify-center'
+          } h-full transition-colors duration-500`}>
+            <div className="w-full max-w-md relative">
               
-              {/* BARRA DE PESQUISA */}
-              <div className="relative transition-colors duration-500">
+              {/* BARRA DE PESQUISA - MESMA ESTRUTURA DAS OUTRAS */}
+              <div className="relative">
                 <Search 
                   className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-theme transition-colors duration-500"
                   size={20}
@@ -232,7 +265,7 @@ export default function PaginaMunicipio({ params }: PageProps) {
                 <input
                   type="text"
                   placeholder="Pesquisar escolas..."
-                  className="w-full h-16 rounded-full pl-12 pr-6 focus:outline-none focus:ring-2 focus:ring-primary text-lg bg-card border border-theme text-text transition-colors duration-500"
+                  className="w-full h-14 rounded-full pl-12 pr-6 focus:outline-none focus:ring-2 focus:ring-primary text-lg bg-card border border-theme text-text transition-all duration-500"
                   value={searchTerm}
                   onChange={(e) => {
                     setSearchTerm(e.target.value);
@@ -240,10 +273,17 @@ export default function PaginaMunicipio({ params }: PageProps) {
                   }}
                   onFocus={() => setShowSchoolSuggestions(true)}
                   onBlur={() => setTimeout(() => setShowSchoolSuggestions(false), 200)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && escolasFiltradas.length > 0) {
+                      setEscolaSelecionada(escolasFiltradas[0]);
+                      setSearchTerm(escolasFiltradas[0].nome);
+                      setShowSchoolSuggestions(false);
+                    }
+                  }}
                 />
               </div>
 
-              {/* BADGES DO ESTADO E MUNICÍPIO */}
+              {/* BADGES - MESMO ESPAÇAMENTO DAS OUTRAS PÁGINAS */}
               <div className="flex items-center gap-3 mt-6 transition-colors duration-500">
                 <div className="bg-primary text-white px-5 py-2 rounded-full text-base font-medium flex items-center gap-2 transition-colors duration-500">
                   {nomeEstadoCompleto}
@@ -267,12 +307,12 @@ export default function PaginaMunicipio({ params }: PageProps) {
 
               {/* SUGESTÕES DE ESCOLAS */}
               {showSchoolSuggestions && (
-                <div className="absolute top-full left-0 right-0 mt-2 max-h-60 overflow-y-auto z-50 shadow-theme bg-card border border-theme rounded-lg transition-colors duration-500">
+                <div className="absolute top-full left-0 right-0 mt-2 max-h-60 overflow-y-auto z-50 shadow-theme bg-card border border-theme rounded-lg transition-all duration-500">
                   {escolasFiltradas.length > 0 ? (
                     escolasFiltradas.map((escola) => (
                       <button
                         key={escola.id}
-                        className="w-full text-left px-4 py-3 border-b border-theme last:border-b-0 hover:bg-card-alt text-text transition-colors duration-500"
+                        className="w-full text-left px-4 py-3 border-b border-theme last:border-b-0 hover:bg-card-alt cursor-pointer transition-colors duration-500"
                         onClick={() => {
                           setEscolaSelecionada(escola);
                           setSearchTerm(escola.nome);
@@ -280,8 +320,8 @@ export default function PaginaMunicipio({ params }: PageProps) {
                         }}
                       >
                         <div className="flex justify-between items-center">
-                          <span className="transition-colors duration-500">{escola.nome}</span>
-                          <span className="bg-primary/20 text-primary px-2 py-1 rounded text-xs">
+                          <span className="text-text transition-colors duration-500">{escola.nome}</span>
+                          <span className="bg-primary/20 text-primary px-2 py-1 rounded text-sm transition-colors duration-500">
                             {escola.tipo}
                           </span>
                         </div>
@@ -299,7 +339,7 @@ export default function PaginaMunicipio({ params }: PageProps) {
               {escolaSelecionada && (
                 <div className="mt-6 bg-card rounded-xl p-4 border border-theme animate-fade-in">
                   <div className="flex items-start gap-4">
-                    <School className="text-primary mt-1 flex-shrink-0" size={24} />
+                    <School className="text-primary mt-1 shrink-0" size={24} />
                     <div className="flex-1">
                       <h4 className="font-semibold text-lg mb-2">{escolaSelecionada.nome}</h4>
                       <div className="space-y-2 text-sm text-gray-theme">
@@ -333,16 +373,20 @@ export default function PaginaMunicipio({ params }: PageProps) {
             </div>
           </div>
 
-          {/* COLUNA DA DIREITA - MAPA IDÊNTICO À PÁGINA ESTADO */}
-          <div className="flex items-center justify-end h-full w-full transition-colors duration-500">
-  {/* mt-8 para descer o mapa */}
-  <div className="relative h-[65vh] w-[150%] -mr-56 transform -translate-x-20" style={{ marginTop: '18rem' }}>
-    <div 
-      ref={mapContainerRef}
-      className="w-full h-full"
-    />
-  </div>
-</div>
+          <div className={`flex items-center justify-center ${
+            isMobile ? 'w-full order-2' : 'lg:justify-end'
+          } h-full w-full transition-colors duration-500`}>
+            <div className="relative w-full h-full flex items-center justify-center overflow-visible">
+              <div 
+                ref={mapContainerRef}
+                className={`w-full h-full ${
+                  isMobile ? 'min-h-[40vh]' : 
+                  isTablet ? 'min-h-[50vh]' : 
+                  'min-h-[60vh]'
+                }`}
+              />
+            </div>
+          </div>
 
         </div>
       </div>
