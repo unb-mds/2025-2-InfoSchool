@@ -365,6 +365,18 @@ export default function PaginaMunicipio({ params }: PageProps) {
                           ))}
                         </div>
                       </div>
+                      
+                      {/* BOTÃO PARA DASHBOARD - COM CURSOR DE MÃO */}
+                      <button 
+                        className="w-full mt-4 bg-primary text-white py-3 px-4 rounded-lg hover:bg-primary/90 transition-colors duration-200 font-medium flex items-center justify-center gap-2 cursor-pointer"
+                        onClick={() => {
+                          const codigoINEP = escolaSelecionada.id.padStart(8, '0');
+                          router.push(`/dashboard/${codigoINEP}`);
+                        }}
+                      >
+                        <School size={16} />
+                        Ver Dashboard da Escola
+                      </button>
                     </div>
                   </div>
                 </div>
