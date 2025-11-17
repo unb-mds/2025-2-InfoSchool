@@ -51,22 +51,10 @@ export default function MapaPage() {
     router.push(`/estado/${sigla.toLowerCase()}`);
   };
 
-  const toggleTheme = () => {
-    const newTheme = !isDark;
-    setIsDark(newTheme);
-    
-    if (newTheme) {
-      document.documentElement.setAttribute('data-theme', 'dark');
-    } else {
-      document.documentElement.removeAttribute('data-theme');
-    }
-  };
-
   useEffect(() => {
     const currentTheme = document.documentElement.getAttribute('data-theme');
     setIsDark(currentTheme === 'dark');
     
-    // Remove barra horizontal global
     document.documentElement.style.overflowX = 'hidden';
     document.body.style.overflowX = 'hidden';
     
@@ -82,9 +70,47 @@ export default function MapaPage() {
         html, body {
           overflow-x: hidden !important;
         }
+        
+        .mapa-container {
+          min-height: 40vh;
+          width: 100%;
+        }
+        
+        @media (min-width: 480px) {
+          .mapa-container {
+            min-height: 45vh;
+          }
+        }
+        
+        @media (min-width: 768px) {
+          .mapa-container {
+            min-height: 60vh;
+            width: 120%;
+            margin-right: -8rem;
+            transform: scale(1.1);
+          }
+        }
+        
+        @media (min-width: 1024px) {
+          .mapa-container {
+            min-height: 75vh;
+            width: 150%;
+            margin-right: -12rem;
+            transform: scale(1.2);
+          }
+        }
+        
+        @media (min-width: 1440px) {
+          .mapa-container {
+            min-height: 80vh;
+            width: 180%;
+            margin-right: -24rem;
+            transform: scale(1.33);
+          }
+        }
       `}</style>
       
-      <main className="min-h-screen bg-background text-text transition-all duration-500">
+      <main className="min-h-screen bg-background text-text transition-all duration-500 overflow-x-hidden">
         <div className="max-w-[95%] sm:max-w-[90%] md:max-w-[80%] mx-auto px-3 sm:px-4 py-6 md:py-16">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 min-h-[70vh] items-center">
             
@@ -116,6 +142,8 @@ export default function MapaPage() {
                     }}
                   />
                 </div>
+
+                <div className="h-35 mt-6"></div>
 
                 {showSuggestions && (
                   <div className="absolute top-full left-0 right-0 mt-2 max-h-60 overflow-y-auto overflow-x-hidden z-50 shadow-theme bg-card border border-theme rounded-lg transition-all duration-500">
@@ -150,7 +178,7 @@ export default function MapaPage() {
             </div>
             
             <div className="flex items-center justify-end h-full w-full overflow-visible">
-              <div className="relative h-full min-h-[80vh] w-[120%] -mr-32 overflow-visible">
+              <div className="mapa-container relative flex items-center justify-center overflow-visible">
                 <Image
                   src="/images/brasil.png"
                   alt="Mapa do Brasil"
@@ -159,7 +187,6 @@ export default function MapaPage() {
                     objectFit: "contain"
                   }}
                   priority
-                  className="transition-all duration-500 scale-133"
                 />
               </div>
             </div>
