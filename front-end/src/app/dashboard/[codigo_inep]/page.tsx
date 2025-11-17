@@ -1180,7 +1180,7 @@ export default function DashboardEscola() {
                       Histórico completo
                     </div>
                     <div className="text-gray-theme mt-1 text-xs sm:text-sm">
-                      Análise temporal desde 2019
+                      Análise temporal desde 2018
                     </div>
                   </div>
 
