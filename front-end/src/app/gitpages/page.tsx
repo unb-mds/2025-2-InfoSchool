@@ -63,14 +63,14 @@ export default function GitPages() {
             <div className="flex gap-4 justify-center flex-wrap transition-all duration-500">
               <button 
                 onClick={() => document.getElementById('solucao')?.scrollIntoView({ behavior: 'smooth' })}
-                className="bg-primary text-white px-16 py-4 rounded-full font-semibold hover:bg-primary/90 transition-all duration-500 text-lg w-full sm:w-auto min-w-[280px]"
+                className="bg-primary text-white px-8 sm:px-16 py-4 rounded-full font-semibold hover:bg-primary/90 active:scale-95 transition-all duration-300 text-lg w-full sm:w-auto min-w-[280px] cursor-pointer transform hover:scale-105"
                 style={{ fontFamily: "'Sansita', sans-serif" }}
               >
                 Conheça a Plataforma
               </button>
               <button 
                 onClick={() => document.getElementById('acesso')?.scrollIntoView({ behavior: 'smooth' })}
-                className="border border-primary text-primary px-16 py-4 rounded-full font-semibold hover:bg-primary/10 transition-all duration-500 text-lg w-full sm:w-auto min-w-[280px]"
+                className="border border-primary text-primary px-8 sm:px-16 py-4 rounded-full font-semibold hover:bg-primary/10 active:scale-95 transition-all duration-300 text-lg w-full sm:w-auto min-w-[280px] cursor-pointer transform hover:scale-105"
                 style={{ fontFamily: "'Sansita', sans-serif" }}
               >
                 Como Acessar
@@ -86,7 +86,7 @@ export default function GitPages() {
           </ScrollAnimation>
           
           <ScrollAnimation direction="up" duration={500} delay={150}>
-            <div className="bg-card border border-theme rounded-2xl p-8 transition-all duration-500">
+            <div className="bg-card border border-theme rounded-2xl p-6 md:p-8 transition-all duration-500">
               <p className="text-lg text-text mb-6 transition-all duration-500" style={{ fontFamily: "'Sansita', sans-serif" }}>
                 Os dados do Censo Escolar brasileiro, coletados desde <strong>1995</strong>, representam um tesouro de informações sobre a educação nacional. No entanto:
               </p>
@@ -112,44 +112,44 @@ export default function GitPages() {
           </ScrollAnimation>
         </section>
 
-        {/* Por que escolher o InfoSchool? */}
-        <section className="py-16 bg-card rounded-2xl px-8 transition-all duration-500">
+        {/* Por que escolher o InfoSchool? - CORRIGIDO */}
+        <section className="py-16 bg-card rounded-2xl px-6 md:px-8 transition-all duration-500">
           <ScrollAnimation direction="up" duration={500} delay={100}>
             <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 transition-all duration-500" style={{ fontFamily: "'Rammetto One', sans-serif" }}>Por que escolher o InfoSchool?</h2>
           </ScrollAnimation>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 transition-all duration-500">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 transition-all duration-500">
             <ScrollAnimation direction="up" duration={500} delay={150}>
-              <div className="bg-background border border-theme rounded-2xl p-6 text-center transition-all duration-500 hover:scale-105 cursor-pointer min-h-[200px] flex flex-col justify-center">
-                <h3 className="text-xl font-semibold mb-3 text-primary transition-all duration-500" style={{ fontFamily: "'Rammetto One', sans-serif" }}>Dados Completos</h3>
-                <p className="text-text transition-all duration-500" style={{ fontFamily: "'Sansita', sans-serif" }}>
+              <div className="bg-background border border-theme rounded-2xl p-4 lg:p-6 text-center transition-all duration-500 hover:scale-105 h-[220px] flex flex-col justify-center">
+                <h3 className="text-lg lg:text-xl font-semibold mb-3 text-primary transition-all duration-500 leading-tight" style={{ fontFamily: "'Rammetto One', sans-serif" }}>Dados Completos</h3>
+                <p className="text-text text-sm lg:text-base transition-all duration-500" style={{ fontFamily: "'Sansita', sans-serif" }}>
                   Acesso a 30 anos de dados do Censo Escolar (1995-2025)
                 </p>
               </div>
             </ScrollAnimation>
 
             <ScrollAnimation direction="up" duration={500} delay={200}>
-              <div className="bg-background border border-theme rounded-2xl p-6 text-center transition-all duration-500 hover:scale-105 cursor-pointer min-h-[200px] flex flex-col justify-center">
-                <h3 className="text-xl font-semibold mb-3 text-primary transition-all duration-500" style={{ fontFamily: "'Rammetto One', sans-serif" }}>Interface Intuitiva</h3>
-                <p className="text-text transition-all duration-500" style={{ fontFamily: "'Sansita', sans-serif" }}>
+              <div className="bg-background border border-theme rounded-2xl p-4 lg:p-6 text-center transition-all duration-500 hover:scale-105 h-[220px] flex flex-col justify-center">
+                <h3 className="text-lg lg:text-xl font-semibold mb-3 text-primary transition-all duration-500 leading-tight" style={{ fontFamily: "'Rammetto One', sans-serif" }}>Interface Intuitiva</h3>
+                <p className="text-text text-sm lg:text-base transition-all duration-500" style={{ fontFamily: "'Sansita', sans-serif" }}>
                   Navegação simples mesmo para usuários sem experiência técnica
                 </p>
               </div>
             </ScrollAnimation>
 
             <ScrollAnimation direction="up" duration={500} delay={250}>
-              <div className="bg-background border border-theme rounded-2xl p-6 text-center transition-all duration-500 hover:scale-105 cursor-pointer min-h-[200px] flex flex-col justify-center">
-                <h3 className="text-xl font-semibold mb-3 text-primary transition-all duration-500" style={{ fontFamily: "'Rammetto One', sans-serif" }}>Relatórios Personalizados</h3>
-                <p className="text-text transition-all duration-500" style={{ fontFamily: "'Sansita', sans-serif" }}>
+              <div className="bg-background border border-theme rounded-2xl p-4 lg:p-6 text-center transition-all duration-500 hover:scale-105 h-[220px] flex flex-col justify-center">
+                <h3 className="text-lg lg:text-xl font-semibold mb-3 text-primary transition-all duration-500 leading-tight" style={{ fontFamily: "'Rammetto One', sans-serif" }}>Relatórios Personalizados</h3>
+                <p className="text-text text-sm lg:text-base transition-all duration-500" style={{ fontFamily: "'Sansita', sans-serif" }}>
                   Geração de PDFs com informações específicas para suas necessidades
                 </p>
               </div>
             </ScrollAnimation>
 
             <ScrollAnimation direction="up" duration={500} delay={300}>
-              <div className="bg-background border border-theme rounded-2xl p-6 text-center transition-all duration-500 hover:scale-105 cursor-pointer min-h-[200px] flex flex-col justify-center">
-                <h3 className="text-xl font-semibold mb-3 text-primary transition-all duration-500" style={{ fontFamily: "'Rammetto One', sans-serif" }}>Comparações Detalhadas</h3>
-                <p className="text-text transition-all duration-500" style={{ fontFamily: "'Sansita', sans-serif" }}>
+              <div className="bg-background border border-theme rounded-2xl p-4 lg:p-6 text-center transition-all duration-500 hover:scale-105 h-[220px] flex flex-col justify-center">
+                <h3 className="text-lg lg:text-xl font-semibold mb-3 text-primary transition-all duration-500 leading-tight" style={{ fontFamily: "'Rammetto One', sans-serif" }}>Comparações Detalhadas</h3>
+                <p className="text-text text-sm lg:text-base transition-all duration-500" style={{ fontFamily: "'Sansita', sans-serif" }}>
                   Analise e compare escolas, municípios e estados brasileiros
                 </p>
               </div>
@@ -157,54 +157,54 @@ export default function GitPages() {
           </div>
         </section>
 
-        {/* Nossos Números - CORRIGIDOS */}
+        {/* Nossos Números - CORRIGIDO */}
         <section className="py-16 transition-all duration-500">
           <ScrollAnimation direction="up" duration={500} delay={100}>
             <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 transition-all duration-500" style={{ fontFamily: "'Rammetto One', sans-serif" }}>Nossos Números</h2>
           </ScrollAnimation>
           
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-6 transition-all duration-500">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 transition-all duration-500">
             <ScrollAnimation direction="up" duration={500} delay={150}>
-              <div className="bg-card border border-theme rounded-2xl p-6 text-center transition-all duration-500 hover:scale-105 cursor-pointer">
-                <div className="text-3xl md:text-4xl font-bold text-primary mb-2 transition-all duration-500">300K+</div>
-                <div className="text-text transition-all duration-500" style={{ fontFamily: "'Sansita', sans-serif" }}>Escolas Mapeadas</div>
+              <div className="bg-card border border-theme rounded-2xl p-4 md:p-6 text-center transition-all duration-500 hover:scale-105">
+                <div className="text-2xl md:text-3xl lg:text-4xl font-bold text-primary mb-2 transition-all duration-500">300K+</div>
+                <div className="text-text text-sm md:text-base transition-all duration-500" style={{ fontFamily: "'Sansita', sans-serif" }}>Escolas Mapeadas</div>
               </div>
             </ScrollAnimation>
 
             <ScrollAnimation direction="up" duration={500} delay={200}>
-              <div className="bg-card border border-theme rounded-2xl p-6 text-center transition-all duration-500 hover:scale-105 cursor-pointer">
-                <div className="text-3xl md:text-4xl font-bold text-primary mb-2 transition-all duration-500">30</div>
-                <div className="text-text transition-all duration-500" style={{ fontFamily: "'Sansita', sans-serif" }}>Anos de Dados</div>
+              <div className="bg-card border border-theme rounded-2xl p-4 md:p-6 text-center transition-all duration-500 hover:scale-105">
+                <div className="text-2xl md:text-3xl lg:text-4xl font-bold text-primary mb-2 transition-all duration-500">30</div>
+                <div className="text-text text-sm md:text-base transition-all duration-500" style={{ fontFamily: "'Sansita', sans-serif" }}>Anos de Dados</div>
               </div>
             </ScrollAnimation>
 
             <ScrollAnimation direction="up" duration={500} delay={250}>
-              <div className="bg-card border border-theme rounded-2xl p-6 text-center transition-all duration-500 hover:scale-105 cursor-pointer">
-                <div className="text-3xl md:text-4xl font-bold text-primary mb-2 transition-all duration-500">5.570</div>
-                <div className="text-text transition-all duration-500" style={{ fontFamily: "'Sansita', sans-serif" }}>Municípios</div>
+              <div className="bg-card border border-theme rounded-2xl p-4 md:p-6 text-center transition-all duration-500 hover:scale-105 col-span-2 md:col-span-1">
+                <div className="text-2xl md:text-3xl lg:text-4xl font-bold text-primary mb-2 transition-all duration-500">5.570</div>
+                <div className="text-text text-sm md:text-base transition-all duration-500" style={{ fontFamily: "'Sansita', sans-serif" }}>Municípios</div>
               </div>
             </ScrollAnimation>
           </div>
         </section>
 
-        {/* Solução Section */}
+        {/* Solução Section - CORRIGIDO */}
         <section id="solucao" className="py-16 transition-all duration-500">
           <ScrollAnimation direction="up" duration={500} delay={100}>
             <h2 className="text-3xl md:text-4xl font-bold text-center mb-4 transition-all duration-500" style={{ fontFamily: "'Rammetto One', sans-serif" }}>A Solução InfoSchool</h2>
           </ScrollAnimation>
 
           <ScrollAnimation direction="up" duration={500} delay={150}>
-            <p className="text-xl text-gray-theme text-center mb-12 max-w-3xl mx-auto transition-all duration-500" style={{ fontFamily: "'Sansita', sans-serif" }}>
+            <p className="text-xl text-gray-theme text-center mb-12 max-w-3xl mx-auto px-4 transition-all duration-500" style={{ fontFamily: "'Sansita', sans-serif" }}>
               Três caminhos intuitivos para explorar 30 anos de dados educacionais
             </p>
           </ScrollAnimation>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16 transition-all duration-500">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8 transition-all duration-500">
             {/* Caminho 1 - Busca */}
             <ScrollAnimation direction="up" duration={500} delay={200}>
-              <div className="text-center p-6 rounded-2xl bg-card border border-theme transition-all duration-500 hover:scale-105 cursor-pointer min-h-[400px] flex flex-col">
-                <div className="w-20 h-20 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-6 transition-all duration-500">
-                  <div className="w-12 h-12 relative transition-all duration-500">
+              <div className="text-center p-6 rounded-2xl bg-card border border-theme transition-all duration-500 hover:scale-105 h-[480px] flex flex-col">
+                <div className="w-16 h-16 md:w-20 md:h-20 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-6 transition-all duration-500">
+                  <div className="w-10 h-10 md:w-12 md:h-12 relative transition-all duration-500">
                     <Image
                       src="/icons/lupa.png"
                       alt="Ícone de busca"
@@ -213,7 +213,7 @@ export default function GitPages() {
                     />
                   </div>
                 </div>
-                <h3 className="text-2xl font-semibold mb-4 transition-all duration-500" style={{ fontFamily: "'Rammetto One', sans-serif" }}>Busca Rápida</h3>
+                <h3 className="text-xl md:text-2xl font-semibold mb-4 transition-all duration-500" style={{ fontFamily: "'Rammetto One', sans-serif" }}>Busca Rápida</h3>
                 <p className="text-gray-theme mb-4 transition-all duration-500 flex-grow" style={{ fontFamily: "'Sansita', sans-serif" }}>
                   Como um Google educacional. Digite o nome da escola e encontre instantaneamente.
                 </p>
@@ -225,9 +225,9 @@ export default function GitPages() {
 
             {/* Caminho 2 - Mapa */}
             <ScrollAnimation direction="up" duration={500} delay={250}>
-              <div className="text-center p-6 rounded-2xl bg-card border border-theme transition-all duration-500 hover:scale-105 cursor-pointer min-h-[400px] flex flex-col">
-                <div className="w-20 h-20 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-6 transition-all duration-500">
-                  <div className="w-12 h-12 relative transition-all duration-500">
+              <div className="text-center p-6 rounded-2xl bg-card border border-theme transition-all duration-500 hover:scale-105 h-[480px] flex flex-col">
+                <div className="w-16 h-16 md:w-20 md:h-20 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-6 transition-all duration-500">
+                  <div className="w-10 h-10 md:w-12 md:h-12 relative transition-all duration-500">
                     <Image
                       src="/icons/mapa.png"
                       alt="Ícone de mapa"
@@ -236,7 +236,7 @@ export default function GitPages() {
                     />
                   </div>
                 </div>
-                <h3 className="text-2xl font-semibold mb-4 transition-all duration-500" style={{ fontFamily: "'Rammetto One', sans-serif" }}>Mapa Interativo</h3>
+                <h3 className="text-xl md:text-2xl font-semibold mb-4 transition-all duration-500" style={{ fontFamily: "'Rammetto One', sans-serif" }}>Mapa Interativo</h3>
                 <p className="text-gray-theme mb-4 transition-all duration-500 flex-grow" style={{ fontFamily: "'Sansita', sans-serif" }}>
                   Navegue visualmente: Brasil → Estado → Município → Escola. Perfeito para exploração geográfica.
                 </p>
@@ -248,9 +248,9 @@ export default function GitPages() {
 
             {/* Caminho 3 - IA */}
             <ScrollAnimation direction="up" duration={500} delay={300}>
-              <div className="text-center p-6 rounded-2xl bg-card border border-theme transition-all duration-500 hover:scale-105 cursor-pointer min-h-[400px] flex flex-col">
-                <div className="w-20 h-20 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-6 transition-all duration-500">
-                  <div className="w-12 h-12 relative transition-all duration-500">
+              <div className="text-center p-6 rounded-2xl bg-card border border-theme transition-all duration-500 hover:scale-105 h-[480px] flex flex-col">
+                <div className="w-16 h-16 md:w-20 md:h-20 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-6 transition-all duration-500">
+                  <div className="w-10 h-10 md:w-12 md:h-12 relative transition-all duration-500">
                     <Image
                       src="/icons/robo.png"
                       alt="Ícone de robô"
@@ -259,7 +259,7 @@ export default function GitPages() {
                     />
                   </div>
                 </div>
-                <h3 className="text-2xl font-semibold mb-4 transition-all duration-500" style={{ fontFamily: "'Rammetto One', sans-serif" }}>Chat com IA</h3>
+                <h3 className="text-xl md:text-2xl font-semibold mb-4 transition-all duration-500" style={{ fontFamily: "'Rammetto One', sans-serif" }}>Chat com IA</h3>
                 <p className="text-gray-theme mb-4 transition-all duration-500 flex-grow" style={{ fontFamily: "'Sansita', sans-serif" }}>
                   Pergunte em linguagem natural. Nossa IA "Aluno" encontra as respostas e gera PDFs personalizados.
                 </p>
@@ -271,13 +271,13 @@ export default function GitPages() {
           </div>
         </section>
 
-        {/* Como Começar */}
-        <section className="py-16 bg-card rounded-2xl px-8 transition-all duration-500">
+        {/* Como Começar - CORRIGIDO */}
+        <section className="py-16 bg-card rounded-2xl px-6 md:px-8 transition-all duration-500">
           <ScrollAnimation direction="up" duration={500} delay={100}>
             <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 transition-all duration-500" style={{ fontFamily: "'Rammetto One', sans-serif" }}>Como Começar</h2>
           </ScrollAnimation>
           
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 transition-all duration-500">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 transition-all duration-500">
             <ScrollAnimation direction="up" duration={500} delay={150}>
               <div className="text-center transition-all duration-500">
                 <div className="w-16 h-16 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-4 text-xl font-bold transition-all duration-500">1</div>
@@ -320,16 +320,16 @@ export default function GitPages() {
           </div>
         </section>
 
-        {/* Casos de Uso */}
+        {/* Casos de Uso - CORRIGIDO */}
         <section className="py-16 transition-all duration-500">
           <ScrollAnimation direction="up" duration={500} delay={100}>
             <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 transition-all duration-500" style={{ fontFamily: "'Rammetto One', sans-serif" }}>Transformando Decisões Educacionais</h2>
           </ScrollAnimation>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 transition-all duration-500">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8 transition-all duration-500">
             {/* Caso 1 */}
             <ScrollAnimation direction="up" duration={500} delay={150}>
-              <div className="bg-card border border-theme rounded-2xl p-6 transition-all duration-500 hover:scale-105 cursor-pointer min-h-[300px] flex flex-col">
+              <div className="bg-card border border-theme rounded-2xl p-6 transition-all duration-500 hover:scale-105 h-[380px] flex flex-col">
                 <h3 className="text-xl font-semibold mb-3 transition-all duration-500" style={{ fontFamily: "'Rammetto One', sans-serif" }}>Para Pais</h3>
                 <p className="text-text mb-4 transition-all duration-500 flex-grow" style={{ fontFamily: "'Sansita', sans-serif" }}>
                   <strong>Escolha a melhor escola para seu filho</strong> com base em infraestrutura, localização e indicadores reais.
@@ -344,7 +344,7 @@ export default function GitPages() {
 
             {/* Caso 2 */}
             <ScrollAnimation direction="up" duration={500} delay={200}>
-              <div className="bg-card border border-theme rounded-2xl p-6 transition-all duration-500 hover:scale-105 cursor-pointer min-h-[300px] flex flex-col">
+              <div className="bg-card border border-theme rounded-2xl p-6 transition-all duration-500 hover:scale-105 h-[380px] flex flex-col">
                 <h3 className="text-xl font-semibold mb-3 transition-all duration-500" style={{ fontFamily: "'Rammetto One', sans-serif" }}>Para Pesquisadores</h3>
                 <p className="text-text mb-4 transition-all duration-500 flex-grow" style={{ fontFamily: "'Sansita', sans-serif" }}>
                   <strong>Analise a evolução educacional desde 1995</strong> com dados consolidados e ferramentas de análise temporal.
@@ -359,7 +359,7 @@ export default function GitPages() {
 
             {/* Caso 3 */}
             <ScrollAnimation direction="up" duration={500} delay={250}>
-              <div className="bg-card border border-theme rounded-2xl p-6 transition-all duration-500 hover:scale-105 cursor-pointer min-h-[300px] flex flex-col">
+              <div className="bg-card border border-theme rounded-2xl p-6 transition-all duration-500 hover:scale-105 h-[380px] flex flex-col">
                 <h3 className="text-xl font-semibold mb-3 transition-all duration-500" style={{ fontFamily: "'Rammetto One', sans-serif" }}>Para Gestores Públicos</h3>
                 <p className="text-text mb-4 transition-all duration-500 flex-grow" style={{ fontFamily: "'Sansita', sans-serif" }}>
                   <strong>Planeje investimentos com base em dados reais</strong> e identifique prioridades regionais.
@@ -374,22 +374,22 @@ export default function GitPages() {
           </div>
         </section>
 
-        {/* Dashboard Section */}
+        {/* Dashboard Section - CORRIGIDO */}
         <section className="py-16 transition-all duration-500">
           <ScrollAnimation direction="up" duration={500} delay={100}>
             <h2 className="text-3xl md:text-4xl font-bold text-center mb-4 transition-all duration-500" style={{ fontFamily: "'Rammetto One', sans-serif" }}>Dashboard Completo</h2>
           </ScrollAnimation>
 
           <ScrollAnimation direction="up" duration={500} delay={150}>
-            <p className="text-xl text-gray-theme text-center mb-12 transition-all duration-500" style={{ fontFamily: "'Sansita', sans-serif" }}>
+            <p className="text-xl text-gray-theme text-center mb-12 px-4 transition-all duration-500" style={{ fontFamily: "'Sansita', sans-serif" }}>
               Informações detalhadas sobre cada escola brasileira
             </p>
           </ScrollAnimation>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 transition-all duration-500">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8 transition-all duration-500">
             {/* Seção 1 */}
             <ScrollAnimation direction="up" duration={500} delay={200}>
-              <div className="bg-card border border-theme rounded-2xl p-6 transition-all duration-500 hover:scale-105 cursor-pointer min-h-[300px] flex flex-col">
+              <div className="bg-card border border-theme rounded-2xl p-6 transition-all duration-500 hover:scale-105 h-[380px] flex flex-col">
                 <h3 className="text-xl font-semibold mb-4 text-primary transition-all duration-500" style={{ fontFamily: "'Rammetto One', sans-serif" }}>Identificação da Escola</h3>
                 <ul className="space-y-2 text-text transition-all duration-500 flex-grow" style={{ fontFamily: "'Sansita', sans-serif" }}>
                   <li>• Nome e Código INEP</li>
@@ -404,7 +404,7 @@ export default function GitPages() {
 
             {/* Seção 2 */}
             <ScrollAnimation direction="up" duration={500} delay={250}>
-              <div className="bg-card border border-theme rounded-2xl p-6 transition-all duration-500 hover:scale-105 cursor-pointer min-h-[300px] flex flex-col">
+              <div className="bg-card border border-theme rounded-2xl p-6 transition-all duration-500 hover:scale-105 h-[380px] flex flex-col">
                 <h3 className="text-xl font-semibold mb-4 text-primary transition-all duration-500" style={{ fontFamily: "'Rammetto One', sans-serif" }}>Métricas & Infraestrutura</h3>
                 <ul className="space-y-2 text-text transition-all duration-500 flex-grow" style={{ fontFamily: "'Sansita', sans-serif" }}>
                   <li>• Número de Alunos, Professores, Turmas</li>
@@ -419,7 +419,7 @@ export default function GitPages() {
 
             {/* Seção 3 */}
             <ScrollAnimation direction="up" duration={500} delay={300}>
-              <div className="bg-card border border-theme rounded-2xl p-6 transition-all duration-500 hover:scale-105 cursor-pointer min-h-[300px] flex flex-col">
+              <div className="bg-card border border-theme rounded-2xl p-6 transition-all duration-500 hover:scale-105 h-[380px] flex flex-col">
                 <h3 className="text-xl font-semibold mb-4 text-primary transition-all duration-500" style={{ fontFamily: "'Rammetto One', sans-serif" }}>Análise Temporal</h3>
                 <ul className="space-y-2 text-text transition-all duration-500 flex-grow" style={{ fontFamily: "'Sansita', sans-serif" }}>
                   <li>• Dados de 1995 até 2025</li>
@@ -434,44 +434,44 @@ export default function GitPages() {
           </div>
         </section>
 
-        {/* Responsividade */}
-        <section className="py-16 bg-card rounded-2xl px-8 transition-all duration-500">
+        {/* Responsividade - CORRIGIDO */}
+        <section className="py-16 bg-card rounded-2xl px-6 md:px-8 transition-all duration-500">
           <ScrollAnimation direction="up" duration={500} delay={100}>
             <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 transition-all duration-500" style={{ fontFamily: "'Rammetto One', sans-serif" }}>Responsividade</h2>
           </ScrollAnimation>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 transition-all duration-500">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 transition-all duration-500">
             <ScrollAnimation direction="up" duration={500} delay={150}>
-              <div className="bg-background border border-theme rounded-2xl p-6 text-center transition-all duration-500 hover:scale-105 cursor-pointer min-h-[180px] flex flex-col justify-center">
-                <h3 className="text-xl font-semibold mb-3 text-primary transition-all duration-500" style={{ fontFamily: "'Rammetto One', sans-serif" }}>Acesso Universal</h3>
-                <p className="text-text transition-all duration-500" style={{ fontFamily: "'Sansita', sans-serif" }}>
+              <div className="bg-background border border-theme rounded-2xl p-4 lg:p-6 text-center transition-all duration-500 hover:scale-105 h-[200px] flex flex-col justify-center">
+                <h3 className="text-lg lg:text-xl font-semibold mb-3 text-primary transition-all duration-500 leading-tight" style={{ fontFamily: "'Rammetto One', sans-serif" }}>Acesso Universal</h3>
+                <p className="text-text text-sm lg:text-base transition-all duration-500" style={{ fontFamily: "'Sansita', sans-serif" }}>
                   Funciona em qualquer dispositivo: computador, tablet ou smartphone
                 </p>
               </div>
             </ScrollAnimation>
 
             <ScrollAnimation direction="up" duration={500} delay={200}>
-              <div className="bg-background border border-theme rounded-2xl p-6 text-center transition-all duration-500 hover:scale-105 cursor-pointer min-h-[180px] flex flex-col justify-center">
-                <h3 className="text-xl font-semibold mb-3 text-primary transition-all duration-500" style={{ fontFamily: "'Rammetto One', sans-serif" }}>Interface Adaptável</h3>
-                <p className="text-text transition-all duration-500" style={{ fontFamily: "'Sansita', sans-serif" }}>
+              <div className="bg-background border border-theme rounded-2xl p-4 lg:p-6 text-center transition-all duration-500 hover:scale-105 h-[200px] flex flex-col justify-center">
+                <h3 className="text-lg lg:text-xl font-semibold mb-3 text-primary transition-all duration-500 leading-tight" style={{ fontFamily: "'Rammetto One', sans-serif" }}>Interface Adaptável</h3>
+                <p className="text-text text-sm lg:text-base transition-all duration-500" style={{ fontFamily: "'Sansita', sans-serif" }}>
                   Layout que se ajusta automaticamente ao tamanho da tela
                 </p>
               </div>
             </ScrollAnimation>
 
             <ScrollAnimation direction="up" duration={500} delay={250}>
-              <div className="bg-background border border-theme rounded-2xl p-6 text-center transition-all duration-500 hover:scale-105 cursor-pointer min-h-[180px] flex flex-col justify-center">
-                <h3 className="text-xl font-semibold mb-3 text-primary transition-all duration-500" style={{ fontFamily: "'Rammetto One', sans-serif" }}>Performance Otimizada</h3>
-                <p className="text-text transition-all duration-500" style={{ fontFamily: "'Sansita', sans-serif" }}>
+              <div className="bg-background border border-theme rounded-2xl p-4 lg:p-6 text-center transition-all duration-500 hover:scale-105 h-[200px] flex flex-col justify-center">
+                <h3 className="text-lg lg:text-xl font-semibold mb-3 text-primary transition-all duration-500 leading-tight" style={{ fontFamily: "'Rammetto One', sans-serif" }}>Performance Otimizada</h3>
+                <p className="text-text text-sm lg:text-base transition-all duration-500" style={{ fontFamily: "'Sansita', sans-serif" }}>
                   Carregamento rápido mesmo em conexões mais lentas
                 </p>
               </div>
             </ScrollAnimation>
 
             <ScrollAnimation direction="up" duration={500} delay={300}>
-              <div className="bg-background border border-theme rounded-2xl p-6 text-center transition-all duration-500 hover:scale-105 cursor-pointer min-h-[180px] flex flex-col justify-center">
-                <h3 className="text-xl font-semibold mb-3 text-primary transition-all duration-500" style={{ fontFamily: "'Rammetto One', sans-serif" }}>Design Acessível</h3>
-                <p className="text-text transition-all duration-500" style={{ fontFamily: "'Sansita', sans-serif" }}>
+              <div className="bg-background border border-theme rounded-2xl p-4 lg:p-6 text-center transition-all duration-500 hover:scale-105 h-[200px] flex flex-col justify-center">
+                <h3 className="text-lg lg:text-xl font-semibold mb-3 text-primary transition-all duration-500 leading-tight" style={{ fontFamily: "'Rammetto One', sans-serif" }}>Design Acessível</h3>
+                <p className="text-text text-sm lg:text-base transition-all duration-500" style={{ fontFamily: "'Sansita', sans-serif" }}>
                   Interface limpa e intuitiva para todos os usuários
                 </p>
               </div>
@@ -479,6 +479,7 @@ export default function GitPages() {
           </div>
         </section>
 
+        {/* Resto do código permanece igual... */}
         {/* Inteligência Artificial Educacional (RAG) */}
         <section className="py-16 transition-all duration-500">
           <ScrollAnimation direction="up" duration={500} delay={100}>
@@ -488,14 +489,14 @@ export default function GitPages() {
           </ScrollAnimation>
 
           <ScrollAnimation direction="up" duration={500} delay={150}>
-            <p className="text-xl text-gray-theme text-center mb-12 transition-all duration-500" style={{ fontFamily: "'Sansita', sans-serif" }}>
+            <p className="text-xl text-gray-theme text-center mb-12 px-4 transition-all duration-500" style={{ fontFamily: "'Sansita', sans-serif" }}>
               Converse naturalmente com nossa IA "Aluno"
             </p>
           </ScrollAnimation>
 
           <ScrollAnimation direction="up" duration={500} delay={200}>
-            <div className="bg-card border border-theme rounded-2xl p-8 transition-all duration-500">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 transition-all duration-500">
+            <div className="bg-card border border-theme rounded-2xl p-6 md:p-8 transition-all duration-500">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 transition-all duration-500">
                 <div>
                   <h3 className="text-xl font-semibold mb-4 text-primary transition-all duration-500" style={{ fontFamily: "'Rammetto One', sans-serif" }}>O que você pode perguntar:</h3>
                   <ul className="space-y-3 text-text transition-all duration-500" style={{ fontFamily: "'Sansita', sans-serif" }}>
@@ -548,13 +549,13 @@ export default function GitPages() {
             </ScrollAnimation>
 
             <ScrollAnimation direction="up" duration={500} delay={150}>
-              <p className="text-xl text-gray-theme mb-8 transition-all duration-500" style={{ fontFamily: "'Sansita', sans-serif" }}>
+              <p className="text-xl text-gray-theme mb-8 px-4 transition-all duration-500" style={{ fontFamily: "'Sansita', sans-serif" }}>
                 Acesse 30 anos de dados educacionais brasileiros de forma simples e intuitiva
               </p>
             </ScrollAnimation>
             
             <ScrollAnimation direction="up" duration={500} delay={200}>
-              <div className="bg-card border border-theme rounded-2xl p-8 max-w-2xl mx-auto transition-all duration-500">
+              <div className="bg-card border border-theme rounded-2xl p-6 md:p-8 max-w-2xl mx-auto transition-all duration-500">
                 <h3 className="text-2xl font-semibold mb-4 transition-all duration-500" style={{ fontFamily: "'Rammetto One', sans-serif" }}>Como Acessar</h3>
                 <p className="text-lg text-text mb-6 transition-all duration-500" style={{ fontFamily: "'Sansita', sans-serif" }}>
                   Navegue até nossa plataforma e escolha seu caminho de exploração
