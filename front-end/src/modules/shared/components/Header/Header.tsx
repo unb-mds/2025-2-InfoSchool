@@ -1,5 +1,5 @@
 'use client';
-import { useState, useMemo, useCallback, useEffect, ChangeEvent } from 'react';
+import { useState, useMemo, useCallback, useEffect } from 'react';
 import { useTheme } from '../ThemeProvider/ThemeProvider';
 import { Search } from 'lucide-react';
 import { useRouter, usePathname } from 'next/navigation';
@@ -21,10 +21,18 @@ function useDebounce<T>(value: T, delay: number) {
   return debouncedValue;
 }
 
+type Escola = {
+  id: string;
+  nome: string;
+  municipio: string;
+  estado: string;
+  tipo: string;
+};
+
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-  const [escolasBuscadas, setEscolasBuscadas] = useState([]); // Novo estado para resultados da API
+  const [escolasBuscadas, setEscolasBuscadas] = useState<Escola[]>([]); // Novo estado para resultados da API
   const [isLoading, setIsLoading] = useState(false); // Novo estado para loading
   const [showSuggestions, setShowSuggestions] = useState(false);
   
@@ -104,7 +112,7 @@ export default function Header() {
     setEscolasBuscadas([]); // Limpa resultados após a seleção
   }, [router]);
 
-  const handleSearchChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+  const handleSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
     setShowSuggestions(true);
   }, []);
