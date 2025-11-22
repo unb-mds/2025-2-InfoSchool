@@ -1,116 +1,62 @@
 const { BigQuery } = require('@google-cloud/bigquery');
+const PROJECT_ID = 'infoschool-475602';
 
-const BIGQUERY_PROJECT_ID = 'infoschool-475602';
-const bigquery = new BigQuery({ projectId: BIGQUERY_PROJECT_ID });
+const bigquery = new BigQuery({ projectId: PROJECT_ID });
 
-const getEscolas = async (fastify, options) => {
+module.exports = async function (fastify, opts) {
 
   fastify.get('/', async (request, reply) => {
+    
+    const term = request.query.q;
 
-    const { termo, estado, municipio, ano, tipo, pagina, limite } = request.query;
-
-    const pageSize = parseInt(limite) || 50;
-    const page = parseInt(pagina) || 1;
-    const offset = (page - 1) * pageSize;
-
-    let params = {};
-    let whereClauses = [];
-
-    const anoBusca = ano || 2024;
-    const tabelaCenso = `\`${BIGQUERY_PROJECT_ID}.escolas.${anoBusca}\``;
-
-    if (termo) {
-      whereClauses.push(`(
-            UPPER(NO_ENTIDADE) LIKE @termo 
-            OR UPPER(NO_MUNICIPIO) LIKE @termo
-        )`);
-      params.termo = `%${termo.toUpperCase()}%`;
+    if (!term || term.trim() === '') {
+      return { escolas: [] };
     }
-    if (estado) {
-      whereClauses.push(`SG_UF = @estado`);
-      params.estado = estado;
-    }
-    if (municipio) {
-      whereClauses.push(`NO_MUNICIPIO = @municipio`);
-      params.municipio = municipio;
-    }
-    if (tipo) {
-      let codigoDependencia;
-      switch (tipo.toLowerCase()) {
-        case 'federal': codigoDependencia = 1; break;
-        case 'estadual': codigoDependencia = 2; break;
-        case 'municipal': codigoDependencia = 3; break;
-        case 'privada': codigoDependencia = 4; break;
-        default: codigoDependencia = null;
-      }
-      if (codigoDependencia !== null) {
-        whereClauses.push(`TP_DEPENDENCIA = @tipoDependencia`);
-        params.tipoDependencia = codigoDependencia;
-      }
+    
+    if (term.trim().length < 3) {
+        return { escolas: [] };
     }
 
-    const whereCondition = whereClauses.length > 0 ? `WHERE ${whereClauses.join(' AND ')}` : '';
+    const searchTermForQuery = `%${term.toLowerCase()}%`;
 
-    params.limite = pageSize;
-    params.offset = offset;
+    const query = `
+      SELECT
+          CAST(CO_ENTIDADE AS STRING) AS id,
+          NO_ENTIDADE AS nome,
+          NO_MUNICIPIO AS municipio,
+          SG_UF AS estado,
+          CASE TP_DEPENDENCIA
+            WHEN 1 THEN 'Federal'
+            WHEN 2 THEN 'Estadual'
+            WHEN 3 THEN 'Municipal'
+            WHEN 4 THEN 'Privada'
+            ELSE 'Não Informado'
+          END AS tipo
+      FROM
+          \`infoschool-475602.escolas.2024\` 
+      WHERE
+          LOWER(NO_ENTIDADE) LIKE @searchTerm OR
+          LOWER(NO_MUNICIPIO) LIKE @searchTerm OR
+          LOWER(SG_UF) LIKE @searchTerm
+      LIMIT 15;
+    `;
+
+    const options = {
+      query: query,
+      params: { searchTerm: searchTermForQuery },
+    };
 
     try {
-      const countQuery = `SELECT COUNT(*) as total FROM ${tabelaCenso} ${whereCondition}`;
+      const [rows] = await bigquery.query(options);
 
-      const countParams = { ...params };
-
-      const [countRows] = await bigquery.query({
-        query: countQuery,
-        params: countParams,
-        location: 'US'
-      });
-      const total = countRows[0].total;
-
-      const dataQuery = `
-                SELECT 
-                    NO_ENTIDADE, 
-                    NO_MUNICIPIO, 
-                    SG_UF, 
-                    ${anoBusca} AS ano,
-                    CASE TP_DEPENDENCIA
-                      WHEN 1 THEN 'Federal'
-                      WHEN 2 THEN 'Estadual'
-                      WHEN 3 THEN 'Municipal'
-                      WHEN 4 THEN 'Privada'
-                    ELSE 'Não Informado'
-                    END AS TP_DEPENDENCIA
-                FROM
-                    ${tabelaCenso} 
-                ${whereCondition}
-                ORDER BY 
-                    NO_ENTIDADE ASC 
-                LIMIT @limite OFFSET @offset
-            `;
-
-      const [dataRows] = await bigquery.query({
-        query: dataQuery,
-        params: params,
-        location: 'US'
-      });
-
-      reply.send({
-        dados: dataRows,
-        total: total.toString(),
-        paginaAtual: page,
-        limite: pageSize
-      });
-
+      return { escolas: rows };
+      
     } catch (error) {
-      fastify.log.error(`BigQuery Error: ${error.message}`);
-
-      reply.code(500)
-        .header('Content-Type', 'application/json')
-        .send({
-          error: 'Falha na comunicação com o BigQuery. Verifique a tabela ou o formato da coluna.',
-          details: error.message
-        });
+      fastify.log.error(`Erro ao consultar BigQuery: ${error.message}`);
+      
+      const httpError = new Error('Falha na busca de escolas');
+      httpError.statusCode = 500;
+      throw httpError;
     }
   });
 };
-
-module.exports = getEscolas;
