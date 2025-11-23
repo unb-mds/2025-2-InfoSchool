@@ -7,7 +7,7 @@ export default function Footer() {
           
           {/* CONTATO*/}
           <div className="text-text-secondary text-xs transition-colors duration-500">
-            <p className="block sm:inline">contato@infoschool.br</p>
+            <p className="block sm:inline">infoschoolunb@gmail.com</p>
             <span className="hidden sm:inline mx-2">|</span>
             <p className="block sm:inline">(61) 99603-2741</p>
             <span className="hidden sm:inline mx-2">|</span>
