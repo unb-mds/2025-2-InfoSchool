@@ -135,5 +135,5 @@ A estrutura do repositório organiza o código-fonte, a documentação e os arte
 ## Equipe
 | ![Pedro Augusto MDS](https://github.com/user-attachments/assets/568ffcc4-da96-4310-b200-8921f9495a2c) | ![Pedro Gomes MDS](https://github.com/user-attachments/assets/0eac3c37-1d5b-446f-bb48-52a893d2a8ac) | ![Davi Ursulino MDS](https://github.com/user-attachments/assets/ff7ad902-4640-446f-84cf-a2f5d214fbc2) | ![FABIO MDS](https://github.com/user-attachments/assets/9c69cbe5-14f5-4148-b8ee-8bfc958c4071) | ![Leonado MDS](https://github.com/user-attachments/assets/3206604a-bc82-4ac4-84a8-026909c91714) | ![Joao MDS](https://github.com/user-attachments/assets/482c0304-2789-495c-8132-e22c59c691cd) |
 |----------|----------|----------|----------|----------|----------|
-| Pedro Augusto   | Pedro Gomes   | Davi Ursulino   | Fábio Alessandro   | Leonardo Lopes  | João Eduardo   |
+| [Pedro Augusto](https://github.com/macedoPedro20) | [Pedro Gomes](https://github.com/PedroGomes-phgr) | [Davi Ursulino](https://github.com/DaviUrsulino) | [Fábio Alessandro](https://github.com/Fabiovieira05) | [Leonardo Lopes](https://github.com/LeonardoLopesJr) | [João Eduardo](https://github.com/joaoleless)   |
 
