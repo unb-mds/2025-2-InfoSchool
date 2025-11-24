@@ -1,4 +1,23 @@
-const ap = require("fastify")({
+// --- ETAPA 0: CARREGAMENTO IMEDIATO DO AMBIENTE ---
+// ATENÇÃO: Usando a opção 'override: true' para forçar o carregamento das variáveis
+// do .env, mesmo que elas já estejam definidas no shell, resolvendo o 'injecting env (0)'.
+require('dotenv').config({ override: true });
+
+// ETAPA 1: IMPORTAÇÕES
+const Fastify = require("fastify");
+const paginaInicialRoutes = require("./src/routes/public/home.js");
+const rankingRoutes = require("./src/routes/public/ranking.js");
+const ragRoutes = require("./src/routes/public/rag.js");
+const brasilRoutes = require("./src/routes/maps/brasil.js");
+const estadosRoutes = require("./src/routes/maps/estado.js");
+const municipioRoutes = require("./src/routes/maps/municipio.js");
+const dashboardRoutes = require("./src/routes/dashboard/index.js");
+const escolasApiRoutes = require("./src/routes/explorar-escolas/api/explorar-escolas.js");
+const escolaSearchRoutes = require("./src/routes/paginaPrincipal/escolaSearch.js");
+
+// ETAPA 2: INICIALIZAÇÃO DA INSTÂNCIA ÚNICA (AP = APP)
+const app = Fastify({
+  // Consolidando a configuração de logger que estava no seu 'ap'
   logger: {
     level: process.env.NODE_ENV === "development" ? "info" : "warn",
     transport:
@@ -8,41 +27,36 @@ const ap = require("fastify")({
           }
         : undefined,
   },
+  // Adiciona o ignoreTrailingSlash para evitar 404s
+  ignoreTrailingSlash: true 
 });
 
-// Plugins (mantenha igual)
-ap.register(require("@fastify/cors"), {
+// ETAPA 3: REGISTRO DE PLUGINS
+app.register(require("@fastify/cors"), {
+  // ATENÇÃO: Para produção, mude 'true' para o endereço exato do seu frontend (ex: 'https://seuapp.com')
   origin: true,
   methods: ["GET", "POST"],
 });
-ap.register(require("@fastify/helmet"));
-ap.register(require("@fastify/rate-limit"), {
+app.register(require("@fastify/helmet"));
+app.register(require("@fastify/rate-limit"), {
   max: 100,
   timeWindow: "1 minute",
 });
 
-// Import de rotas (CORRIGIDO - removida duplicata)
-const paginaInicialRoutes = require("./src/routes/public/home.js");
-const rankingRoutes = require("./src/routes/public/ranking.js");
-const ragRoutes = require("./src/routes/public/rag.js");
-const brasilRoutes = require("./src/routes/maps/brasil.js");
-const estadosRoutes = require("./src/routes/maps/estado.js");
-const municipioRoutes = require("./src/routes/maps/municipio.js");
-const dashboardRoutes = require("./src/routes/dashboard/index.js");
-const escolasApiRoutes = require("./src/routes/explorar-escolas/api/explorar-escolas.js");
-
-const app = Fastify({ logger: true });
-
-// Registro de rotas (CORRIGIDO)
+// ETAPA 4: REGISTRO DE ROTAS (TODAS NO OBJETO 'app')
 app.register(paginaInicialRoutes, { prefix: "/pagina-inicial" });
 app.register(rankingRoutes, { prefix: "/ranking" });
 app.register(ragRoutes, { prefix: "/rag" });
 app.register(brasilRoutes, { prefix: "/mapa" });
 app.register(escolasApiRoutes, { prefix: "/api/explorar-escolas" });
 
-app.register(estadosRoutes, { prefix: "/estados" }); // MUDEI: /estado -> /estados
-app.register(municipioRoutes, { prefix: "/municipios" }); // NOVO: prefixo separado
-app.register(dashboardRoutes, { prefix: "/dashboard" }); // SIMPLIFIQUEI
+// Rota de busca BigQuery (A ROTA DO NOSSO FOCO)
+app.register(escolaSearchRoutes, { prefix: "/api/escolas/search" });
+
+// Adaptação dos seus prefixos
+app.register(estadosRoutes, { prefix: "/estados" }); 
+app.register(municipioRoutes, { prefix: "/municipios" }); 
+app.register(dashboardRoutes, { prefix: "/dashboard" }); 
 
 // Rota raiz
 app.get("/", async (request, reply) => {
@@ -62,17 +76,15 @@ app.get("/", async (request, reply) => {
       data: {
         ranking: "GET /ranking/...",
         dashboard: "GET /dashboard/...",
+        search: "GET /api/escolas/search?q=...", // Adiciona a nova rota de busca
       },
     },
   };
 });
 
-// Error handler (mantenha)
+// Error handler 
 app.setErrorHandler((error, request, reply) => {
   console.error(error);
-
-
-  // É CRUCIAL retornar JSON em caso de erro para o frontend!
 
   reply.status(error.statusCode || 500).send({
     error: true,
@@ -84,13 +96,14 @@ app.setErrorHandler((error, request, reply) => {
 // Iniciar servidor
 const start = async () => {
   try {
+    // Usando process.env.PORT, que agora está garantido pelo dotenv
     await app.listen({
-      port: process.env.PORT || 3000,
+      port: process.env.PORT || 3001, // Mudei o default para 3001 para evitar conflito com Next.js
       host: "0.0.0.0",
     });
-    console.log(`🚀 Servidor rodando na porta ${process.env.PORT || 3000}`);
+    console.log(`🚀 Servidor rodando na porta ${process.env.PORT || 3001}`);
 
-    // Inicialização automática do RAG (OPCIONAL)
+    // Inicialização automática do RAG
     console.log("🔄 Inicializando RAG Híbrido...");
     const hybridRAGService = require("./src/services/hybrid-ragService");
     setTimeout(async () => {
