@@ -146,7 +146,7 @@ export default function MapaPage() {
                 <div className="h-35 mt-6"></div>
 
                 {showSuggestions && (
-                  <div className="absolute top-full left-0 right-0 mt-2 max-h-60 overflow-y-auto overflow-x-hidden z-50 shadow-theme bg-card border border-theme rounded-lg transition-all duration-500">
+                  <div className="absolute top-16 left-0 right-0 max-h-60 overflow-y-auto overflow-x-hidden z-50 shadow-theme bg-card border border-theme rounded-lg transition-all duration-500">
                     {filteredEstados.length > 0 ? (
                       filteredEstados.map((estado) => (
                         <button
