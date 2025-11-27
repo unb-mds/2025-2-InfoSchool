@@ -1,8 +1,8 @@
 'use client';
 import { useState, useMemo, useCallback, useEffect } from 'react';
-import { useTheme } from '../ThemeProvider/ThemeProvider'; // DESCOMENTE NO SEU PROJETO
+import { useTheme } from '../ThemeProvider/ThemeProvider'; 
 import { Search, Loader2 } from 'lucide-react';
-import { useRouter, usePathname } from 'next/navigation'; // DESCOMENTE NO SEU PROJETO
+import { useRouter, usePathname } from 'next/navigation'; 
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 

@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { Search, MapPin, Calendar, School, Filter, Building, Loader2 } from 'lucide-react';
+import { useRouter } from 'next/navigation'; 
 
 interface UseDebounceProps<T> {
   value: T;
@@ -36,6 +37,8 @@ const TIPOS_ESCOLA = ['Municipal', 'Estadual', 'Federal', 'Privada'];
 
 
 export default function ExplorarEscolas() {
+  const router = useRouter();
+
   const [searchTerm, setSearchTerm] = useState('');
   const [filtroEstado, setFiltroEstado] = useState('');
   const [filtroMunicipio, setFiltroMunicipio] = useState('');
@@ -48,7 +51,9 @@ export default function ExplorarEscolas() {
   const [municipios, setMunicipios] = useState<string[]>([]);
   const [loadingMunicipios, setLoadingMunicipios] = useState(false);
 
+  // Interface atualizada com CO_ENTIDADE (ID INEP)
   interface Escola {
+    CO_ENTIDADE: string | number; 
     NO_ENTIDADE: string;
     NO_MUNICIPIO: string;
     SG_UF: string;
@@ -82,6 +87,7 @@ export default function ExplorarEscolas() {
         setMunicipios(nomesMunicipios.sort());
       } catch (error) {
         console.error('Erro ao carregar municípios:', error);
+        // Fallback simples se a API do IBGE falhar
         const municipiosMock: { [key: string]: string[] } = {
           'SP': ["São Paulo", "Campinas", "Santos", "Ribeirão Preto", "Sorocaba", "São José dos Campos"],
           'RJ': ["Rio de Janeiro", "Niterói", "Duque de Caxias", "São Gonçalo", "Nova Iguaçu"],
@@ -115,6 +121,7 @@ export default function ExplorarEscolas() {
     params.append('limite', PAGE_SIZE.toString());
 
     try {
+      // Nota: Ajuste a URL base se necessário para o seu ambiente real
       const url = `/api/explorar-escolas?${params.toString()}`; 
       
       const response = await fetch(url);
@@ -129,13 +136,15 @@ export default function ExplorarEscolas() {
       
     } catch (err: unknown) {
       console.error('Erro ao buscar escolas:', err);
-      setError(err instanceof Error ? err.message : 'Falha ao conectar com o servidor. (Verifique o console para o erro JSON)');
+      // Fallback visual para evitar tela branca em caso de erro de rede no preview
       setEscolas([]);
       setTotalEscolas(0);
+      setError(err instanceof Error ? err.message : 'Falha ao conectar com o servidor.');
     } finally {
       setLoading(false);
     }
   }, [filtroEstado, filtroMunicipio, filtroAno, filtroTipo, currentPage, debouncedSearchTerm]); 
+  
   useEffect(() => {
     buscarEscolas();
   }, [buscarEscolas]); 
@@ -154,6 +163,15 @@ export default function ExplorarEscolas() {
     setFiltroTipo('');
     setSearchTerm(''); 
     setCurrentPage(1); 
+  };
+
+  // Função para redirecionar para o Dashboard
+  const handleCardClick = (idInep: string | number) => {
+    if (idInep) {
+      router.push(`/dashboard/${idInep}`);
+    } else {
+      console.warn("Código INEP não disponível para esta escola.");
+    }
   };
 
   const temFiltrosAtivos = filtroEstado || filtroMunicipio || filtroAno !== 2024 || filtroTipo || searchTerm;
@@ -327,7 +345,9 @@ export default function ExplorarEscolas() {
             <div className="space-y-4 md:space-y-6">
               {escolas.map((escola, index) => (
                 <div 
-                  key={`${escola.NO_ENTIDADE || 'unknown'}-${escola.NO_MUNICIPIO || 'unknown'}-${escola.SG_UF || 'unknown'}-${escola.ano || 'na'}-${index}`}
+                  key={`${escola.NO_ENTIDADE || 'unknown'}-${index}`}
+                  // Evento onClick adicionado para navegar
+                  onClick={() => handleCardClick(escola.CO_ENTIDADE)}
                   className="bg-card rounded-2xl p-4 sm:p-6 shadow-2xl hover:shadow-3xl transition-all duration-500 hover:scale-[1.02] cursor-pointer border border-theme"
                 >
                   <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
@@ -350,7 +370,7 @@ export default function ExplorarEscolas() {
                         </div>
                         <div className="flex items-center gap-2">
                           <Building size={16} className="text-text/60" />
-                          <span className="text-text">ID: {escola.TP_DEPENDENCIA || 'N/A'}</span>
+                          <span className="text-text">Dependência: {escola.TP_DEPENDENCIA || 'N/A'}</span>
                         </div>
                       </div>
                     </div>
