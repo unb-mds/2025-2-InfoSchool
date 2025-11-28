@@ -1,6 +1,3 @@
-// --- ETAPA 0: CARREGAMENTO IMEDIATO DO AMBIENTE ---
-// ATENÇÃO: Usando a opção 'override: true' para forçar o carregamento das variáveis
-// do .env, mesmo que elas já estejam definidas no shell, resolvendo o 'injecting env (0)'.
 require('dotenv').config({ override: true });
 
 // ETAPA 1: IMPORTAÇÕES
@@ -11,7 +8,7 @@ const ragRoutes = require("./src/routes/public/rag.js");
 const brasilRoutes = require("./src/routes/maps/brasil.js");
 const estadosRoutes = require("./src/routes/maps/estado.js");
 const municipioRoutes = require("./src/routes/maps/municipio.js");
-const dashboardRoutes = require("./src/routes/dashboard/index.js");
+const dashboardRoutes = require("./src/routes/dashboard/dashboard.js");
 const escolasApiRoutes = require("./src/routes/explorar-escolas/api/explorar-escolas.js");
 const escolaSearchRoutes = require("./src/routes/paginaPrincipal/escolaSearch.js");
 const escolasLocationRoutes = require("./src/routes/caminho-normal/api/escolaPorLocalizao.js");
@@ -26,7 +23,7 @@ const app = Fastify({
     ? {
       target: "pino-pretty",
     }
-        : undefined,
+    : undefined,
   },
   // Adiciona o ignoreTrailingSlash para evitar 404s
   ignoreTrailingSlash: true 
@@ -58,6 +55,7 @@ app.register(estadosRoutes, { prefix: "/estados" });
 app.register(municipioRoutes, { prefix: "/municipios" }); 
 app.register(dashboardRoutes, { prefix: "/dashboard" }); 
 app.register(escolasLocationRoutes, { prefix: "/api/escolas/location" });
+app.register(dashboardRoutes, { prefix: "/api/escola/details" });
 
 // Rota raiz
 app.get("/", async (request, reply) => {
