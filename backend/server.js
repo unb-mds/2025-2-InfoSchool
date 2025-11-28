@@ -14,6 +14,7 @@ const municipioRoutes = require("./src/routes/maps/municipio.js");
 const dashboardRoutes = require("./src/routes/dashboard/index.js");
 const escolasApiRoutes = require("./src/routes/explorar-escolas/api/explorar-escolas.js");
 const escolaSearchRoutes = require("./src/routes/paginaPrincipal/escolaSearch.js");
+const escolasLocationRoutes = require("./src/routes/caminho-normal/api/escolaPorLocalizao.js");
 
 // ETAPA 2: INICIALIZAÇÃO DA INSTÂNCIA ÚNICA (AP = APP)
 const app = Fastify({
@@ -21,10 +22,10 @@ const app = Fastify({
   logger: {
     level: process.env.NODE_ENV === "development" ? "info" : "warn",
     transport:
-      process.env.NODE_ENV === "development"
-        ? {
-            target: "pino-pretty",
-          }
+    process.env.NODE_ENV === "development"
+    ? {
+      target: "pino-pretty",
+    }
         : undefined,
   },
   // Adiciona o ignoreTrailingSlash para evitar 404s
@@ -50,13 +51,13 @@ app.register(ragRoutes, { prefix: "/rag" });
 app.register(brasilRoutes, { prefix: "/mapa" });
 app.register(escolasApiRoutes, { prefix: "/api/explorar-escolas" });
 
-// Rota de busca BigQuery (A ROTA DO NOSSO FOCO)
 app.register(escolaSearchRoutes, { prefix: "/api/escolas/search" });
 
 // Adaptação dos seus prefixos
 app.register(estadosRoutes, { prefix: "/estados" }); 
 app.register(municipioRoutes, { prefix: "/municipios" }); 
 app.register(dashboardRoutes, { prefix: "/dashboard" }); 
+app.register(escolasLocationRoutes, { prefix: "/api/escolas/location" });
 
 // Rota raiz
 app.get("/", async (request, reply) => {
