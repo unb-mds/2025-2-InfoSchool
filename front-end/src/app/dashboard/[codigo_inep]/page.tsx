@@ -3,24 +3,22 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation'; // DESCOMENTE NO SEU PROJETO REAL
 
-
 // Ícones
 import { 
   School, MapPin, Phone, Mail, Users, UserCheck, BookOpen, 
-  TrendingUp, Award, Clock, Building, Wifi, Utensils, Laptop, 
+  TrendingUp, Award, Building, Wifi, Utensils, Laptop, 
   ArrowLeft, Home, Download, BarChart3, Target, Calendar,
-  Lightbulb, Cpu, Library, GraduationCap, PieChart,
-  Activity, Shield, Heart, Loader2, CheckCircle2, AlertTriangle, X
+  Loader2, FileText, X, AlertTriangle
 } from 'lucide-react';
 
 // Recharts
 import {
-  LineChart, Line, ResponsiveContainer, CartesianGrid, XAxis, YAxis, Tooltip, Legend, BarChart, Bar
+  LineChart, Line, ResponsiveContainer, CartesianGrid, XAxis, YAxis, Tooltip
 } from 'recharts';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
-// --- DICIONÁRIO DE DADOS COMPLETO (Baseado no seu JSON) ---
+// --- DICIONÁRIO DE DADOS COMPLETO (RESTAURADO DO ORIGINAL) ---
 const DICIONARIO_DADOS: Record<string, string> = {
   // IDENTIFICAÇÃO
   "NU_ANO_CENSO": "Ano do Censo",
@@ -306,7 +304,7 @@ const DICIONARIO_DADOS: Record<string, string> = {
   "QT_TUR_BAS": "Total Turmas"
 };
 
-// --- FUNÇÃO DE PDF ATUALIZADA ---
+// --- FUNÇÃO DE PDF ---
 const generatePDF = (dadosCompletos: any) => {
   const { raw } = dadosCompletos;
   const now = new Date();
@@ -315,14 +313,12 @@ const generatePDF = (dadosCompletos: any) => {
   const formatValue = (key: string, val: any) => {
     if (val === null || val === undefined) return '-';
     if ((key.startsWith('IN_') || key.startsWith('TP_')) && typeof val === 'number') {
-       // Ignora códigos que não são booleanos
        if (['TP_DEPENDENCIA', 'TP_LOCALIZACAO', 'TP_SITUACAO_FUNCIONAMENTO', 'CO_UF', 'CO_MUNICIPIO', 'TP_REDE_LOCAL'].includes(key)) return val;
        return val === 1 ? 'Sim' : 'Não';
     }
     return val;
   };
 
-  // Categorias para organização do PDF
   const keys = Object.keys(raw).sort();
   const categories = {
     'Identificação': keys.filter(k => ['NO_ENTIDADE', 'CO_ENTIDADE', 'NO_MUNICIPIO', 'SG_UF', 'TP_DEPENDENCIA', 'TP_LOCALIZACAO'].includes(k)),
@@ -366,9 +362,6 @@ const generatePDF = (dadosCompletos: any) => {
         .label { width: 60%; font-weight: bold; color: #555; }
         .code { font-size: 9px; color: #999; font-weight: normal; }
         .footer { margin-top: 40px; border-top: 1px solid #ccc; padding-top: 10px; text-align: center; color: #999; font-size: 10px; }
-        @media print {
-            body { margin: 20px; }
-        }
       </style>
     </head>
     <body>
@@ -380,10 +373,7 @@ const generatePDF = (dadosCompletos: any) => {
       ${htmlSections}
       <div class="footer">Relatório gerado via InfoSchool. Fonte: INEP/MEC.</div>
       <script>
-         // Auto-aciona a impressão para simular o download
-         setTimeout(() => {
-            window.print();
-         }, 800);
+         setTimeout(() => { window.print(); }, 800);
       </script>
     </body>
     </html>
@@ -416,10 +406,7 @@ const DashboardService = {
         professores: data.QT_DOC_BAS || 0,
         turmas: data.QT_TUR_BAS || 0,
         salas: data.QT_SALAS_UTILIZADAS || 0,
-        ideb: 5.5 + (hash % 30) / 10,
-        aprovacao: 85 + (hash % 15),
-        frequencia: 90 + (hash % 8),
-        evasao: 2 + (hash % 5)
+        ideb_simulado: 5.5 + (hash % 30) / 10, 
       };
 
       return {
@@ -436,7 +423,6 @@ const DashboardService = {
           turno: data.turnos_ui || ['Não informado'],
           municipio: data.NO_MUNICIPIO,
           estado: data.SG_UF,
-          diretora: `Gestão Escolar`
         },
         metricas: metricasReais,
         infraestrutura: {
@@ -455,24 +441,12 @@ const DashboardService = {
           }
         },
         dadosTemporais: [
-          { ano: 2019, alunos: Math.floor((data.QT_MAT_BAS || 500) * 0.9), ideb: 5.0, professores: 20, aprovacao: 80 },
-          { ano: 2020, alunos: Math.floor((data.QT_MAT_BAS || 500) * 0.95), ideb: 5.2, professores: 22, aprovacao: 82 },
-          { ano: 2021, alunos: Math.floor((data.QT_MAT_BAS || 500) * 0.98), ideb: 5.3, professores: 23, aprovacao: 83 },
-          { ano: 2022, alunos: data.QT_MAT_BAS || 500, ideb: 5.4, professores: 24, aprovacao: 84 },
-          { ano: 2023, alunos: data.QT_MAT_BAS || 500, ideb: 5.5, professores: 25, aprovacao: 85 }
-        ],
-        destaques: { 
-          melhor_indicador: "Infraestrutura Ativa",
-          evolucao_destaque: "Manutenção de alunos",
-          comparacao_municipal: 5 + (hash % 10),
-          comparacao_estadual: 2 + (hash % 5),
-          pontos_fortes: [
-            data.IN_INTERNET === 1 ? "Conectividade" : null,
-            data.tem_biblioteca_ui ? "Acervo Disponível" : null,
-            data.tem_acessibilidade_ui ? "Acessibilidade" : null,
-            "Gestão Participativa"
-          ].filter(Boolean)
-        }
+          { ano: 2019, alunos: Math.floor((data.QT_MAT_BAS || 500) * 0.9), ideb: 5.0, professores: 20 },
+          { ano: 2020, alunos: Math.floor((data.QT_MAT_BAS || 500) * 0.95), ideb: 5.2, professores: 22 },
+          { ano: 2021, alunos: Math.floor((data.QT_MAT_BAS || 500) * 0.98), ideb: 5.3, professores: 23 },
+          { ano: 2022, alunos: data.QT_MAT_BAS || 500, ideb: 5.4, professores: 24 },
+          { ano: 2023, alunos: data.QT_MAT_BAS || 500, ideb: 5.5, professores: 25 }
+        ]
       };
     } catch (error) {
       console.error(error);
@@ -537,23 +511,21 @@ function IdentificacaoEscola({ escola }: any) {
 
 function MetricasEscola({ metricas }: { metricas: any }) {
   const cards = [
-    { icon: Users, label: 'Alunos', value: metricas.alunos, color: 'text-blue-500', isMock: false },
-    { icon: UserCheck, label: 'Professores', value: metricas.professores, color: 'text-green-500', isMock: false },
-    { icon: BookOpen, label: 'Turmas', value: metricas.turmas, color: 'text-purple-500', isMock: false },
-    { icon: TrendingUp, label: 'IDEB (Simulado)', value: metricas.ideb.toFixed(1), color: 'text-purple-500', isMock: true },
-    { icon: Building, label: 'Salas', value: metricas.salas, color: 'text-indigo-500', isMock: false },
-    { icon: Target, label: 'Aprovação (Simulado)', value: `${metricas.aprovacao}%`, color: 'text-purple-500', isMock: true }
+    { icon: Users, label: 'Alunos', value: metricas.alunos, color: 'text-blue-500' },
+    { icon: UserCheck, label: 'Professores', value: metricas.professores, color: 'text-green-500' },
+    { icon: BookOpen, label: 'Turmas', value: metricas.turmas, color: 'text-purple-500' },
+    { icon: Building, label: 'Salas', value: metricas.salas, color: 'text-indigo-500' },
   ];
 
   return (
     <div className="bg-card rounded-2xl p-4 sm:p-6 border border-white/10 shadow-[0_0_20px_-5px_rgba(0,0,0,0.35)] backdrop-blur-sm transition-all duration-300 hover:shadow-[0_0_35px_-5px_rgba(0,0,0,0.55)] hover:bg-card/80">
       <h2 className="text-lg font-semibold text-text mb-4">Métricas da Escola</h2>
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
-        {cards.map(({ icon: Icon, label, value, color, isMock }, index) => (
-          <div key={index} className={`text-center p-3 sm:p-4 rounded-lg border transition-all duration-300 hover:scale-[1.05] hover:shadow-lg ${isMock ? 'bg-purple-50 border-purple-200' : 'bg-card-alt border-theme hover:bg-card'}`}>
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+        {cards.map(({ icon: Icon, label, value, color }, index) => (
+          <div key={index} className={`text-center p-3 sm:p-4 rounded-lg border transition-all duration-300 hover:scale-[1.05] hover:shadow-lg bg-card-alt border-theme hover:bg-card`}>
             <Icon className={`mx-auto mb-1 sm:mb-2 ${color} w-5 h-5 sm:w-6 sm:h-6`} />
-            <div className={`text-lg sm:text-xl lg:text-2xl font-bold ${isMock ? 'text-purple-700' : 'text-text'}`}>{typeof value === 'number' ? value.toLocaleString('pt-BR') : value}</div>
-            <div className={`text-xs sm:text-sm mt-1 ${isMock ? 'text-purple-600 font-medium' : 'text-gray-theme'}`}>{label}</div>
+            <div className={`text-lg sm:text-xl lg:text-2xl font-bold text-text`}>{typeof value === 'number' ? value.toLocaleString('pt-BR') : value}</div>
+            <div className={`text-xs sm:text-sm mt-1 text-gray-theme`}>{label}</div>
           </div>
         ))}
       </div>
@@ -570,6 +542,8 @@ function InfraestruturaEscola({ infraestrutura }: { infraestrutura: any }) {
     { icon: Utensils, label: "Alimentação", disponivel: infraestrutura.alimentacao }
   ];
 
+  const possuiCotas = infraestrutura.cotas.ppi || infraestrutura.cotas.renda || infraestrutura.cotas.pcd;
+
   return (
     <div className="bg-card rounded-2xl p-4 sm:p-6 border border-white/10 shadow-[0_0_20px_-5px_rgba(0,0,0,0.35)] backdrop-blur-sm transition-all duration-300 hover:shadow-[0_0_35px_-5px_rgba(0,0,0,0.55)] hover:bg-card/80">
       <h2 className="text-lg font-semibold text-text mb-4">Infraestrutura</h2>
@@ -578,7 +552,13 @@ function InfraestruturaEscola({ infraestrutura }: { infraestrutura: any }) {
           <div key={index} className="text-center p-3 sm:p-4 bg-card-alt rounded-lg border border-theme transition-all duration-300 hover:bg-card hover:shadow-md">
             <Icon className={`mx-auto mb-1 sm:mb-2 ${disponivel ? "text-green-500" : "text-red-400"} w-5 h-5 sm:w-6 sm:h-6`} />
             <div className={`text-xs sm:text-sm font-medium ${disponivel ? "text-text" : "text-gray-theme"}`}>{label}</div>
-            <div className={`text-xs ${disponivel ? "text-green-500" : "text-red-400"}`}>{disponivel ? "Disponível" : "Indisponível"}</div>
+            
+            <div className={`text-xs ${disponivel ? "text-green-500" : "text-red-400"}`}>
+              {label === "Alimentação" 
+                ? (disponivel ? "Gratuita" : "Paga / Não possui") 
+                : (disponivel ? "Disponível" : "Indisponível")
+              }
+            </div>
           </div>
         ))}
       </div>
@@ -594,6 +574,12 @@ function InfraestruturaEscola({ infraestrutura }: { infraestrutura: any }) {
           {infraestrutura.cotas.ppi && <span className="px-3 py-1 rounded-full text-xs font-medium bg-purple-500/10 text-purple-400 border border-purple-500/20">PPI</span>}
           {infraestrutura.cotas.renda && <span className="px-3 py-1 rounded-full text-xs font-medium bg-blue-500/10 text-blue-400 border border-blue-500/20">Renda</span>}
           {infraestrutura.cotas.pcd && <span className="px-3 py-1 rounded-full text-xs font-medium bg-green-500/10 text-green-400 border border-green-500/20">PCD</span>}
+          
+          {!possuiCotas && (
+            <span className="text-sm text-gray-500 italic flex items-center gap-1">
+              Não possui sistema de cotas
+            </span>
+          )}
         </div>
       </div>
     </div>
@@ -652,51 +638,28 @@ function AnaliseTemporal({ dadosTemporais }: { dadosTemporais: any[] }) {
   );
 }
 
-function DestaquesEscola({ destaques }: { destaques: any }) {
-  return (
-    <div className="bg-purple-50 rounded-2xl p-4 sm:p-6 border border-purple-200 shadow-md">
-      <h2 className="text-lg font-semibold text-purple-900 mb-4 flex items-center gap-2"><Award className="text-purple-600 w-5 h-5 sm:w-6 sm:h-6" /> Destaques da Escola (Simulado)</h2>
-      <div className="space-y-3 sm:space-y-4">
-        <div className="bg-white border border-purple-100 rounded-lg p-3 sm:p-4 transition-all duration-200 hover:shadow-md">
-          <div className="flex items-center gap-2 mb-1"><TrendingUp className="text-purple-500 w-4 h-4 sm:w-5 sm:h-5" /><span className="font-semibold text-purple-800 text-sm sm:text-base">Melhor Indicador</span></div>
-          <p className="text-purple-600 text-xs sm:text-sm">{destaques.melhor_indicador}</p>
-        </div>
-        <div className="bg-white border border-purple-100 rounded-lg p-3 sm:p-4 transition-all duration-200 hover:shadow-md">
-          <div className="flex items-center gap-2 mb-1"><Clock className="text-purple-500 w-4 h-4 sm:w-5 sm:h-5" /><span className="font-semibold text-purple-800 text-sm sm:text-base">Evolução</span></div>
-          <p className="text-purple-600 text-xs sm:text-sm">{destaques.evolucao_destaque}</p>
-        </div>
-        <div className="grid grid-cols-2 gap-3 sm:gap-4">
-          <div className="bg-white border border-purple-100 rounded-lg p-2 sm:p-3 text-center transition-all duration-200 hover:shadow-md"><div className="text-base sm:text-lg font-bold text-purple-600">+{destaques.comparacao_municipal}%</div><div className="text-xs text-purple-400">Acima da média municipal</div></div>
-          <div className="bg-white border border-purple-100 rounded-lg p-2 sm:p-3 text-center transition-all duration-200 hover:shadow-md"><div className="text-base sm:text-lg font-bold text-purple-600">+{destaques.comparacao_estadual}%</div><div className="text-xs text-purple-400">Acima da média estadual</div></div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// --- NOVO COMPONENTE: MODAL DE CONFIRMAÇÃO ---
 function ConfirmationModal({ isOpen, onClose, onConfirm, isLoading }: any) {
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl max-w-md w-full p-6 border border-gray-200 dark:border-gray-700 transform scale-100 animate-in zoom-in-95 duration-200">
+      <div className="bg-card rounded-2xl shadow-2xl max-w-md w-full p-6 border border-theme transform scale-100 animate-in zoom-in-95 duration-200">
         <div className="flex items-start gap-4">
-          <div className="p-3 bg-yellow-100 dark:bg-yellow-900/30 rounded-full flex-shrink-0">
-            <AlertTriangle className="w-6 h-6 text-yellow-600 dark:text-yellow-400" />
+          <div className="p-3 bg-blue-500/10 rounded-full flex-shrink-0">
+            <FileText className="w-6 h-6 text-blue-500" />
           </div>
           <div className="flex-1">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-              Confirmar Exportação
+            <h3 className="text-lg font-bold text-text">
+              Exportar Relatório PDF
             </h3>
-            <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-              Você tem certeza que deseja gerar e baixar o relatório completo desta escola?
+            <p className="mt-2 text-sm text-gray-theme">
+              O relatório completo desta escola será gerado e baixado automaticamente.
             </p>
-            <div className="mt-2 text-xs text-gray-400 dark:text-gray-500 bg-gray-50 dark:bg-gray-800 p-2 rounded border border-gray-100 dark:border-gray-700">
-              Isso buscará todos os dados do servidor e preparará um arquivo PDF para impressão.
+            <div className="mt-3 text-xs text-gray-theme bg-card-alt p-2 rounded border border-theme">
+              Inclui: Infraestrutura, Docentes, Matrículas e Histórico.
             </div>
           </div>
-          <button onClick={onClose} disabled={isLoading} className="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300">
+          <button onClick={onClose} disabled={isLoading} className="text-gray-theme hover:text-text transition-colors">
             <X size={20} />
           </button>
         </div>
@@ -705,17 +668,17 @@ function ConfirmationModal({ isOpen, onClose, onConfirm, isLoading }: any) {
           <button 
             onClick={onClose}
             disabled={isLoading}
-            className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700 disabled:opacity-50"
+            className="px-4 py-2 text-sm font-medium text-text bg-transparent border border-theme rounded-lg hover:bg-black/5 dark:hover:bg-white/5 transition-colors focus:outline-none disabled:opacity-50"
           >
             Cancelar
           </button>
           <button 
             onClick={onConfirm}
             disabled={isLoading}
-            className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-70 disabled:cursor-not-allowed transition-all"
+            className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 shadow-md focus:outline-none disabled:opacity-70 disabled:cursor-not-allowed transition-all"
           >
             {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
-            {isLoading ? "Gerando..." : "Confirmar e Baixar"}
+            {isLoading ? "Gerando..." : "Confirmar Download"}
           </button>
         </div>
       </div>
@@ -732,7 +695,6 @@ export default function DashboardEscola() {
   const [error, setError] = useState<string | null>(null);
   const [gerandoPDF, setGerandoPDF] = useState(false);
   
-  // State para o Modal
   const [showConfirmation, setShowConfirmation] = useState(false);
 
   useEffect(() => {
@@ -750,19 +712,17 @@ export default function DashboardEscola() {
     if (codigo_inep) carregarDadosIniciais();
   }, [codigo_inep]);
 
-  // Função chamada ao clicar no botão "Exportar"
   const handleExportClick = () => {
     setShowConfirmation(true);
   };
 
-  // Função chamada ao confirmar no Modal
   const handleConfirmExport = async () => {
     if (!dados) return;
     setGerandoPDF(true);
     try {
       const dadosCompletos = await DashboardService.getDadosEscola(codigo_inep, true);
       generatePDF(dadosCompletos);
-      setShowConfirmation(false); // Fecha modal só no sucesso ou erro final
+      setShowConfirmation(false);
     } catch (e) {
       alert("Erro ao gerar PDF.");
     } finally {
@@ -786,16 +746,10 @@ export default function DashboardEscola() {
             <AnaliseTemporal dadosTemporais={dados.dadosTemporais} />
           </div>
           <div className="space-y-6 sm:space-y-8">
-            <DestaquesEscola destaques={dados.destaques} />
             <div className="bg-card p-6 rounded-xl border border-white/10 shadow-lg">
               <h3 className="font-bold text-lg mb-4 flex items-center gap-2"><TrendingUp size={20} className="text-primary"/> Ações Rápidas</h3>
               <div className="space-y-3">
-                <a href="/explorar-escolas" className="w-full flex items-center gap-3 p-3 bg-card-alt rounded-xl border border-theme hover:bg-black/10 dark:hover:bg-white/10 no-underline group">
-                   <div className="p-2 bg-blue-100 rounded-lg group-hover:scale-110 transition-transform"><BarChart3 className="text-blue-500 w-5 h-5" /></div>
-                   <div className="flex-1 text-left"><div className="font-semibold text-text text-sm group-hover:text-blue-500">Comparar escolas</div></div>
-                </a>
                 
-                {/* BOTÃO ALTERADO PARA ABRIR MODAL */}
                 <button onClick={handleExportClick} disabled={gerandoPDF} className="w-full flex items-center gap-3 sm:gap-4 p-3 sm:p-4 cursor-pointer bg-card-alt rounded-xl border border-theme transition-all duration-200 hover:bg-black/10 dark:hover:bg-white/10 hover:shadow-md group disabled:opacity-50">
                   <div className="p-2 bg-green-100 rounded-lg group-hover:scale-110 transition-transform duration-200 flex-shrink-0">
                     <Download className="text-green-500 w-5 h-5 sm:w-6 sm:h-6" />
@@ -818,7 +772,6 @@ export default function DashboardEscola() {
         </div>
       </div>
 
-      {/* RENDERIZAÇÃO DO MODAL */}
       <ConfirmationModal 
         isOpen={showConfirmation}
         onClose={() => !gerandoPDF && setShowConfirmation(false)}
