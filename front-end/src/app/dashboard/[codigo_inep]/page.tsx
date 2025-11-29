@@ -5,7 +5,7 @@ import { useRouter, useParams } from 'next/navigation'; // DESCOMENTE NO SEU PRO
 
 // Ícones
 import { 
-  School, MapPin, Phone, Mail, Users, UserCheck, BookOpen, 
+  School, MapPin, Phone, Users, UserCheck, BookOpen, 
   TrendingUp, Award, Building, Wifi, Utensils, Laptop, 
   ArrowLeft, Home, Download, BarChart3, Target, Calendar,
   Loader2, FileText, X, AlertTriangle
@@ -18,7 +18,7 @@ import {
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
-// --- DICIONÁRIO DE DADOS COMPLETO (RESTAURADO DO ORIGINAL) ---
+// --- DICIONARIO DE DADOS ---
 const DICIONARIO_DADOS: Record<string, string> = {
   // IDENTIFICAÇÃO
   "NU_ANO_CENSO": "Ano do Censo",
@@ -461,9 +461,9 @@ function DashboardHeader({ escola, onBack }: any) {
       <div className="max-w-[95%] sm:max-w-[90%] md:max-w-[80%] mx-auto px-3 sm:px-4 py-2 md:py-3">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div className="flex items-center gap-4">
-            <button onClick={onBack} className="flex items-center gap-2 text-gray-theme hover:text-text transition-colors duration-200 text-sm sm:text-base"><ArrowLeft size={18} /><span>Voltar</span></button>
+            <button onClick={onBack} className="flex items-center gap-2 text-gray-theme hover:text-text transition-colors duration-200 text-sm sm:text-base cursor-pointer"><ArrowLeft size={18} /><span>Voltar</span></button>
             <div className="h-4 sm:h-6 w-px bg-theme"></div>
-            <button onClick={() => window.location.href = '/'} className="flex items-center gap-2 text-gray-theme hover:text-text transition-colors duration-200 text-sm sm:text-base"><Home size={18} /><span>Início</span></button>
+            <button onClick={() => window.location.href = '/'} className="flex items-center gap-2 text-gray-theme hover:text-text transition-colors duration-200 text-sm sm:text-base cursor-pointer"><Home size={18} /><span>Início</span></button>
           </div>
           <div className="text-right">
             <div className="text-xs sm:text-sm text-gray-theme">{escola.municipio} - {escola.estado}</div>
@@ -477,31 +477,92 @@ function DashboardHeader({ escola, onBack }: any) {
 
 function IdentificacaoEscola({ escola }: any) {
   return (
-    <div className="bg-card rounded-2xl p-7 border border-white/10 shadow-[0_0_25px_-5px_rgba(0,0,0,0.35)] backdrop-blur-sm transition-all duration-300 hover:shadow-[0_0_35px_-5px_rgba(0,0,0,0.45)]">
-      <div className="flex flex-col sm:flex-row sm:items-start gap-7">
-        <div className="p-0 rounded-none bg-transparent shadow-none border-none"><School className="text-primary w-9 h-9" /></div>
-        <div className="flex-1 min-w-0 space-y-5">
-          <div className="space-y-1">
-            <h1 className="text-2xl font-extrabold tracking-tight text-white break-words">{escola.nome}</h1>
-            <div className="w-16 h-[3px] bg-primary/60 rounded-full"></div>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 items-start gap-6 text-sm">
-            <div className="space-y-3">
-              <div className="flex flex-col xs:flex-row xs:items-center gap-1.5"><span className="font-semibold text-text">Código INEP:</span><span className="text-gray-theme">{escola.codigo_inep}</span></div>
-              <div className="flex flex-col xs:flex-row xs:items-center gap-1.5"><span className="font-semibold text-text">Rede:</span><span className="px-3 py-1 rounded-full bg-gradient-to-r from-green-100 to-green-200 max-w-fit text-green-900 text-xs font-semibold shadow-sm">{escola.rede}</span></div>
-              <div className="flex flex-col xs:flex-row xs:items-center gap-1.5"><span className="font-semibold text-text">Localização:</span><span className="text-gray-theme capitalize">{escola.localizacao}</span></div>
-            </div>
-            <div className="space-y-3">
-              <div className="flex items-start gap-2"><MapPin className="text-gray-theme w-4 h-4 mt-0.5" /><span className="text-gray-theme leading-tight break-words">{escola.endereco}</span></div>
-              <div className="flex items-center gap-2"><Phone className="text-gray-theme w-4 h-4" /><span className="text-gray-theme">{escola.telefone}</span></div>
-              <div className="flex items-center gap-2"><Mail className="text-purple-500 w-4 h-4" /><span className="text-purple-600 font-medium break-words">{escola.email} (Simulado)</span></div>
+    <div className="bg-card rounded-2xl border border-theme shadow-lg overflow-hidden relative group">
+      {/* Detalhe decorativo no topo */}
+      <div className="h-2 w-full bg-gradient-to-r from-blue-500 to-primary absolute top-0 left-0"></div>
+      
+      <div className="p-6 sm:p-8">
+        <div className="flex flex-col md:flex-row gap-6 md:gap-8 items-start">
+          
+          {/* 1. Ícone da Escola (Estilo Logo) */}
+          <div className="flex-shrink-0">
+            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-primary/10 flex items-center justify-center border border-primary/20 shadow-sm group-hover:scale-105 transition-transform duration-300">
+              <School className="text-primary w-10 h-10 sm:w-12 sm:h-12" strokeWidth={1.5} />
             </div>
           </div>
-          <div className="flex flex-wrap gap-3 pt-2">
-            <span className="px-3 py-1 bg-gradient-to-r from-green-100 to-green-200 text-green-900 rounded-full text-xs font-bold tracking-wide shadow-sm">{escola.situacao}</span>
-            {(escola.turno || []).map((turno: string, index: number) => (
-              <span key={index} className="px-3 py-1 rounded-full text-xs font-semibold tracking-wide bg-primary/15 text-primary shadow-sm border border-primary/20">{turno}</span>
-            ))}
+
+          {/* 2. Conteúdo Principal */}
+          <div className="flex-1 w-full min-w-0">
+            
+            {/* Cabeçalho: Nome e Código */}
+            <div className="mb-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-2">
+                <h1 className="text-2xl sm:text-3xl font-bold text-text leading-tight break-words">
+                  {escola.nome}
+                </h1>
+                <div className="flex-shrink-0 px-3 py-1 bg-card-alt border border-theme rounded-full text-xs font-mono text-gray-theme">
+                  INEP: {escola.codigo_inep}
+                </div>
+              </div>
+              
+              {/* Badges de Status e Turno */}
+              <div className="flex flex-wrap gap-2 mt-3">
+                <span className="px-3 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded-full text-xs font-bold border border-green-200 dark:border-green-800 flex items-center gap-1.5">
+                  <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></div>
+                  {escola.situacao}
+                </span>
+                {(escola.turno || []).map((turno: string, index: number) => (
+                  <span key={index} className="px-3 py-1 rounded-full text-xs font-medium bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-300 border border-blue-100 dark:border-blue-800/50">
+                    {turno}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            {/* Separador */}
+            <div className="h-px w-full bg-theme mb-6"></div>
+
+            {/* Grid de Informações Detalhadas */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-6">
+              
+              {/* Coluna 1: Administrativo */}
+              <div className="space-y-4">
+                <div className="flex items-start gap-3">
+                  <div className="p-1.5 bg-card-alt rounded-lg text-primary border border-theme mt-0.5"><Building size={16} /></div>
+                  <div>
+                    <p className="text-xs font-medium text-gray-theme uppercase tracking-wider mb-0.5">Rede de Ensino</p>
+                    <p className="text-sm font-semibold text-text">{escola.rede}</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="p-1.5 bg-card-alt rounded-lg text-primary border border-theme mt-0.5"><MapPin size={16} /></div>
+                  <div>
+                    <p className="text-xs font-medium text-gray-theme uppercase tracking-wider mb-0.5">Localização</p>
+                    <p className="text-sm font-semibold text-text capitalize">{escola.localizacao}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Coluna 2: Endereço */}
+              <div className="sm:col-span-2 lg:col-span-2 space-y-4">
+                 <div className="flex items-start gap-3">
+                  <div className="p-1.5 bg-card-alt rounded-lg text-primary border border-theme mt-0.5"><MapPin size={16} /></div>
+                  <div>
+                    <p className="text-xs font-medium text-gray-theme uppercase tracking-wider mb-0.5">Endereço Completo</p>
+                    <p className="text-sm font-medium text-text leading-relaxed">{escola.endereco}</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-start gap-3">
+                  <div className="p-1.5 bg-card-alt rounded-lg text-primary border border-theme mt-0.5"><Phone size={16} /></div>
+                  <div>
+                    <p className="text-xs font-medium text-gray-theme uppercase tracking-wider mb-0.5">Telefone de Contato</p>
+                    <p className="text-sm font-semibold text-text tracking-wide">{escola.telefone}</p>
+                  </div>
+                </div>
+              </div>
+
+            </div>
           </div>
         </div>
       </div>
@@ -618,17 +679,18 @@ function AnaliseTemporal({ dadosTemporais }: { dadosTemporais: any[] }) {
         </div>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-white rounded-xl p-4 border border-purple-200 shadow-sm">
+        {/* Adicionado hover:scale-105 e hover:shadow-lg nos cards abaixo */}
+        <div className="bg-white rounded-xl p-4 border border-purple-200 shadow-sm transition-all duration-300 hover:scale-105 hover:shadow-lg cursor-default">
           <div className="flex items-center justify-between mb-2"><div className="flex items-center gap-2"><Users className="text-purple-500 w-5 h-5" /><span className="font-semibold text-purple-900">Alunos (Hist.)</span></div><span className="text-sm font-medium text-purple-600">{Number(evolucaoAlunos) > 0 ? "+" : ""}{evolucaoAlunos}%</span></div>
           <div className="text-2xl font-bold text-purple-800 mb-1">{dadosAnoAtual?.alunos.toLocaleString("pt-BR")}</div>
           <div className="text-xs text-purple-600">vs 2019: {dadosTemporais[0]?.alunos.toLocaleString("pt-BR")}</div>
         </div>
-        <div className="bg-white rounded-xl p-4 border border-purple-200 shadow-sm">
+        <div className="bg-white rounded-xl p-4 border border-purple-200 shadow-sm transition-all duration-300 hover:scale-105 hover:shadow-lg cursor-default">
           <div className="flex items-center justify-between mb-2"><div className="flex items-center gap-2"><TrendingUp className="text-purple-500 w-5 h-5" /><span className="font-semibold text-purple-900">IDEB</span></div><span className="text-sm font-medium text-purple-600">{Number(evolucaoIDEB) > 0 ? "+" : ""}{evolucaoIDEB} pts</span></div>
           <div className="text-2xl font-bold text-purple-800 mb-1">{dadosAnoAtual?.ideb.toFixed(1)}</div>
           <div className="text-xs text-purple-600">vs 2019: {dadosTemporais[0]?.ideb.toFixed(1)}</div>
         </div>
-        <div className="bg-white rounded-xl p-4 border border-purple-200 shadow-sm">
+        <div className="bg-white rounded-xl p-4 border border-purple-200 shadow-sm transition-all duration-300 hover:scale-105 hover:shadow-lg cursor-default">
           <div className="flex items-center justify-between mb-2"><div className="flex items-center gap-2"><UserCheck className="text-purple-500 w-5 h-5" /><span className="font-semibold text-purple-900">Professores</span></div><span className="text-sm font-medium text-purple-600">{Number(evolucaoProfessores) > 0 ? "+" : ""}{evolucaoProfessores}%</span></div>
           <div className="text-2xl font-bold text-purple-800 mb-1">{dadosAnoAtual?.professores.toLocaleString("pt-BR")}</div>
           <div className="text-xs text-purple-600">vs 2019: {dadosTemporais[0]?.professores.toLocaleString("pt-BR")}</div>
@@ -749,8 +811,8 @@ export default function DashboardEscola() {
             <div className="bg-card p-6 rounded-xl border border-white/10 shadow-lg">
               <h3 className="font-bold text-lg mb-4 flex items-center gap-2"><TrendingUp size={20} className="text-primary"/> Ações Rápidas</h3>
               <div className="space-y-3">
-                
-                <button onClick={handleExportClick} disabled={gerandoPDF} className="w-full flex items-center gap-3 sm:gap-4 p-3 sm:p-4 cursor-pointer bg-card-alt rounded-xl border border-theme transition-all duration-200 hover:bg-black/10 dark:hover:bg-white/10 hover:shadow-md group disabled:opacity-50">
+                {/* Adicionado hover:scale-[1.03] e hover:shadow-lg nos botões abaixo */}
+                <button onClick={handleExportClick} disabled={gerandoPDF} className="w-full flex items-center gap-3 sm:gap-4 p-3 sm:p-4 cursor-pointer bg-card-alt rounded-xl border border-theme transition-all duration-300 hover:scale-[1.03] hover:bg-black/10 dark:hover:bg-white/10 hover:shadow-lg group disabled:opacity-50">
                   <div className="p-2 bg-green-100 rounded-lg group-hover:scale-110 transition-transform duration-200 flex-shrink-0">
                     <Download className="text-green-500 w-5 h-5 sm:w-6 sm:h-6" />
                   </div>
@@ -761,7 +823,7 @@ export default function DashboardEscola() {
                   <div className="text-green-500 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex-shrink-0">📄</div>
                 </button>
 
-                <button onClick={() => document.getElementById("analise-temporal")?.scrollIntoView({ behavior: "smooth" })} className="w-full flex items-center gap-3 sm:gap-4 p-3 sm:p-4 cursor-pointer bg-card-alt rounded-xl border border-theme transition-all duration-200 hover:bg-black/10 dark:hover:bg-white/10 hover:shadow-md group">
+                <button onClick={() => document.getElementById("analise-temporal")?.scrollIntoView({ behavior: "smooth" })} className="w-full flex items-center gap-3 sm:gap-4 p-3 sm:p-4 cursor-pointer bg-card-alt rounded-xl border border-theme transition-all duration-300 hover:scale-[1.03] hover:bg-black/10 dark:hover:bg-white/10 hover:shadow-lg group">
                   <div className="p-2 bg-purple-100 rounded-lg group-hover:scale-110 transition-transform duration-200 flex-shrink-0"><Calendar className="text-purple-500 w-5 h-5 sm:w-6 sm:h-6" /></div>
                   <div className="flex-1 text-left min-w-0"><div className="font-semibold text-text text-sm sm:text-base group-hover:text-purple-500 transition-colors">Histórico completo</div><div className="text-gray-theme mt-1 text-xs sm:text-sm">Análise temporal desde 2018</div></div>
                   <div className="text-purple-500 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex-shrink-0">📊</div>
