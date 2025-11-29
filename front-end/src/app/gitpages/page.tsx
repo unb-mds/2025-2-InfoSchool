@@ -1,4 +1,4 @@
-// src/app/gitpages/page.tsx - VERSÃO FINAL COM ÍCONES AZUIS
+// src/app/gitpages/page.tsx - VERSÃO FINAL ATUALIZADA
 'use client';
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
@@ -19,7 +19,7 @@ export default function GitPages() {
   return (
     <main className="min-h-screen bg-background text-text transition-all duration-500">
       
-      {/* Botão Voltar ao Topo Flutuante */}
+      {/* Botão Voltar ao Topo */}
       <button
         onClick={scrollToTop}
         className="fixed bottom-8 right-8 bg-primary text-white p-3 rounded-full shadow-2xl hover:bg-primary/90 transition-all duration-500 z-50"
@@ -28,7 +28,7 @@ export default function GitPages() {
         ↑ Topo
       </button>
 
-      {/* Container com borda responsiva IGUAL AO READER (80-85%) */}
+      {/* Container Principal */}
       <div className="max-w-[85%] sm:max-w-[80%] md:max-w-[80%] mx-auto px-3 sm:px-4">
         
         {/* Hero Section */}
@@ -79,135 +79,133 @@ export default function GitPages() {
           </ScrollAnimation>
         </section>
 
-        {/* NOVA SEÇÃO: Demonstração com GIFs - COM ESPAÇAMENTO VERTICAL */}
-<section id="demonstracao" className="py-20 transition-all duration-500">
-  <ScrollAnimation direction="up" duration={500} delay={100}>
-    <h2 className="text-3xl md:text-4xl font-bold text-center mb-6 transition-all duration-500" style={{ fontFamily: "'Rammetto One', sans-serif" }}>Veja a Plataforma em Ação</h2>
-  </ScrollAnimation>
+        {/* Seção: Demonstração com GIFs */}
+        <section id="demonstracao" className="py-20 transition-all duration-500">
+          <ScrollAnimation direction="up" duration={500} delay={100}>
+            <h2 className="text-3xl md:text-4xl font-bold text-center mb-6 transition-all duration-500" style={{ fontFamily: "'Rammetto One', sans-serif" }}>Veja a Plataforma em Ação</h2>
+          </ScrollAnimation>
 
-  <ScrollAnimation direction="up" duration={500} delay={150}>
-    <p className="text-xl text-gray-theme text-center mb-16 max-w-3xl mx-auto px-4 transition-all duration-500" style={{ fontFamily: "'Sansita', sans-serif" }}>
-      Confira como é fácil explorar dados educacionais com nossa plataforma
-    </p>
-  </ScrollAnimation>
+          <ScrollAnimation direction="up" duration={500} delay={150}>
+            <p className="text-xl text-gray-theme text-center mb-16 max-w-3xl mx-auto px-4 transition-all duration-500" style={{ fontFamily: "'Sansita', sans-serif" }}>
+              Confira como é fácil explorar dados educacionais com nossa plataforma
+            </p>
+          </ScrollAnimation>
 
-  {/* GRID COM ESPAÇAMENTO VERTICAL AUMENTADO */}
-  <div className="grid grid-cols-1 lg:grid-cols-2 gap-y-20 gap-x-12 md:gap-y-24 md:gap-x-16 transition-all duration-500">
-    
-    {/* GIF 1 - Página Inicial */}
-    <ScrollAnimation direction="up" duration={500} delay={200}>
-      <div className="text-center p-6 rounded-2xl bg-card border border-theme transition-all duration-500 hover:scale-105 flex flex-col">
-        <div className="w-16 h-16 md:w-20 md:h-20 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-6 transition-all duration-500">
-          <div className="w-10 h-10 md:w-12 md:h-12 relative transition-all duration-500">
-            <Image
-              src="/icons/home.png"
-              alt="Ícone home"
-              fill
-              className="object-contain transition-all duration-500"
-              style={{ filter: 'brightness(0) saturate(100%) invert(39%) sepia(77%) saturate(1498%) hue-rotate(194deg) brightness(93%) contrast(101%)' }}
-            />
-          </div>
-        </div>
-        <h3 className="text-xl md:text-2xl font-semibold mb-4 transition-all duration-500" style={{ fontFamily: "'Rammetto One', sans-serif" }}>Página Inicial</h3>
-        <p className="text-gray-theme mb-6 transition-all duration-500" style={{ fontFamily: "'Sansita', sans-serif" }}>
-          Interface moderna e intuitiva com acesso rápido a todas as funcionalidades
-        </p>
-        <div className="bg-background rounded-lg p-4 transition-all duration-500 flex-1 min-h-0">
-          <video 
-            autoPlay 
-            loop 
-            muted 
-            playsInline
-            className="w-full h-full rounded-lg object-cover max-h-48"
-          >
-            <source src="/gifs/home.webm" type="video/webm" />
-            Seu navegador não suporta o formato WebM.
-          </video>
-        </div>
-      </div>
-    </ScrollAnimation>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-y-20 gap-x-12 md:gap-y-24 md:gap-x-16 transition-all duration-500">
+            
+            {/* Card: Página Inicial */}
+            <ScrollAnimation direction="up" duration={500} delay={200}>
+              <div className="text-center p-6 rounded-2xl bg-card border border-theme transition-all duration-500 hover:scale-105 flex flex-col">
+                <div className="w-16 h-16 md:w-20 md:h-20 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-6 transition-all duration-500">
+                  <div className="w-10 h-10 md:w-12 md:h-12 relative transition-all duration-500">
+                    <Image
+                      src="/icons/home.png"
+                      alt="Ícone home"
+                      fill
+                      className="object-contain transition-all duration-500"
+                      style={{ filter: 'brightness(0) saturate(100%) invert(39%) sepia(77%) saturate(1498%) hue-rotate(194deg) brightness(93%) contrast(101%)' }}
+                    />
+                  </div>
+                </div>
+                <h3 className="text-xl md:text-2xl font-semibold mb-4 transition-all duration-500" style={{ fontFamily: "'Rammetto One', sans-serif" }}>Página Inicial</h3>
+                <p className="text-gray-theme mb-6 transition-all duration-500" style={{ fontFamily: "'Sansita', sans-serif" }}>
+                  Interface moderna e intuitiva com acesso rápido a todas as funcionalidades
+                </p>
+                <div className="bg-background rounded-lg p-4 transition-all duration-500 flex-1 min-h-0">
+                  <video 
+                    autoPlay 
+                    loop 
+                    muted 
+                    playsInline
+                    className="w-full h-full rounded-lg object-cover"
+                  >
+                    <source src="/gifs/home.webm" type="video/webm" />
+                  </video>
+                </div>
+              </div>
+            </ScrollAnimation>
 
-    {/* GIF 2 - Explorar Escolas */}
-    <ScrollAnimation direction="up" duration={500} delay={250}>
-      <div className="text-center p-6 rounded-2xl bg-card border border-theme transition-all duration-500 hover:scale-105 flex flex-col">
-        <div className="w-16 h-16 md:w-20 md:h-20 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-6 transition-all duration-500">
-          <div className="w-10 h-10 md:w-12 md:h-12 relative transition-all duration-500">
-            <Image
-              src="/icons/mapa.png"
-              alt="Ícone mapa"
-              fill
-              className="object-contain transition-all duration-500"
-              style={{ filter: 'brightness(0) saturate(100%) invert(39%) sepia(77%) saturate(1498%) hue-rotate(194deg) brightness(93%) contrast(101%)' }}
-            />
-          </div>
-        </div>
-        <h3 className="text-xl md:text-2xl font-semibold mb-4 transition-all duration-500" style={{ fontFamily: "'Rammetto One', sans-serif" }}>Explorar Escolas</h3>
-        <p className="text-gray-theme mb-6 transition-all duration-500" style={{ fontFamily: "'Sansita', sans-serif" }}>
-          Navegue pelo mapa interativo e descubra escolas em qualquer região do Brasil
-        </p>
-        <div className="bg-background rounded-lg p-4 transition-all duration-500 flex-1 min-h-0">
-          <div className="aspect-video bg-gray-100 rounded-lg flex items-center justify-center border border-theme">
-            <p className="text-gray-theme" style={{ fontFamily: "'Sansita', sans-serif" }}>GIF do Explorar Escolas</p>
-          </div>
-        </div>
-      </div>
-    </ScrollAnimation>
+            {/* Card: Explorar Escolas */}
+            <ScrollAnimation direction="up" duration={500} delay={250}>
+              <div className="text-center p-6 rounded-2xl bg-card border border-theme transition-all duration-500 hover:scale-105 flex flex-col">
+                <div className="w-16 h-16 md:w-20 md:h-20 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-6 transition-all duration-500">
+                  <div className="w-10 h-10 md:w-12 md:h-12 relative transition-all duration-500">
+                    <Image
+                      src="/icons/mapa.png"
+                      alt="Ícone mapa"
+                      fill
+                      className="object-contain transition-all duration-500"
+                      style={{ filter: 'brightness(0) saturate(100%) invert(39%) sepia(77%) saturate(1498%) hue-rotate(194deg) brightness(93%) contrast(101%)' }}
+                    />
+                  </div>
+                </div>
+                <h3 className="text-xl md:text-2xl font-semibold mb-4 transition-all duration-500" style={{ fontFamily: "'Rammetto One', sans-serif" }}>Explorar Escolas</h3>
+                <p className="text-gray-theme mb-6 transition-all duration-500" style={{ fontFamily: "'Sansita', sans-serif" }}>
+                  Navegue pelo mapa interativo e descubra escolas em qualquer região do Brasil
+                </p>
+                <div className="bg-background rounded-lg p-4 transition-all duration-500 flex-1 min-h-0">
+                  <div className="aspect-video bg-gray-100 rounded-lg flex items-center justify-center border border-theme">
+                    <p className="text-gray-theme" style={{ fontFamily: "'Sansita', sans-serif" }}>GIF do Explorar Escolas</p>
+                  </div>
+                </div>
+              </div>
+            </ScrollAnimation>
 
-    {/* GIF 3 - Busca e Dashboard */}
-    <ScrollAnimation direction="up" duration={500} delay={300}>
-      <div className="text-center p-6 rounded-2xl bg-card border border-theme transition-all duration-500 hover:scale-105 flex flex-col">
-        <div className="w-16 h-16 md:w-20 md:h-20 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-6 transition-all duration-500">
-          <div className="w-10 h-10 md:w-12 md:h-12 relative transition-all duration-500">
-            <Image
-              src="/icons/lupa.png"
-              alt="Ícone busca"
-              fill
-              className="object-contain transition-all duration-500"
-              style={{ filter: 'brightness(0) saturate(100%) invert(39%) sepia(77%) saturate(1498%) hue-rotate(194deg) brightness(93%) contrast(101%)' }}
-            />
-          </div>
-        </div>
-        <h3 className="text-xl md:text-2xl font-semibold mb-4 transition-all duration-500" style={{ fontFamily: "'Rammetto One', sans-serif" }}>Busca e Dashboard</h3>
-        <p className="text-gray-theme mb-6 transition-all duration-500" style={{ fontFamily: "'Sansita', sans-serif" }}>
-          Busque escolas específicas e visualize dashboards completos com todos os dados
-        </p>
-        <div className="bg-background rounded-lg p-4 transition-all duration-500 flex-1 min-h-0">
-          <div className="aspect-video bg-gray-100 rounded-lg flex items-center justify-center border border-theme">
-            <p className="text-gray-theme" style={{ fontFamily: "'Sansita', sans-serif" }}>GIF do Caminho Normal</p>
-          </div>
-        </div>
-      </div>
-    </ScrollAnimation>
+            {/* Card: Busca e Dashboard */}
+            <ScrollAnimation direction="up" duration={500} delay={300}>
+              <div className="text-center p-6 rounded-2xl bg-card border border-theme transition-all duration-500 hover:scale-105 flex flex-col">
+                <div className="w-16 h-16 md:w-20 md:h-20 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-6 transition-all duration-500">
+                  <div className="w-10 h-10 md:w-12 md:h-12 relative transition-all duration-500">
+                    <Image
+                      src="/icons/lupa.png"
+                      alt="Ícone busca"
+                      fill
+                      className="object-contain transition-all duration-500"
+                      style={{ filter: 'brightness(0) saturate(100%) invert(39%) sepia(77%) saturate(1498%) hue-rotate(194deg) brightness(93%) contrast(101%)' }}
+                    />
+                  </div>
+                </div>
+                <h3 className="text-xl md:text-2xl font-semibold mb-4 transition-all duration-500" style={{ fontFamily: "'Rammetto One', sans-serif" }}>Busca e Dashboard</h3>
+                <p className="text-gray-theme mb-6 transition-all duration-500" style={{ fontFamily: "'Sansita', sans-serif" }}>
+                  Busque escolas específicas e visualize dashboards completos com todos os dados
+                </p>
+                <div className="bg-background rounded-lg p-4 transition-all duration-500 flex-1 min-h-0">
+                  <div className="aspect-video bg-gray-100 rounded-lg flex items-center justify-center border border-theme">
+                    <p className="text-gray-theme" style={{ fontFamily: "'Sansita', sans-serif" }}>GIF do Caminho Normal</p>
+                  </div>
+                </div>
+              </div>
+            </ScrollAnimation>
 
-    {/* GIF 4 - Chat com IA */}
-    <ScrollAnimation direction="up" duration={500} delay={350}>
-      <div className="text-center p-6 rounded-2xl bg-card border border-theme transition-all duration-500 hover:scale-105 flex flex-col">
-        <div className="w-16 h-16 md:w-20 md:h-20 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-6 transition-all duration-500">
-          <div className="w-10 h-10 md:w-12 md:h-12 relative transition-all duration-500">
-            <Image
-              src="/icons/robo.png"
-              alt="Ícone IA"
-              fill
-              className="object-contain transition-all duration-500"
-              style={{ filter: 'brightness(0) saturate(100%) invert(39%) sepia(77%) saturate(1498%) hue-rotate(194deg) brightness(93%) contrast(101%)' }}
-            />
+            {/* Card: Chat com IA */}
+            <ScrollAnimation direction="up" duration={500} delay={350}>
+              <div className="text-center p-6 rounded-2xl bg-card border border-theme transition-all duration-500 hover:scale-105 flex flex-col">
+                <div className="w-16 h-16 md:w-20 md:h-20 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-6 transition-all duration-500">
+                  <div className="w-10 h-10 md:w-12 md:h-12 relative transition-all duration-500">
+                    <Image
+                      src="/icons/robo.png"
+                      alt="Ícone IA"
+                      fill
+                      className="object-contain transition-all duration-500"
+                      style={{ filter: 'brightness(0) saturate(100%) invert(39%) sepia(77%) saturate(1498%) hue-rotate(194deg) brightness(93%) contrast(101%)' }}
+                    />
+                  </div>
+                </div>
+                <h3 className="text-xl md:text-2xl font-semibold mb-4 transition-all duration-500" style={{ fontFamily: "'Rammetto One', sans-serif" }}>Chat com IA</h3>
+                <p className="text-gray-theme mb-6 transition-all duration-500" style={{ fontFamily: "'Sansita', sans-serif" }}>
+                  Converse naturalmente com nossa IA e gere relatórios personalizados em PDF
+                </p>
+                <div className="bg-background rounded-lg p-4 transition-all duration-500 flex-1 min-h-0">
+                  <div className="aspect-video bg-gray-100 rounded-lg flex items-center justify-center border border-theme">
+                    <p className="text-gray-theme" style={{ fontFamily: "'Sansita', sans-serif" }}>GIF do Chat com IA</p>
+                  </div>
+                </div>
+              </div>
+            </ScrollAnimation>
           </div>
-        </div>
-        <h3 className="text-xl md:text-2xl font-semibold mb-4 transition-all duration-500" style={{ fontFamily: "'Rammetto One', sans-serif" }}>Chat com IA</h3>
-        <p className="text-gray-theme mb-6 transition-all duration-500" style={{ fontFamily: "'Sansita', sans-serif" }}>
-          Converse naturalmente com nossa IA e gere relatórios personalizados em PDF
-        </p>
-        <div className="bg-background rounded-lg p-4 transition-all duration-500 flex-1 min-h-0">
-          <div className="aspect-video bg-gray-100 rounded-lg flex items-center justify-center border border-theme">
-            <p className="text-gray-theme" style={{ fontFamily: "'Sansita', sans-serif" }}>GIF do Chat com IA</p>
-          </div>
-        </div>
-      </div>
-    </ScrollAnimation>
-  </div>
-</section>
+        </section>
 
-        {/* NOVA SEÇÃO: Evolução do Produto - COM MUITO ESPAÇAMENTO */}
+        {/* Seção: Evolução do Produto */}
         <section className="py-20 bg-card rounded-2xl px-6 md:px-8 transition-all duration-500 mt-16">
           <ScrollAnimation direction="up" duration={500} delay={100}>
             <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 transition-all duration-500" style={{ fontFamily: "'Rammetto One', sans-serif" }}>Evolução do Produto</h2>
@@ -216,32 +214,36 @@ export default function GitPages() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 md:gap-14 transition-all duration-500">
             {/* Release 1 */}
             <ScrollAnimation direction="up" duration={500} delay={150}>
-              <div className="bg-background border border-theme rounded-2xl p-6 transition-all duration-500 hover:scale-105 h-[320px] flex flex-col">
+              <div className="bg-background border border-theme rounded-2xl p-6 transition-all duration-500 hover:scale-105 h-[380px] flex flex-col">
                 <div className="flex items-center mb-6">
                   <div className="w-12 h-12 bg-primary text-white rounded-full flex items-center justify-center text-lg font-bold mr-4">
                     1.0
                   </div>
                   <div>
-                    <h3 className="text-xl font-semibold transition-all duration-500" style={{ fontFamily: "'Rammetto One', sans-serif" }}>Versão Inicial</h3>
-                    <p className="text-gray-theme text-sm" style={{ fontFamily: "'Sansita', sans-serif" }}>Fundação do Projeto</p>
+                    <h3 className="text-xl font-semibold transition-all duration-500" style={{ fontFamily: "'Rammetto One', sans-serif" }}>Release 1 - Fundação</h3>
+                    <p className="text-gray-theme text-sm" style={{ fontFamily: "'Sansita', sans-serif" }}>Base Sólida do Projeto</p>
                   </div>
                 </div>
                 <ul className="space-y-3 text-text transition-all duration-500 flex-grow" style={{ fontFamily: "'Sansita', sans-serif" }}>
                   <li className="flex items-start">
                     <span className="text-primary mr-3">•</span>
-                    <span>Implementação da página inicial</span>
+                    <span>Story Map completo com épicos e features</span>
                   </li>
                   <li className="flex items-start">
                     <span className="text-primary mr-3">•</span>
-                    <span>Estrutura básica do front-end</span>
+                    <span>Protótipos de baixa e alta fidelidade</span>
                   </li>
                   <li className="flex items-start">
                     <span className="text-primary mr-3">•</span>
-                    <span>Design system inicial</span>
+                    <span>Arquitetura definida e documentada (ADRs)</span>
                   </li>
                   <li className="flex items-start">
                     <span className="text-primary mr-3">•</span>
-                    <span>Configuração do ambiente de desenvolvimento</span>
+                    <span>Configuração completa do ambiente</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="text-primary mr-3">•</span>
+                    <span>Padrões de software livre implementados</span>
                   </li>
                 </ul>
               </div>
@@ -249,28 +251,28 @@ export default function GitPages() {
 
             {/* Release 2 */}
             <ScrollAnimation direction="up" duration={500} delay={200}>
-              <div className="bg-background border border-theme rounded-2xl p-6 transition-all duration-500 hover:scale-105 h-[320px] flex flex-col">
+              <div className="bg-background border border-theme rounded-2xl p-6 transition-all duration-500 hover:scale-105 h-[380px] flex flex-col">
                 <div className="flex items-center mb-6">
                   <div className="w-12 h-12 bg-primary text-white rounded-full flex items-center justify-center text-lg font-bold mr-4">
                     2.0
                   </div>
                   <div>
-                    <h3 className="text-xl font-semibold transition-all duration-500" style={{ fontFamily: "'Rammetto One', sans-serif" }}>Versão Atual</h3>
-                    <p className="text-gray-theme text-sm" style={{ fontFamily: "'Sansita', sans-serif" }}>Funcionalidades Completas</p>
+                    <h3 className="text-xl font-semibold transition-all duration-500" style={{ fontFamily: "'Rammetto One', sans-serif" }}>Release 2 - Funcionalidades</h3>
+                    <p className="text-gray-theme text-sm" style={{ fontFamily: "'Sansita', sans-serif" }}>Sistema Completo</p>
                   </div>
                 </div>
                 <ul className="space-y-3 text-text transition-all duration-500 flex-grow" style={{ fontFamily: "'Sansita', sans-serif" }}>
                   <li className="flex items-start">
                     <span className="text-primary mr-3">•</span>
-                    <span>Mapa interativo de escolas</span>
+                    <span>Mapa interativo de escolas brasileiras</span>
                   </li>
                   <li className="flex items-start">
                     <span className="text-primary mr-3">•</span>
-                    <span>Chat com IA educacional</span>
+                    <span>Chat com IA educacional (RAG)</span>
                   </li>
                   <li className="flex items-start">
                     <span className="text-primary mr-3">•</span>
-                    <span>Sistema de geração de PDFs</span>
+                    <span>Sistema de geração de PDFs inteligente</span>
                   </li>
                   <li className="flex items-start">
                     <span className="text-primary mr-3">•</span>
@@ -282,7 +284,7 @@ export default function GitPages() {
                   </li>
                   <li className="flex items-start">
                     <span className="text-primary mr-3">•</span>
-                    <span>Dados históricos de 1995-2025</span>
+                    <span>Testes de integração e cobertura</span>
                   </li>
                 </ul>
               </div>
@@ -290,8 +292,7 @@ export default function GitPages() {
           </div>
         </section>
 
-        {/* O RESTO DO CÓDIGO PERMANECE EXATAMENTE IGUAL... */}
-        {/* Problema Section */}
+        {/* Seção: Problema */}
         <section className="py-20 transition-all duration-500">
           <ScrollAnimation direction="up" duration={500} delay={100}>
             <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 transition-all duration-500" style={{ fontFamily: "'Rammetto One', sans-serif" }}>O Desafio dos Dados Educacionais</h2>
@@ -300,7 +301,7 @@ export default function GitPages() {
           <ScrollAnimation direction="up" duration={500} delay={150}>
             <div className="bg-card border border-theme rounded-2xl p-6 md:p-8 transition-all duration-500">
               <p className="text-lg text-text mb-6 transition-all duration-500" style={{ fontFamily: "'Sansita', sans-serif" }}>
-                Os dados do Censo Escolar brasileiro, coletados desde <strong>1995</strong>, representam um tesouro de informações sobre a educação nacional. No entanto:
+                Os dados do Censo Escolar brasileiro representam um tesouro de informações sobre a educação nacional. No entanto:
               </p>
               <ul className="space-y-4 text-text transition-all duration-500" style={{ fontFamily: "'Sansita', sans-serif" }}>
                 <li className="flex items-start transition-all duration-500">
@@ -324,7 +325,7 @@ export default function GitPages() {
           </ScrollAnimation>
         </section>
 
-        {/* Por que escolher o InfoSchool? - CORRIGIDO */}
+        {/* Seção: Por que escolher o InfoSchool? */}
         <section className="py-20 bg-card rounded-2xl px-6 md:px-8 transition-all duration-500">
           <ScrollAnimation direction="up" duration={500} delay={100}>
             <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 transition-all duration-500" style={{ fontFamily: "'Rammetto One', sans-serif" }}>Por que escolher o InfoSchool?</h2>
@@ -335,7 +336,7 @@ export default function GitPages() {
               <div className="bg-background border border-theme rounded-2xl p-6 text-center transition-all duration-500 hover:scale-105 h-[240px] flex flex-col justify-center">
                 <h3 className="text-xl font-semibold mb-4 text-primary transition-all duration-500" style={{ fontFamily: "'Rammetto One', sans-serif" }}>Dados Completos</h3>
                 <p className="text-text transition-all duration-500" style={{ fontFamily: "'Sansita', sans-serif" }}>
-                  Acesso a 30 anos de dados do Censo Escolar (1995-2025)
+                  Acesso a dados educacionais de 2007 até 2024
                 </p>
               </div>
             </ScrollAnimation>
@@ -369,7 +370,7 @@ export default function GitPages() {
           </div>
         </section>
 
-        {/* Nossos Números - CORRIGIDO */}
+        {/* Seção: Nossos Números */}
         <section className="py-16 transition-all duration-500">
           <ScrollAnimation direction="up" duration={500} delay={100}>
             <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 transition-all duration-500" style={{ fontFamily: "'Rammetto One', sans-serif" }}>Nossos Números</h2>
@@ -378,14 +379,14 @@ export default function GitPages() {
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 transition-all duration-500">
             <ScrollAnimation direction="up" duration={500} delay={150}>
               <div className="bg-card border border-theme rounded-2xl p-4 md:p-6 text-center transition-all duration-500 hover:scale-105">
-                <div className="text-2xl md:text-3xl lg:text-4xl font-bold text-primary mb-2 transition-all duration-500">300K+</div>
-                <div className="text-text text-sm md:text-base transition-all duration-500" style={{ fontFamily: "'Sansita', sans-serif" }}>Escolas Mapeadas</div>
+                <div className="text-2xl md:text-3xl lg:text-4xl font-bold text-primary mb-2 transition-all duration-500">200K+</div>
+                <div className="text-text text-sm md:text-base transition-all duration-500" style={{ fontFamily: "'Sansita', sans-serif" }}>Escolas Mapeadas por Ano</div>
               </div>
             </ScrollAnimation>
 
             <ScrollAnimation direction="up" duration={500} delay={200}>
               <div className="bg-card border border-theme rounded-2xl p-4 md:p-6 text-center transition-all duration-500 hover:scale-105">
-                <div className="text-2xl md:text-3xl lg:text-4xl font-bold text-primary mb-2 transition-all duration-500">30</div>
+                <div className="text-2xl md:text-3xl lg:text-4xl font-bold text-primary mb-2 transition-all duration-500">18</div>
                 <div className="text-text text-sm md:text-base transition-all duration-500" style={{ fontFamily: "'Sansita', sans-serif" }}>Anos de Dados</div>
               </div>
             </ScrollAnimation>
@@ -399,7 +400,7 @@ export default function GitPages() {
           </div>
         </section>
 
-        {/* Solução Section - CORRIGIDO */}
+        {/* Seção: Solução */}
         <section id="solucao" className="py-16 transition-all duration-500">
           <ScrollAnimation direction="up" duration={500} delay={100}>
             <h2 className="text-3xl md:text-4xl font-bold text-center mb-4 transition-all duration-500" style={{ fontFamily: "'Rammetto One', sans-serif" }}>A Solução InfoSchool</h2>
@@ -407,7 +408,7 @@ export default function GitPages() {
 
           <ScrollAnimation direction="up" duration={500} delay={150}>
             <p className="text-xl text-gray-theme text-center mb-12 max-w-3xl mx-auto px-4 transition-all duration-500" style={{ fontFamily: "'Sansita', sans-serif" }}>
-              Três caminhos intuitivos para explorar 30 anos de dados educacionais
+              Três caminhos intuitivos para explorar dados educacionais
             </p>
           </ScrollAnimation>
 
@@ -422,6 +423,7 @@ export default function GitPages() {
                       alt="Ícone de busca"
                       fill
                       className="object-contain transition-all duration-500"
+                      style={{ filter: 'brightness(0) saturate(100%) invert(39%) sepia(77%) saturate(1498%) hue-rotate(194deg) brightness(93%) contrast(101%)' }}
                     />
                   </div>
                 </div>
@@ -445,6 +447,7 @@ export default function GitPages() {
                       alt="Ícone de mapa"
                       fill
                       className="object-contain transition-all duration-500"
+                      style={{ filter: 'brightness(0) saturate(100%) invert(39%) sepia(77%) saturate(1498%) hue-rotate(194deg) brightness(93%) contrast(101%)' }}
                     />
                   </div>
                 </div>
@@ -468,6 +471,7 @@ export default function GitPages() {
                       alt="Ícone de robô"
                       fill
                       className="object-contain transition-all duration-500"
+                      style={{ filter: 'brightness(0) saturate(100%) invert(39%) sepia(77%) saturate(1498%) hue-rotate(194deg) brightness(93%) contrast(101%)' }}
                     />
                   </div>
                 </div>
@@ -476,14 +480,14 @@ export default function GitPages() {
                   Pergunte em linguagem natural. Nossa IA "Aluno" encontra as respostas e gera PDFs personalizados.
                 </p>
                 <div className="bg-background rounded-lg p-4 text-sm transition-all duration-500">
-                  <code className="text-primary transitionall duration-500" style={{ fontFamily: "'Sansita', sans-serif" }}>"Mostre escolas com acesso à internet"</code>
+                  <code className="text-primary transition-all duration-500" style={{ fontFamily: "'Sansita', sans-serif" }}>"Mostre escolas com acesso à internet"</code>
                 </div>
               </div>
             </ScrollAnimation>
           </div>
         </section>
 
-        {/* Como Começar - CORRIGIDO */}
+        {/* Seção: Como Começar */}
         <section className="py-16 bg-card rounded-2xl px-6 md:px-8 transition-all duration-500">
           <ScrollAnimation direction="up" duration={500} delay={100}>
             <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 transition-all duration-500" style={{ fontFamily: "'Rammetto One', sans-serif" }}>Como Começar</h2>
@@ -532,7 +536,7 @@ export default function GitPages() {
           </div>
         </section>
 
-        {/* Casos de Uso - CORRIGIDO */}
+        {/* Seção: Casos de Uso */}
         <section className="py-16 transition-all duration-500">
           <ScrollAnimation direction="up" duration={500} delay={100}>
             <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 transition-all duration-500" style={{ fontFamily: "'Rammetto One', sans-serif" }}>Transformando Decisões Educacionais</h2>
@@ -559,10 +563,10 @@ export default function GitPages() {
               <div className="bg-card border border-theme rounded-2xl p-6 transition-all duration-500 hover:scale-105 h-[380px] flex flex-col">
                 <h3 className="text-xl font-semibold mb-3 transition-all duration-500" style={{ fontFamily: "'Rammetto One', sans-serif" }}>Para Pesquisadores</h3>
                 <p className="text-text mb-4 transition-all duration-500 flex-grow" style={{ fontFamily: "'Sansita', sans-serif" }}>
-                  <strong>Analise a evolução educacional desde 1995</strong> com dados consolidados e ferramentas de análise temporal.
+                  <strong>Analise a evolução educacional desde 2007</strong> com dados consolidados e ferramentas de análise temporal.
                 </p>
                 <ul className="text-sm text-gray-theme space-y-1 transition-all duration-500" style={{ fontFamily: "'Sansita', sans-serif" }}>
-                  <li>• Dados históricos de 1995-2025</li>
+                  <li>• Dados históricos de 2007-2024</li>
                   <li>• Análise de tendências e correlações</li>
                   <li>• Exportação de dados para pesquisa</li>
                 </ul>
@@ -586,7 +590,7 @@ export default function GitPages() {
           </div>
         </section>
 
-        {/* Dashboard Section - CORRIGIDO */}
+        {/* Seção: Dashboard */}
         <section className="py-16 transition-all duration-500">
           <ScrollAnimation direction="up" duration={500} delay={100}>
             <h2 className="text-3xl md:text-4xl font-bold text-center mb-4 transition-all duration-500" style={{ fontFamily: "'Rammetto One', sans-serif" }}>Dashboard Completo</h2>
@@ -634,7 +638,7 @@ export default function GitPages() {
               <div className="bg-card border border-theme rounded-2xl p-6 transition-all duration-500 hover:scale-105 h-[380px] flex flex-col">
                 <h3 className="text-xl font-semibold mb-4 text-primary transition-all duration-500" style={{ fontFamily: "'Rammetto One', sans-serif" }}>Análise Temporal</h3>
                 <ul className="space-y-2 text-text transition-all duration-500 flex-grow" style={{ fontFamily: "'Sansita', sans-serif" }}>
-                  <li>• Dados de 1995 até 2025</li>
+                  <li>• Dados de 2007 até 2024</li>
                   <li>• Evolução de matrículas</li>
                   <li>• Comparativo entre anos</li>
                   <li>• Destaques e indicadores</li>
@@ -646,7 +650,7 @@ export default function GitPages() {
           </div>
         </section>
 
-        {/* Responsividade - CORRIGIDO */}
+        {/* Seção: Responsividade */}
         <section className="py-16 bg-card rounded-2xl px-6 md:px-8 transition-all duration-500">
           <ScrollAnimation direction="up" duration={500} delay={100}>
             <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 transition-all duration-500" style={{ fontFamily: "'Rammetto One', sans-serif" }}>Responsividade</h2>
@@ -691,7 +695,7 @@ export default function GitPages() {
           </div>
         </section>
 
-        {/* Inteligência Artificial Educacional (RAG) */}
+        {/* Seção: Inteligência Artificial */}
         <section className="py-16 transition-all duration-500">
           <ScrollAnimation direction="up" duration={500} delay={100}>
             <h2 className="text-3xl md:text-4xl font-bold text-center mb-4 transition-all duration-500" style={{ fontFamily: "'Rammetto One', sans-serif" }}>
@@ -725,7 +729,7 @@ export default function GitPages() {
                     </li>
                     <li className="flex items-start transition-all duration-500">
                       <span className="text-primary mr-2">•</span>
-                      <span>"Evolução das matrículas em São Paulo desde 2000"</span>
+                      <span>"Evolução das matrículas em São Paulo desde 2010"</span>
                     </li>
                   </ul>
                 </div>
@@ -752,7 +756,7 @@ export default function GitPages() {
           </ScrollAnimation>
         </section>
 
-        {/* Acesso Section */}
+        {/* Seção: Acesso */}
         <section id="acesso" className="py-16 transition-all duration-500">
           <div className="text-center transition-all duration-500">
             <ScrollAnimation direction="up" duration={500} delay={100}>
@@ -761,7 +765,7 @@ export default function GitPages() {
 
             <ScrollAnimation direction="up" duration={500} delay={150}>
               <p className="text-xl text-gray-theme mb-8 px-4 transition-all duration-500" style={{ fontFamily: "'Sansita', sans-serif" }}>
-                Acesse 30 anos de dados educacionais brasileiros de forma simples e intuitiva
+                Acesse dados educacionais brasileiros de forma simples e intuitiva
               </p>
             </ScrollAnimation>
             
