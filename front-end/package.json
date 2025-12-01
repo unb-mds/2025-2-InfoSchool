@@ -19,7 +19,8 @@
     "next": "15.5.4",
     "react": "^18",
     "react-dom": "^18",
-    "react-intersection-observer": "^9.16.0"
+    "react-intersection-observer": "^9.16.0",
+    "recharts": "^3.4.1"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.13",

@@ -1,25 +1,93 @@
 'use client';
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, useEffect } from 'react';
 import { useTheme } from '../ThemeProvider/ThemeProvider';
 import { Search } from 'lucide-react';
 import { useRouter, usePathname } from 'next/navigation';
 
-const ESCOLAS_MOCK = [
-  { id: 1, nome: "Colégio São Paulo", municipio: "São Paulo", estado: "SP", tipo: "Estadual" },
-  { id: 2, nome: "Escola Técnica Estadual", municipio: "Campinas", estado: "SP", tipo: "Estadual" },
-  { id: 3, nome: "Colégio Objetivo", municipio: "São Paulo", estado: "SP", tipo: "Privada" },
-  { id: 4, nome: "Colégio Pedro II", municipio: "Rio de Janeiro", estado: "RJ", tipo: "Federal" },
-];
+
+function useDebounce<T>(value: T, delay: number) {
+  const [debouncedValue, setDebouncedValue] = useState(value);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [value, delay]);
+
+  return debouncedValue;
+}
+
+type Escola = {
+  id: string;
+  nome: string;
+  municipio: string;
+  estado: string;
+  tipo: string;
+};
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const [escolasBuscadas, setEscolasBuscadas] = useState<Escola[]>([]); // Novo estado para resultados da API
+  const [isLoading, setIsLoading] = useState(false); // Novo estado para loading
   const [showSuggestions, setShowSuggestions] = useState(false);
+  
   const { theme, toggleTheme } = useTheme();
   const router = useRouter();
   const pathname = usePathname();
 
   const isHomePage = pathname === '/inicial' || pathname === '/';
+  
+  // Usa o valor do input, mas só o atualiza após 500ms de inatividade
+  const debouncedSearchTerm = useDebounce(searchTerm, 500); 
+
+  // Função para buscar dados reais no BigQuery via API Route
+    const fetchEscolas = useCallback(async (term: string) => {
+      if (!term || term.trim().length < 3) { // Regra: só busca se o termo tiver 3 ou mais caracteres
+        setEscolasBuscadas([]);
+        setIsLoading(false);
+        return;
+      }
+  
+      setIsLoading(true);
+      
+      try {
+        // Chama a API Route que criamos: /api/escolas/search?q={termo}
+        const response = await fetch(`/api/escolas/search?q=${encodeURIComponent(term)}`);
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        setEscolasBuscadas(data.escolas || []); // Garante que é um array, mesmo em caso de erro na API
+  
+      } catch (error) {
+        console.error("Erro na busca de escolas:", error);
+        setEscolasBuscadas([]); // Limpa em caso de falha
+      } finally {
+        setIsLoading(false);
+      }
+    }, []);
+
+  // useEffect para observar o termo "debounced" e disparar a busca
+  useEffect(() => {
+    if (debouncedSearchTerm) {
+      fetchEscolas(debouncedSearchTerm);
+    } else {
+      // Limpa os resultados se o termo for apagado
+      setEscolasBuscadas([]);
+    }
+  }, [debouncedSearchTerm, fetchEscolas]);
+  
+  // O escolasFiltradas agora usa escolasBuscadas (e não mais o mock)
+  const escolasFiltradas = escolasBuscadas; 
+
+  // --- Funções de Navegação e Menu (inalteradas, mas incluídas para a completude do arquivo) ---
 
   const handleSobreNosClick = useCallback(() => {
     setMenuOpen(false);
@@ -31,18 +99,7 @@ export default function Header() {
     }
   }, [isHomePage]);
 
-  const escolasFiltradas = useMemo(() => {
-    if (!searchTerm.trim()) return [];
-    
-    const term = searchTerm.toLowerCase();
-    return ESCOLAS_MOCK.filter(escola =>
-      escola.nome.toLowerCase().includes(term) ||
-      escola.municipio.toLowerCase().includes(term) ||
-      escola.estado.toLowerCase().includes(term)
-    );
-  }, [searchTerm]);
-
-  const redirecionarParaEscola = useCallback((escola: typeof ESCOLAS_MOCK[0]) => {
+  const redirecionarParaEscola = useCallback((escola: { nome: string }) => {
     const escolaSlug = escola.nome
       .normalize('NFD')
       .replace(/[\u0300-\u036f]/g, '')
@@ -52,6 +109,7 @@ export default function Header() {
     router.push(`/escolas/${escolaSlug}`);
     setShowSuggestions(false);
     setSearchTerm('');
+    setEscolasBuscadas([]); // Limpa resultados após a seleção
   }, [router]);
 
   const handleSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
@@ -60,12 +118,15 @@ export default function Header() {
   }, []);
 
   const handleSearchBlur = useCallback(() => {
-    setTimeout(() => setShowSuggestions(false), 200);
+    // Usamos um atraso maior aqui (300ms) para dar tempo de clicar em uma sugestão
+    setTimeout(() => setShowSuggestions(false), 300);
   }, []);
 
   const toggleMenu = useCallback(() => {
     setMenuOpen(prev => !prev);
   }, []);
+
+  // --- Renderização do Componente ---
 
   return (
     <header className="bg-header border-theme border-b sticky top-0 z-50 transition-colors duration-500">
@@ -100,7 +161,7 @@ export default function Header() {
                 />
                 <input
                   type="text"
-                  placeholder="Pesquisar escolas por nome, cidade ou estado..."
+                  placeholder="Digite o nome da escola"
                   className="w-full h-12 rounded-full pl-12 pr-6 focus:outline-none focus:ring-2 focus:ring-primary text-lg bg-card border border-theme text-text transition-colors duration-500"
                   value={searchTerm}
                   onChange={handleSearchChange}
@@ -111,8 +172,18 @@ export default function Header() {
 
               {showSuggestions && (
                 <div className="absolute top-full left-0 right-0 mt-2 max-h-60 overflow-y-auto z-50 shadow-theme bg-card border border-theme rounded-lg transition-colors duration-500">
-                  {escolasFiltradas.length > 0 ? (
+                  {isLoading ? (
+                    <div className="px-4 py-3 text-center text-primary flex items-center justify-center space-x-2">
+                        {/* Indicador simples de loading (Spinner) */}
+                        <svg className="animate-spin h-5 w-5 mr-3 text-primary" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        Buscando escola...
+                    </div>
+                  ) : escolasFiltradas.length > 0 ? (
                     escolasFiltradas.map((escola) => (
+                      // Note: O BigQuery retorna todos os valores como string, então use escola.id.
                       <button
                         key={escola.id}
                         className="w-full text-left px-4 py-3 border-b border-theme last:border-b-0 hover:bg-card-alt text-text transition-colors duration-500 group"
@@ -131,11 +202,15 @@ export default function Header() {
                         </div>
                       </button>
                     ))
-                  ) : searchTerm.trim() ? (
+                  ) : searchTerm.trim().length >= 3 ? (
                     <div className="px-4 py-3 text-center text-gray-theme transition-colors duration-500">
-                      Nenhuma escola encontrada
+                      Nenhuma escola encontrada para "{searchTerm}"
                     </div>
-                  ) : null}
+                  ) : (
+                    <div className="px-4 py-3 text-center text-gray-theme transition-colors duration-500">
+                      Digite pelo menos 3 caracteres para iniciar a busca.
+                    </div>
+                  )}
                 </div>
               )}
             </div>

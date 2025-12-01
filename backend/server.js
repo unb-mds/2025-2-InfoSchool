@@ -41,13 +41,14 @@ app.register(cors, {
   origin: true,
   methods: ["GET", "POST"],
 });
-app.register(helmet);
-app.register(rateLimit, {
+appp.register(helmet);
+appp.register(rateLimit, {
   max: 100,
   timeWindow: "1 minute",
 });
 
 // Registro de rotas
+// ETAPA 4: REGISTRO DE ROTAS (TODAS NO OBJETO 'app')
 app.register(paginaInicialRoutes, { prefix: "/pagina-inicial" });
 app.register(rankingRoutes, { prefix: "/ranking" });
 app.register(ragRoutes, { prefix: "/rag" });
@@ -56,6 +57,14 @@ app.register(escolasApiRoutes, { prefix: "/api/explorar-escolas" });
 app.register(estadosRoutes, { prefix: "/estados" });
 app.register(municipioRoutes, { prefix: "/municipios" });
 app.register(dashboardRoutes, { prefix: "/dashboard" });
+
+app.register(escolaSearchRoutes, { prefix: "/api/escolas/search" });
+
+// Adaptação dos seus prefixos
+app.register(estadosRoutes, { prefix: "/estados" }); 
+app.register(municipioRoutes, { prefix: "/municipios" }); 
+app.register(dashboardRoutes, { prefix: "/dashboard" }); 
+app.register(escolasLocationRoutes, { prefix: "/api/escolas/location" });
 
 // Rota raiz
 app.get("/", async (request, reply) => {
@@ -75,6 +84,7 @@ app.get("/", async (request, reply) => {
       data: {
         ranking: "GET /ranking/...",
         dashboard: "GET /dashboard/...",
+        search: "GET /api/escolas/search?q=...", // Adiciona a nova rota de busca
       },
     },
   };
@@ -94,13 +104,14 @@ app.setErrorHandler((error, request, reply) => {
 // Iniciar servidor
 const start = async () => {
   try {
+    // Usando process.env.PORT, que agora está garantido pelo dotenv
     await app.listen({
-      port: process.env.PORT || 3000,
+      port: process.env.PORT || 3001, // Mudei o default para 3001 para evitar conflito com Next.js
       host: "0.0.0.0",
     });
-    console.log(`🚀 Servidor rodando na porta ${process.env.PORT || 3000}`);
+    console.log(`🚀 Servidor rodando na porta ${process.env.PORT || 3001}`);
 
-    // Inicialização automática do RAG (OPCIONAL)
+    // Inicialização automática do RAG
     console.log("🔄 Inicializando RAG Híbrido...");
     
     // CORRIGIDO: import para ES Modules
