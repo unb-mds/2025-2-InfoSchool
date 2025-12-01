@@ -41,8 +41,8 @@ app.register(cors, {
   origin: true,
   methods: ["GET", "POST"],
 });
-appp.register(helmet);
-appp.register(rateLimit, {
+app.register(helmet);
+app.register(rateLimit, {
   max: 100,
   timeWindow: "1 minute",
 });
@@ -58,13 +58,6 @@ app.register(estadosRoutes, { prefix: "/estados" });
 app.register(municipioRoutes, { prefix: "/municipios" });
 app.register(dashboardRoutes, { prefix: "/dashboard" });
 
-app.register(escolaSearchRoutes, { prefix: "/api/escolas/search" });
-
-// Adaptação dos seus prefixos
-app.register(estadosRoutes, { prefix: "/estados" }); 
-app.register(municipioRoutes, { prefix: "/municipios" }); 
-app.register(dashboardRoutes, { prefix: "/dashboard" }); 
-app.register(escolasLocationRoutes, { prefix: "/api/escolas/location" });
 
 // Rota raiz
 app.get("/", async (request, reply) => {
