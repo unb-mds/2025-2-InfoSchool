@@ -4,6 +4,7 @@
 
 [![Versão](https://img.shields.io/badge/version-0.1.0-blue)](https://github.com/unb-mds/2025-2-InfoSchool/releases)
 [![Status](https://img.shields.io/badge/Status-Em_Desenvolvimento-yellow)](#)
+[![Verificação de Qualidade (CI)](https://github.com/unb-mds/2025-2-InfoSchool/actions/workflows/ci.yml/badge.svg)](https://github.com/unb-mds/2025-2-InfoSchool/actions/workflows/ci.yml)
 [![Licença](https://img.shields.io/github/license/unb-mds/2025-2-InfoSchool)](LICENSE)
 [![Issues Fechadas](https://img.shields.io/github/issues-closed/unb-mds/2025-2-InfoSchool)](https://github.com/unb-mds/2025-2-InfoSchool/issues?q=is%3Aissue+is%3Aclosed)
 [![Contribuidores](https://img.shields.io/github/contributors/unb-mds/2025-2-InfoSchool)](https://github.com/unb-mds/2025-2-InfoSchool/graphs/contributors)
@@ -77,6 +78,18 @@ As principais ferramentas utilizadas no desenvolvimento do InfoSchool:
 ![Fastify](https://img.shields.io/badge/fastify-%23000000.svg?style=for-the-badge&logo=fastify&logoColor=white)
 ![Google Gemini](https://img.shields.io/badge/Google%20Gemini-8E75B2?style=for-the-badge&logo=googlegemini&logoColor=white)
 ![Google BigQuery](https://img.shields.io/badge/Google_BigQuery-669DF6?style=for-the-badge&logo=googlebigquery&logoColor=white)
+
+---
+
+## 🧪 Qualidade e Testes
+
+Garantimos a estabilidade e confiabilidade do InfoSchool através de uma estratégia rigorosa de testes automatizados.
+
+### Estratégia de Testes
+
+* **Backend:** Utilizamos Jest + Supertest com Fastify Inject para testes de integração de alta performance. Mockamos serviços externos (BigQuery, Google AI) para garantir testes determinísticos e sem custos de nuvem.
+* **Frontend:** Testes de componentes com React Testing Library e Jest, garantindo que a interface renderiza corretamente e é acessível.
+* **CI/CD:** Pipeline automatizado via GitHub Actions que roda linter, build e testes a cada Pull Request, impedindo regressões na branch main.
 
 ---
 
