@@ -1,0 +1,71 @@
+name: Integração Contínua (CI)
+
+on:
+  push:
+    branches: [ "**" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  backend-verificacao:
+    name: Backend - Testes e Verificação
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./backend
+
+    steps:
+    - name: Checkout do código
+      uses: actions/checkout@v4
+
+    - name: Configurar Node.js 18
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: backend/package-lock.json
+
+    - name: Instalar dependências
+      run: npm ci
+
+    - name: Rodar Testes
+      run: npm test
+      env:
+        PORT: 3000
+        NODE_ENV: test
+        GOOGLE_APPLICATION_CREDENTIALS: "{}"
+        GOOGLE_CLOUD_PROJECT: "test-project"
+        OPENAI_API_KEY: "sk-test-key"
+        DB_USER: "test_user"
+        DB_PASSWORD: "test_password"
+
+  frontend-verificacao:
+    name: Frontend - Lint, Testes e Build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./front-end
+
+    steps:
+    - name: Checkout do código
+      uses: actions/checkout@v4
+
+    - name: Configurar Node.js 18
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: front-end/package-lock.json
+
+    - name: Instalar dependências
+      run: npm ci
+
+    - name: Rodar Lint
+      run: npm run lint
+      continue-on-error: false
+
+    - name: Rodar Testes
+      run: npm test
+
+    - name: Rodar Build de Produção
+      run: npm run build
