@@ -6,8 +6,8 @@ export default {
     collectCoverage: true,
     coverageDirectory: "coverage",
     collectCoverageFrom: [
-        "src/services/dataProcessor.js",
-        "src/controllers/chatController.js"
+        "src/services/bigQueryServices.js",
+        "!src/services/vectorStoreServices.js",
     ],
     coverageReporters: ["text", "lcov"]
 };
