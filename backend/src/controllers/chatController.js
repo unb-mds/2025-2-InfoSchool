@@ -1,8 +1,10 @@
-const HybridRAGService = require("../services/hybrid-ragService");
+import HybridRAGService from "../services/hybrid-ragService.js";
+import { BigQueryService } from "../services/bigQueryServices.js";
 
 class ChatController {
   constructor() {
     this.ragService = HybridRAGService;
+    this.bigQueryService = new BigQueryService();
   }
 
   async chat(req, res) {
@@ -41,7 +43,7 @@ class ChatController {
       const { city, state, adminType, page = 1, limit = 20 } = req.query;
       const filters = { city, state, adminType };
 
-      const schools = await bigQueryService.getDadosEscolas(filters);
+      const schools = await this.bigQueryService.getDadosEscolas(filters);
 
       res.json({
         success: true,
@@ -58,4 +60,4 @@ class ChatController {
   }
 }
 
-module.exports = new ChatController();
+export default new ChatController();
