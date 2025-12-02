@@ -1,8 +1,12 @@
-const { BigQuery } = require("@google-cloud/bigquery");
-const { ENV } = require("../config/environment");
-const { completeColumnMappings, essentialColumns, columnCategories } = require("../config/completeColumnMappings");
+import { BigQuery } from "@google-cloud/bigquery";
+import { ENV } from "../config/environment.js";
+import { 
+  completeColumnMappings, 
+  essentialColumns, 
+  columnCategories 
+} from "../config/completeColumnMappings.js";
 
-class BigQueryService {
+export class BigQueryService {
   constructor() {
     this.bigQuery = new BigQuery({
       projectId: ENV.GOOGLE_CLOUD_PROJECT,
@@ -457,244 +461,241 @@ class BigQueryService {
     return caracteristicas;
   }
 
-
   extrairRecursosPedagogicosCompleto(escola, mapping) {
     return {
-        materiais_didaticos: {
-            acervo_multimidia: escola[mapping.IN_ACERVO_MULTIMIDIA] === 1,
-            brinquedos_educacao_infantil: escola[mapping.IN_BRINQUEDOS_ED_INFANTIL] === 1,
-            materiais_cientificos: escola[mapping.IN_MATERIAL_CIENTIFICO] === 1,
-            materiais_educacao_indigena: escola[mapping.IN_MATERIAL_ED_INDIGENA] === 1,
-            materiais_educacao_etnicorracial: escola[mapping.IN_MATERIAL_ED_ETNICORRACIAL] === 1,
-            materiais_educacao_campo: escola[mapping.IN_MATERIAL_ED_CAMPO] === 1,
-            jogos_educativos: escola[mapping.IN_JOGOS_EDUCATIVOS] === 1
-        },
-        equipamentos: {
-            televisao: escola[mapping.IN_EQUIP_TV] === 1,
-            videocassete: escola[mapping.IN_EQUIP_VIDEOCASSETE] === 1,
-            dvd: escola[mapping.IN_EQUIP_DVD] === 1,
-            antena_parabolica: escola[mapping.IN_EQUIP_PARABOLICA] === 1,
-            copiadora: escola[mapping.IN_EQUIP_COPIADORA] === 1,
-            impressora: escola[mapping.IN_EQUIP_IMPRESSORA] === 1,
-            aparelho_som: escola[mapping.IN_EQUIP_SOM] === 1,
-            projetor_multimidia: escola[mapping.IN_EQUIP_MULTIMIDIA] === 1,
-            lousa_digital: escola[mapping.IN_EQUIP_LOUSA_DIGITAL] === 1
-        },
-        acervos: {
-            livros_infantis: escola[mapping.IN_ACERVO_LIVROS_INF] === 1,
-            livros_fundamental: escola[mapping.IN_ACERVO_LIVROS_FUND] === 1,
-            livros_medio: escola[mapping.IN_ACERVO_LIVROS_MED] === 1,
-            livros_geral: escola[mapping.IN_ACERVO_LIVROS_GERAL] === 1,
-            quantidade_livros: escola[mapping.QT_LIVROS] || 0,
-            quantidade_livros_didaticos: escola[mapping.QT_LIVROS_DIDATICOS] || 0,
-            quantidade_livros_literatura: escola[mapping.QT_LIVROS_LITERATURA] || 0,
-            quantidade_livros_referencia: escola[mapping.QT_LIVROS_REFERENCIA] || 0
-        }
+      materiais_didaticos: {
+        acervo_multimidia: escola[mapping.IN_ACERVO_MULTIMIDIA] === 1,
+        brinquedos_educacao_infantil: escola[mapping.IN_BRINQUEDOS_ED_INFANTIL] === 1,
+        materiais_cientificos: escola[mapping.IN_MATERIAL_CIENTIFICO] === 1,
+        materiais_educacao_indigena: escola[mapping.IN_MATERIAL_ED_INDIGENA] === 1,
+        materiais_educacao_etnicorracial: escola[mapping.IN_MATERIAL_ED_ETNICORRACIAL] === 1,
+        materiais_educacao_campo: escola[mapping.IN_MATERIAL_ED_CAMPO] === 1,
+        jogos_educativos: escola[mapping.IN_JOGOS_EDUCATIVOS] === 1
+      },
+      equipamentos: {
+        televisao: escola[mapping.IN_EQUIP_TV] === 1,
+        videocassete: escola[mapping.IN_EQUIP_VIDEOCASSETE] === 1,
+        dvd: escola[mapping.IN_EQUIP_DVD] === 1,
+        antena_parabolica: escola[mapping.IN_EQUIP_PARABOLICA] === 1,
+        copiadora: escola[mapping.IN_EQUIP_COPIADORA] === 1,
+        impressora: escola[mapping.IN_EQUIP_IMPRESSORA] === 1,
+        aparelho_som: escola[mapping.IN_EQUIP_SOM] === 1,
+        projetor_multimidia: escola[mapping.IN_EQUIP_MULTIMIDIA] === 1,
+        lousa_digital: escola[mapping.IN_EQUIP_LOUSA_DIGITAL] === 1
+      },
+      acervos: {
+        livros_infantis: escola[mapping.IN_ACERVO_LIVROS_INF] === 1,
+        livros_fundamental: escola[mapping.IN_ACERVO_LIVROS_FUND] === 1,
+        livros_medio: escola[mapping.IN_ACERVO_LIVROS_MED] === 1,
+        livros_geral: escola[mapping.IN_ACERVO_LIVROS_GERAL] === 1,
+        quantidade_livros: escola[mapping.QT_LIVROS] || 0,
+        quantidade_livros_didaticos: escola[mapping.QT_LIVROS_DIDATICOS] || 0,
+        quantidade_livros_literatura: escola[mapping.QT_LIVROS_LITERATURA] || 0,
+        quantidade_livros_referencia: escola[mapping.QT_LIVROS_REFERENCIA] || 0
+      }
     };
-}
+  }
 
-extrairAcessibilidadeCompleta(escola, mapping) {
+  extrairAcessibilidadeCompleta(escola, mapping) {
     return {
-        estrutural: {
-            rampas: escola[mapping.IN_ACESSIBILIDADE_RAMPAS] === 1,
-            corrimao: escola[mapping.IN_ACESSIBILIDADE_CORRIMAO] === 1,
-            sinalizacao_sonora: escola[mapping.IN_ACESSIBILIDADE_SINAL_SONORO] === 1,
-            sinalizacao_tatil: escola[mapping.IN_ACESSIBILIDADE_SINAL_TATIL] === 1,
-            sinalizacao_visual: escola[mapping.IN_ACESSIBILIDADE_SINAL_VISUAL] === 1,
-            vao_livre: escola[mapping.IN_ACESSIBILIDADE_VAO_LIVRE] === 1,
-            portas_automaticas: escola[mapping.IN_ACESSIBILIDADE_PORTAS_AUTOMATICAS] === 1
-        },
-        sanitarios: {
-            banheiro_pne: escola[mapping.IN_BANHEIRO_PNE] === 1,
-            banheiro_adaptado: escola[mapping.IN_BANHEIRO_ADAPTADO] === 1,
-            quantidade_banheiros_pne: escola[mapping.QT_BANHEIROS_PNE] || 0
-        },
-        dependencias_acessiveis: {
-            sala_diretoria: escola[mapping.IN_SALA_DIRETORIA_ACESSIVEL] === 1,
-            sala_professores: escola[mapping.IN_SALA_PROFESSORES_ACESSIVEL] === 1,
-            biblioteca: escola[mapping.IN_BIBLIOTECA_ACESSIVEL] === 1,
-            laboratorio_informatica: escola[mapping.IN_LAB_INFO_ACESSIVEL] === 1,
-            laboratorio_ciencias: escola[mapping.IN_LAB_CIENCIAS_ACESSIVEL] === 1,
-            refeitorio: escola[mapping.IN_REFEITORIO_ACESSIVEL] === 1,
-            cozinha: escola[mapping.IN_COZINHA_ACESSIVEL] === 1,
-            quadra_esportes: escola[mapping.IN_QUADRA_ESPORTES_ACESSIVEL] === 1,
-            parque_infantil: escola[mapping.IN_PARQUE_INFANTIL_ACESSIVEL] === 1
-        },
-        recursos_especializados: {
-            sala_atendimento_especial: escola[mapping.IN_SALA_ATENDIMENTO_ESPECIAL] === 1,
-            recursos_educacao_especial: escola[mapping.IN_RECURSOS_EDUCACAO_ESPECIAL] === 1
-        }
+      estrutural: {
+        rampas: escola[mapping.IN_ACESSIBILIDADE_RAMPAS] === 1,
+        corrimao: escola[mapping.IN_ACESSIBILIDADE_CORRIMAO] === 1,
+        sinalizacao_sonora: escola[mapping.IN_ACESSIBILIDADE_SINAL_SONORO] === 1,
+        sinalizacao_tatil: escola[mapping.IN_ACESSIBILIDADE_SINAL_TATIL] === 1,
+        sinalizacao_visual: escola[mapping.IN_ACESSIBILIDADE_SINAL_VISUAL] === 1,
+        vao_livre: escola[mapping.IN_ACESSIBILIDADE_VAO_LIVRE] === 1,
+        portas_automaticas: escola[mapping.IN_ACESSIBILIDADE_PORTAS_AUTOMATICAS] === 1
+      },
+      sanitarios: {
+        banheiro_pne: escola[mapping.IN_BANHEIRO_PNE] === 1,
+        banheiro_adaptado: escola[mapping.IN_BANHEIRO_ADAPTADO] === 1,
+        quantidade_banheiros_pne: escola[mapping.QT_BANHEIROS_PNE] || 0
+      },
+      dependencias_acessiveis: {
+        sala_diretoria: escola[mapping.IN_SALA_DIRETORIA_ACESSIVEL] === 1,
+        sala_professores: escola[mapping.IN_SALA_PROFESSORES_ACESSIVEL] === 1,
+        biblioteca: escola[mapping.IN_BIBLIOTECA_ACESSIVEL] === 1,
+        laboratorio_informatica: escola[mapping.IN_LAB_INFO_ACESSIVEL] === 1,
+        laboratorio_ciencias: escola[mapping.IN_LAB_CIENCIAS_ACESSIVEL] === 1,
+        refeitorio: escola[mapping.IN_REFEITORIO_ACESSIVEL] === 1,
+        cozinha: escola[mapping.IN_COZINHA_ACESSIVEL] === 1,
+        quadra_esportes: escola[mapping.IN_QUADRA_ESPORTES_ACESSIVEL] === 1,
+        parque_infantil: escola[mapping.IN_PARQUE_INFANTIL_ACESSIVEL] === 1
+      },
+      recursos_especializados: {
+        sala_atendimento_especial: escola[mapping.IN_SALA_ATENDIMENTO_ESPECIAL] === 1,
+        recursos_educacao_especial: escola[mapping.IN_RECURSOS_EDUCACAO_ESPECIAL] === 1
+      }
     };
-}
+  }
 
-extrairSaneamentoCompleto(escola, mapping) {
+  extrairSaneamentoCompleto(escola, mapping) {
     return {
-        abastecimento_agua: {
-            fonte: this.mapearFonteAgua(escola[mapping.TP_ABASTECIMENTO_AGUA]),
-            agua_potavel: escola[mapping.IN_AGUA_POTAVEL] === 1,
-            agua_rede_publica: escola[mapping.IN_AGUA_REDE_PUBLICA] === 1,
-            agua_poco_artesiano: escola[mapping.IN_AGUA_POCO_ARTESIANO] === 1,
-            agua_cacimba: escola[mapping.IN_AGUA_CACIMBA] === 1,
-            agua_fonte_rio: escola[mapping.IN_AGUA_FONTE_RIO] === 1,
-            agua_inexistente: escola[mapping.IN_AGUA_INEXISTENTE] === 1
-        },
-        energia_eletrica: {
-            fonte: this.mapearFonteEnergia(escola[mapping.TP_ENERGIA_ELETRICA]),
-            energia_rede_publica: escola[mapping.IN_ENERGIA_REDE_PUBLICA] === 1,
-            energia_gerador: escola[mapping.IN_ENERGIA_GERADOR] === 1,
-            energia_outros: escola[mapping.IN_ENERGIA_OUTROS] === 1,
-            energia_inexistente: escola[mapping.IN_ENERGIA_INEXISTENTE] === 1
-        },
-        esgoto_sanitario: {
-            destino: this.mapearDestinoEsgoto(escola[mapping.TP_ESGOTO_SANITARIO]),
-            esgoto_rede_publica: escola[mapping.IN_ESGOTO_REDE_PUBLICA] === 1,
-            esgoto_fossa_septica: escola[mapping.IN_ESGOTO_FOSSA_SEPTICA] === 1,
-            esgoto_fossa_rudimentar: escola[mapping.IN_ESGOTO_FOSSA_RUDIMENTAR] === 1,
-            esgoto_inexistente: escola[mapping.IN_ESGOTO_INEXISTENTE] === 1
-        },
-        lixo: {
-            destino: this.mapearDestinoLixo(escola[mapping.TP_DESTINO_LIXO]),
-            lixo_servico_publico: escola[mapping.IN_LIXO_SERVICO_PUBLICO] === 1,
-            lixo_queima: escola[mapping.IN_LIXO_QUEIMA] === 1,
-            lixo_enterra: escola[mapping.IN_LIXO_ENTERRA] === 1,
-            lixo_destino_final_publico: escola[mapping.IN_LIXO_DESTINO_FINAL_PUBLICO] === 1,
-            lixo_outros: escola[mapping.IN_LIXO_OUTROS] === 1
-        },
-        tratamento_agua: {
-            tratamento: this.mapearTratamentoAgua(escola[mapping.TP_TRATAMENTO_AGUA]),
-            agua_tratada: escola[mapping.IN_AGUA_TRATADA] === 1,
-            agua_filtrada: escola[mapping.IN_AGUA_FILTRADA] === 1,
-            agua_clorada: escola[mapping.IN_AGUA_CLORADA] === 1,
-            agua_sem_tratamento: escola[mapping.IN_AGUA_SEM_TRATAMENTO] === 1
-        }
+      abastecimento_agua: {
+        fonte: this.mapearFonteAgua(escola[mapping.TP_ABASTECIMENTO_AGUA]),
+        agua_potavel: escola[mapping.IN_AGUA_POTAVEL] === 1,
+        agua_rede_publica: escola[mapping.IN_AGUA_REDE_PUBLICA] === 1,
+        agua_poco_artesiano: escola[mapping.IN_AGUA_POCO_ARTESIANO] === 1,
+        agua_cacimba: escola[mapping.IN_AGUA_CACIMBA] === 1,
+        agua_fonte_rio: escola[mapping.IN_AGUA_FONTE_RIO] === 1,
+        agua_inexistente: escola[mapping.IN_AGUA_INEXISTENTE] === 1
+      },
+      energia_eletrica: {
+        fonte: this.mapearFonteEnergia(escola[mapping.TP_ENERGIA_ELETRICA]),
+        energia_rede_publica: escola[mapping.IN_ENERGIA_REDE_PUBLICA] === 1,
+        energia_gerador: escola[mapping.IN_ENERGIA_GERADOR] === 1,
+        energia_outros: escola[mapping.IN_ENERGIA_OUTROS] === 1,
+        energia_inexistente: escola[mapping.IN_ENERGIA_INEXISTENTE] === 1
+      },
+      esgoto_sanitario: {
+        destino: this.mapearDestinoEsgoto(escola[mapping.TP_ESGOTO_SANITARIO]),
+        esgoto_rede_publica: escola[mapping.IN_ESGOTO_REDE_PUBLICA] === 1,
+        esgoto_fossa_septica: escola[mapping.IN_ESGOTO_FOSSA_SEPTICA] === 1,
+        esgoto_fossa_rudimentar: escola[mapping.IN_ESGOTO_FOSSA_RUDIMENTAR] === 1,
+        esgoto_inexistente: escola[mapping.IN_ESGOTO_INEXISTENTE] === 1
+      },
+      lixo: {
+        destino: this.mapearDestinoLixo(escola[mapping.TP_DESTINO_LIXO]),
+        lixo_servico_publico: escola[mapping.IN_LIXO_SERVICO_PUBLICO] === 1,
+        lixo_queima: escola[mapping.IN_LIXO_QUEIMA] === 1,
+        lixo_enterra: escola[mapping.IN_LIXO_ENTERRA] === 1,
+        lixo_destino_final_publico: escola[mapping.IN_LIXO_DESTINO_FINAL_PUBLICO] === 1,
+        lixo_outros: escola[mapping.IN_LIXO_OUTROS] === 1
+      },
+      tratamento_agua: {
+        tratamento: this.mapearTratamentoAgua(escola[mapping.TP_TRATAMENTO_AGUA]),
+        agua_tratada: escola[mapping.IN_AGUA_TRATADA] === 1,
+        agua_filtrada: escola[mapping.IN_AGUA_FILTRADA] === 1,
+        agua_clorada: escola[mapping.IN_AGUA_CLORADA] === 1,
+        agua_sem_tratamento: escola[mapping.IN_AGUA_SEM_TRATamento] === 1
+      }
     };
-}
+  }
 
-extrairGestaoCompleta(escola, mapping) {
+  extrairGestaoCompleta(escola, mapping) {
     return {
-        informacoes_basicas: {
-            cnpj: escola[mapping.CO_CNPJ_ESCOLA],
-            codigo_inep: escola[mapping.CO_ENTIDADE],
-            codigo_orgao_regional: escola[mapping.CO_ORGAO_REGIONAL],
-            data_inicio_ano_letivo: escola[mapping.DT_ANO_LETIVO_INICIO],
-            data_termino_ano_letivo: escola[mapping.DT_ANO_LETIVO_TERMINO]
-        },
-        estrutura_gestao: {
-            conselho_escolar: escola[mapping.IN_CONSELHO_ESCOLAR] === 1,
-            composicao_conselho: this.mapearComposicaoConselho(escola[mapping.TP_COMPOSICAO_CONSELHO]),
-            diretor_gestao: this.mapearTipoGestao(escola[mapping.TP_GESTAO]),
-            existe_diretor: escola[mapping.IN_EXISTE_DIRETOR] === 1
-        },
-        financiamento: {
-            recursos_pnae: escola[mapping.IN_RECURSOS_PNAE] === 1,
-            recursos_pde: escola[mapping.IN_RECURSOS_PDE] === 1,
-            recursos_outros: escola[mapping.IN_RECURSOS_OUTROS] === 1
-        },
-        alimentacao: {
-            merenda_escolar: escola[mapping.IN_ALIMENTACAO] === 1,
-            tipo_alimentacao: this.mapearTipoAlimentacao(escola[mapping.TP_ALIMENTACAO])
-        },
-        transporte_escolar: {
-            oferta_transporte: escola[mapping.IN_TRANSPORTE] === 1,
-            tipo_transporte: this.mapearTipoTransporte(escola[mapping.TP_TRANSPORTE])
-        }
+      informacoes_basicas: {
+        cnpj: escola[mapping.CO_CNPJ_ESCOLA],
+        codigo_inep: escola[mapping.CO_ENTIDADE],
+        codigo_orgao_regional: escola[mapping.CO_ORGAO_REGIONAL],
+        data_inicio_ano_letivo: escola[mapping.DT_ANO_LETIVO_INICIO],
+        data_termino_ano_letivo: escola[mapping.DT_ANO_LETIVO_TERMINO]
+      },
+      estrutura_gestao: {
+        conselho_escolar: escola[mapping.IN_CONSELHO_ESCOLAR] === 1,
+        composicao_conselho: this.mapearComposicaoConselho(escola[mapping.TP_COMPOSICAO_CONSELHO]),
+        diretor_gestao: this.mapearTipoGestao(escola[mapping.TP_GESTAO]),
+        existe_diretor: escola[mapping.IN_EXISTE_DIRETOR] === 1
+      },
+      financiamento: {
+        recursos_pnae: escola[mapping.IN_RECURSOS_PNAE] === 1,
+        recursos_pde: escola[mapping.IN_RECURSOS_PDE] === 1,
+        recursos_outros: escola[mapping.IN_RECURSOS_OUTROS] === 1
+      },
+      alimentacao: {
+        merenda_escolar: escola[mapping.IN_ALIMENTACAO] === 1,
+        tipo_alimentacao: this.mapearTipoAlimentacao(escola[mapping.TP_ALIMENTACAO])
+      },
+      transporte_escolar: {
+        oferta_transporte: escola[mapping.IN_TRANSPORTE] === 1,
+        tipo_transporte: this.mapearTipoTransporte(escola[mapping.TP_TRANSPORTE])
+      }
     };
-}
+  }
 
-// Métodos auxiliares de mapeamento para as novas funções
-mapearFonteAgua(codigo) {
+  // Métodos auxiliares de mapeamento para as novas funções
+  mapearFonteAgua(codigo) {
     const fontes = {
-        1: "Rede pública",
-        2: "Poço artesiano",
-        3: "Cacimba/ cisterna/ poço",
-        4: "Fonte/ rio/ igarapé/ riacho/ corrego",
-        5: "Inexistente"
+      1: "Rede pública",
+      2: "Poço artesiano",
+      3: "Cacimba/ cisterna/ poço",
+      4: "Fonte/ rio/ igarapé/ riacho/ corrego",
+      5: "Inexistente"
     };
     return fontes[codigo] || "Não informado";
-}
+  }
 
-mapearFonteEnergia(codigo) {
+  mapearFonteEnergia(codigo) {
     const fontes = {
-        1: "Rede pública",
-        2: "Gerador movido a combustível fóssil",
-        3: "Fontes renováveis (eólica, solar, etc)",
-        4: "Inexistente"
+      1: "Rede pública",
+      2: "Gerador movido a combustível fóssil",
+      3: "Fontes renováveis (eólica, solar, etc)",
+      4: "Inexistente"
     };
     return fontes[codigo] || "Não informado";
-}
+  }
 
-mapearDestinoEsgoto(codigo) {
+  mapearDestinoEsgoto(codigo) {
     const destinos = {
-        1: "Rede pública",
-        2: "Fossa séptica",
-        3: "Fossa rudimentar",
-        4: "Inexistente"
+      1: "Rede pública",
+      2: "Fossa séptica",
+      3: "Fossa rudimentar",
+      4: "Inexistente"
     };
     return destinos[codigo] || "Não informado";
-}
+  }
 
-mapearDestinoLixo(codigo) {
+  mapearDestinoLixo(codigo) {
     const destinos = {
-        1: "Serviço de coleta",
-        2: "Queima",
-        3: "Enterra",
-        4: "Destinação final pública",
-        5: "Outros"
+      1: "Serviço de coleta",
+      2: "Queima",
+      3: "Enterra",
+      4: "Destinação final pública",
+      5: "Outros"
     };
     return destinos[codigo] || "Não informado";
-}
+  }
 
-mapearTratamentoAgua(codigo) {
+  mapearTratamentoAgua(codigo) {
     const tratamentos = {
-        1: "Filtração",
-        2: "Cloração",
-        3: "Sem tratamento"
+      1: "Filtração",
+      2: "Cloração",
+      3: "Sem tratamento"
     };
     return tratamentos[codigo] || "Não informado";
-}
+  }
 
-mapearComposicaoConselho(codigo) {
+  mapearComposicaoConselho(codigo) {
     const composicoes = {
-        1: "Pais, alunos, professores, funcionários, comunidade",
-        2: "Pais, alunos, professores, funcionários",
-        3: "Pais, alunos, professores",
-        4: "Pais e professores",
-        5: "Outros"
+      1: "Pais, alunos, professores, funcionários, comunidade",
+      2: "Pais, alunos, professores, funcionários",
+      3: "Pais, alunos, professores",
+      4: "Pais e professores",
+      5: "Outros"
     };
     return composicoes[codigo] || "Não informado";
-}
+  }
 
-mapearTipoGestao(codigo) {
+  mapearTipoGestao(codigo) {
     const tipos = {
-        1: "Estatutário",
-        2: "Contrato temporário",
-        3: "Contrato CLT",
-        4: "Outros"
+      1: "Estatutário",
+      2: "Contrato temporário",
+      3: "Contrato CLT",
+      4: "Outros"
     };
     return tipos[codigo] || "Não informado";
-}
+  }
 
-mapearTipoAlimentacao(codigo) {
+  mapearTipoAlimentacao(codigo) {
     const tipos = {
-        1: "Merenda escolar",
-        2: "Alimentação fornecida pelos pais",
-        3: "Alimentação fornecida pela escola",
-        4: "Outros"
+      1: "Merenda escolar",
+      2: "Alimentação fornecida pelos pais",
+      3: "Alimentação fornecida pela escola",
+      4: "Outros"
     };
     return tipos[codigo] || "Não informado";
-}
+  }
 
-mapearTipoTransporte(codigo) {
+  mapearTipoTransporte(codigo) {
     const tipos = {
-        1: "Transporte público",
-        2: "Transporte escolar",
-        3: "Transporte próprio",
-        4: "Outros"
+      1: "Transporte público",
+      2: "Transporte escolar",
+      3: "Transporte próprio",
+      4: "Outros"
     };
     return tipos[codigo] || "Não informado";
-}
-
-  
+  }
 
   async query(sql) {
     try {
@@ -718,5 +719,3 @@ mapearTipoTransporte(codigo) {
     // Implementação do fallback...
   }
 }
-
-module.exports = { BigQueryService };

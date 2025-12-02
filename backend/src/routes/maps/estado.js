@@ -1,4 +1,4 @@
-module.exports = async function (fastify, opts) {
+export default async function estadoRoutes(fastify, opts) {
   // lista todos os estados (opcional)
   fastify.get("/", async (request, reply) => {
     return { mensagem: "Lista de estados (a implementar)" };

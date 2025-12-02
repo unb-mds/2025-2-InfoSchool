@@ -19,6 +19,7 @@
     "@langchain/core": "^0.2.0",
     "@langchain/google-genai": "^2.0.0",
     "@langchain/openai": "^0.1.0",
+    "axios": "^1.13.2",
     "dotenv": "^17.2.3",
     "elasticlunr": "^0.9.5",
     "fastify": "^5.6.1",

@@ -1,4 +1,4 @@
-const { BigQuery } = require('@google-cloud/bigquery');
+import { BigQuery } from '@google-cloud/bigquery';
 
 const BIGQUERY_PROJECT_ID = 'infoschool-475602';
 const bigquery = new BigQuery({ projectId: BIGQUERY_PROJECT_ID });
@@ -113,4 +113,4 @@ const getEscolas = async (fastify, options) => {
   });
 };
 
-module.exports = getEscolas;
+export default getEscolas;
