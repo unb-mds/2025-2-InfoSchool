@@ -1,5 +1,5 @@
-const csv = require('csv-parser');
-const fs = require('fs');
+import csv from 'csv-parser';
+import fs from 'fs';
 
 class CensoDataProcessor {
     constructor() {
@@ -76,4 +76,4 @@ class CensoDataProcessor {
     }
 }
 
-module.exports = CensoDataProcessor;
+export default CensoDataProcessor;

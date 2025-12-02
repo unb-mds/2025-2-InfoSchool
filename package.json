@@ -1,14 +1,16 @@
 {
-  "name": "backend",
+  "name": "infoschool-root",
   "version": "1.0.0",
-  "description": "[![Versão](https://img.shields.io/badge/version-0.1.0-blue)](https://github.com/unb-mds/2025-2-InfoSchool/releases) ![Status](https://img.shields.io/badge/Status-Em%20Desenvolvimento-yellow) [![Licença](https://img.shields.io/github/license/unb-mds/2025-2-InfoSchool)](https://github.com/unb-mds/2025-2-InfoSchool/blob/main/LICENSE) [![Issues Fechadas](https://img.shields.io/github/issues-closed/unb-mds/2025-2-InfoSchool)](https://github.com/unb-mds/2025-2-InfoSchool/issues?q=is%3Aissue+is%3Aclosed) [![Contribuidores](https://img.shields.io/github/contributors/unb-mds/2025-2-InfoSchool)](https://github.com/unb-mds/2025-2-InfoSchool/graphs/contributors)",
-  "main": "server.js",
+  "description": "Orquestrador do projeto InfoSchool - Executa Front e Back simultaneamente",
+  "private": true,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon server.js",
-    "data:prepare": "node scripts/data-preparation.js"
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:front-end\"",
+    "dev:backend": "npm run dev --prefix backend",
+    "dev:front-end": "npm run dev --prefix front-end",
+    "install:all": "npm install --prefix backend && npm install --prefix front-end",
+    "postinstall": "npm run install:all"
   },
-  "author": "",
+  "author": "UnB-MDS",
   "license": "ISC",
   "dependencies": {
     "@fastify/cors": "^11.1.0",
@@ -19,6 +21,7 @@
     "@langchain/core": "^0.2.0",
     "@langchain/google-genai": "^2.0.0",
     "@langchain/openai": "^0.1.0",
+    "axios": "^1.13.2",
     "dotenv": "^17.2.3",
     "elasticlunr": "^0.9.5",
     "fastify": "^5.6.1",

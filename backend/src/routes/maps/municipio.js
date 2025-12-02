@@ -1,4 +1,4 @@
-module.exports = async function (fastify, opts) {
+export default async function municipioRoutes(fastify, opts) {
   // Lista municípios de um estado -> GET /estado/:estadoNome/municipio
   fastify.get(
     "/:estadoNome/municipio",
@@ -40,4 +40,4 @@ module.exports = async function (fastify, opts) {
       return { estado, municipio };
     }
   );
-};
+}

@@ -1,41 +1,40 @@
+import 'dotenv/config';
 import Fastify from "fastify";
-import dotenv from 'dotenv';
+import cors from "@fastify/cors";
+import helmet from "@fastify/helmet";
+import rateLimit from "@fastify/rate-limit";
 
-dotenv.config();
-
-// Crie APENAS UMA instância do Fastify
-const app = Fastify({
-  logger: process.env.NODE_ENV === "development" 
-    ? { 
-        level: 'info',
-        transport: {
-          target: 'pino-pretty',
-          options: {
-            colorize: true,
-            ignore: 'pid,hostname',
-            translateTime: 'HH:MM:ss.l'
-          }
-        }
-      }
-    : { 
-        level: 'warn' 
-      }
-});
-
-// Import de rotas (CORRIGIDO para ES Modules)
+// Import de rotas
 import paginaInicialRoutes from "./src/routes/public/home.js";
 import rankingRoutes from "./src/routes/public/ranking.js";
 import ragRoutes from "./src/routes/public/rag.js";
 import brasilRoutes from "./src/routes/maps/brasil.js";
 import estadosRoutes from "./src/routes/maps/estado.js";
 import municipioRoutes from "./src/routes/maps/municipio.js";
-import dashboardRoutes from "./src/routes/dashboard/index.js";
+import dashboardRoutes from "./src/routes/dashboard/dashboard.js";
+import historicalRoutes from "./src/routes/dashboard/historical.js";
 import escolasApiRoutes from "./src/routes/explorar-escolas/api/explorar-escolas.js";
+import escolaSearchRoutes from "./src/routes/paginaPrincipal/escolaSearch.js";
+import escolasLocationRoutes from "./src/routes/caminho-normal/api/escolaPorLocalizao.js";
 
-// Plugins (CORRIGIDO para ES Modules)
-import cors from "@fastify/cors";
-import helmet from "@fastify/helmet";
-import rateLimit from "@fastify/rate-limit";
+// Inicialização da instância única
+const app = Fastify({
+  logger: process.env.NODE_ENV === "development"
+    ? {
+      level: 'info',
+      transport: {
+        target: 'pino-pretty',
+        options: {
+          colorize: true,
+          ignore: 'pid,hostname',
+          translateTime: 'HH:MM:ss.l'
+        }
+      }
+    }
+    : {
+      level: 'warn'
+    }
+});
 
 app.register(cors, {
   origin: true,
@@ -54,10 +53,16 @@ app.register(rankingRoutes, { prefix: "/ranking" });
 app.register(ragRoutes, { prefix: "/rag" });
 app.register(brasilRoutes, { prefix: "/mapa" });
 app.register(escolasApiRoutes, { prefix: "/api/explorar-escolas" });
+
+app.register(escolaSearchRoutes, { prefix: "/api/escolas/search" });
+
+// Adaptação dos seus prefixos
 app.register(estadosRoutes, { prefix: "/estados" });
 app.register(municipioRoutes, { prefix: "/municipios" });
 app.register(dashboardRoutes, { prefix: "/dashboard" });
-
+app.register(escolasLocationRoutes, { prefix: "/api/escolas/location" });
+app.register(dashboardRoutes, { prefix: "/api/escola/details" });
+app.register(historicalRoutes, { prefix: "/api/escola/historical" });
 
 // Rota raiz
 app.get("/", async (request, reply) => {
@@ -106,7 +111,7 @@ const start = async () => {
 
     // Inicialização automática do RAG
     console.log("🔄 Inicializando RAG Híbrido...");
-    
+
     // CORRIGIDO: import para ES Modules
     import('./src/services/hybrid-ragService.js')
       .then(module => {
@@ -125,7 +130,7 @@ const start = async () => {
       .catch(error => {
         console.error("❌ Erro ao carregar módulo RAG:", error.message);
       });
-      
+
   } catch (err) {
     console.error(err);
     process.exit(1);

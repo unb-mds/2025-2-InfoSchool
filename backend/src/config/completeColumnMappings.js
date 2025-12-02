@@ -5734,7 +5734,7 @@ const columnCategories = {
   ]
 };
 
-module.exports = { 
+export { 
   completeColumnMappings, 
   essentialColumns, 
   columnCategories 

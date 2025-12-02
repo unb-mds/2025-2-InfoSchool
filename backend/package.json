@@ -1,10 +1,11 @@
 {
   "name": "backend",
   "version": "1.0.0",
+  "type": "module",
   "description": "",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
     "dev": "nodemon server.js",
     "data:prepare": "node scripts/data-preparation.js"
   },
@@ -16,13 +17,21 @@
     "@fastify/rate-limit": "^10.3.0",
     "@google-cloud/bigquery": "^8.1.1",
     "@google/generative-ai": "^0.24.1",
-    "@langchain/core": "^1.1.0",
-    "@langchain/google-genai": "^2.0.0",
-    "@langchain/openai": "^1.0.0",
-    "dotenv": "^17.2.3",
+    "@langchain/community": "^0.3.0",
+    "@langchain/core": "^0.3.0",
+    "@langchain/google-genai": "^0.1.0",
+    "@langchain/openai": "^0.3.0",
+    "csv-parser": "^3.2.0",
+    "dotenv": "^16.4.5",
+    "elasticlunr": "^0.9.5",
     "fastify": "^5.6.1",
-    "langchain": "^1.0.3",
+    "hnswlib-node": "^3.0.0",
+    "langchain": "^0.3.0",
     "nodemon": "^3.1.10",
-    "openai": "^6.8.1"
+    "openai": "^4.0.0"
+  },
+  "devDependencies": {
+    "jest": "^30.2.0",
+    "supertest": "^7.1.4"
   }
 }

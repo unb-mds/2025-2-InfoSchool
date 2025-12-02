@@ -1,5 +1,5 @@
 // src/routes/chat.routes.js
-const hybridRAGService = require("../../services/hybrid-ragService");
+import hybridRAGService from "../../services/hybrid-ragService.js";
 
 async function chatRoutes(fastify, options) {
   // Rota de saúde do RAG
@@ -75,4 +75,4 @@ async function chatRoutes(fastify, options) {
   });
 }
 
-module.exports = chatRoutes;
+export default chatRoutes;

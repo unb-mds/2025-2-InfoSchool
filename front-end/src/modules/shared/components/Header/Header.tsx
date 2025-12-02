@@ -1,9 +1,10 @@
 'use client';
 import { useState, useMemo, useCallback, useEffect } from 'react';
-import { useTheme } from '../ThemeProvider/ThemeProvider';
-import { Search } from 'lucide-react';
-import { useRouter, usePathname } from 'next/navigation';
+import { useTheme } from '../ThemeProvider/ThemeProvider'; 
+import { Search, Loader2 } from 'lucide-react';
+import { useRouter, usePathname } from 'next/navigation'; 
 
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
 function useDebounce<T>(value: T, delay: number) {
   const [debouncedValue, setDebouncedValue] = useState(value);
@@ -32,8 +33,8 @@ type Escola = {
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-  const [escolasBuscadas, setEscolasBuscadas] = useState<Escola[]>([]); // Novo estado para resultados da API
-  const [isLoading, setIsLoading] = useState(false); // Novo estado para loading
+  const [escolasBuscadas, setEscolasBuscadas] = useState<Escola[]>([]); 
+  const [isLoading, setIsLoading] = useState(false); 
   const [showSuggestions, setShowSuggestions] = useState(false);
   
   const { theme, toggleTheme } = useTheme();
@@ -42,52 +43,47 @@ export default function Header() {
 
   const isHomePage = pathname === '/inicial' || pathname === '/';
   
-  // Usa o valor do input, mas só o atualiza após 500ms de inatividade
   const debouncedSearchTerm = useDebounce(searchTerm, 500); 
 
   // Função para buscar dados reais no BigQuery via API Route
-    const fetchEscolas = useCallback(async (term: string) => {
-      if (!term || term.trim().length < 3) { // Regra: só busca se o termo tiver 3 ou mais caracteres
-        setEscolasBuscadas([]);
-        setIsLoading(false);
-        return;
-      }
-  
-      setIsLoading(true);
+  const fetchEscolas = useCallback(async (term: string) => {
+    if (!term || term.trim().length < 3) { 
+      setEscolasBuscadas([]);
+      setIsLoading(false);
+      return;
+    }
+
+    setIsLoading(true);
+    
+    try {
+      // ATUALIZAÇÃO: Usando a URL absoluta para garantir conexão com o Fastify (porta 3001)
+      const response = await fetch(`${API_BASE_URL}/api/escolas/search?q=${encodeURIComponent(term)}`);
       
-      try {
-        // Chama a API Route que criamos: /api/escolas/search?q={termo}
-        const response = await fetch(`/api/escolas/search?q=${encodeURIComponent(term)}`);
-        
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        const data = await response.json();
-        setEscolasBuscadas(data.escolas || []); // Garante que é um array, mesmo em caso de erro na API
-  
-      } catch (error) {
-        console.error("Erro na busca de escolas:", error);
-        setEscolasBuscadas([]); // Limpa em caso de falha
-      } finally {
-        setIsLoading(false);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
-    }, []);
+      
+      const data = await response.json();
+      setEscolasBuscadas(data.escolas || []);
+
+    } catch (error) {
+      console.error("Erro na busca de escolas:", error);
+      setEscolasBuscadas([]); 
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
 
   // useEffect para observar o termo "debounced" e disparar a busca
   useEffect(() => {
     if (debouncedSearchTerm) {
       fetchEscolas(debouncedSearchTerm);
     } else {
-      // Limpa os resultados se o termo for apagado
       setEscolasBuscadas([]);
     }
   }, [debouncedSearchTerm, fetchEscolas]);
   
-  // O escolasFiltradas agora usa escolasBuscadas (e não mais o mock)
   const escolasFiltradas = escolasBuscadas; 
-
-  // --- Funções de Navegação e Menu (inalteradas, mas incluídas para a completude do arquivo) ---
 
   const handleSobreNosClick = useCallback(() => {
     setMenuOpen(false);
@@ -99,17 +95,12 @@ export default function Header() {
     }
   }, [isHomePage]);
 
-  const redirecionarParaEscola = useCallback((escola: { nome: string }) => {
-    const escolaSlug = escola.nome
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
-      .toLowerCase()
-      .replace(/\s+/g, '-');
-    
-    router.push(`/escolas/${escolaSlug}`);
+  // ATUALIZAÇÃO: Função redireciona para o Dashboard usando o ID (Código INEP)
+  const redirecionarParaEscola = useCallback((escola: Escola) => {
+    router.push(`/dashboard/${escola.id}`);
     setShowSuggestions(false);
     setSearchTerm('');
-    setEscolasBuscadas([]); // Limpa resultados após a seleção
+    setEscolasBuscadas([]); 
   }, [router]);
 
   const handleSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
@@ -118,15 +109,12 @@ export default function Header() {
   }, []);
 
   const handleSearchBlur = useCallback(() => {
-    // Usamos um atraso maior aqui (300ms) para dar tempo de clicar em uma sugestão
-    setTimeout(() => setShowSuggestions(false), 300);
+    setTimeout(() => setShowSuggestions(false), 200);
   }, []);
 
   const toggleMenu = useCallback(() => {
     setMenuOpen(prev => !prev);
   }, []);
-
-  // --- Renderização do Componente ---
 
   return (
     <header className="bg-header border-theme border-b sticky top-0 z-50 transition-colors duration-500">
@@ -162,28 +150,24 @@ export default function Header() {
                 <input
                   type="text"
                   placeholder="Digite o nome da escola"
-                  className="w-full h-12 rounded-full pl-12 pr-6 focus:outline-none focus:ring-2 focus:ring-primary text-lg bg-card border border-theme text-text transition-colors duration-500"
+                  className="w-full h-12 rounded-full pl-12 pr-10 focus:outline-none focus:ring-2 focus:ring-primary text-lg bg-card border border-theme text-text transition-colors duration-500"
                   value={searchTerm}
                   onChange={handleSearchChange}
                   onFocus={() => setShowSuggestions(true)}
                   onBlur={handleSearchBlur}
                 />
+                {/* Loader visual dentro do input */}
+                {isLoading && (
+                  <div className="absolute right-4 top-1/2 -translate-y-1/2">
+                    <Loader2 className="animate-spin text-primary" size={20} />
+                  </div>
+                )}
               </div>
 
               {showSuggestions && (
                 <div className="absolute top-full left-0 right-0 mt-2 max-h-60 overflow-y-auto z-50 shadow-theme bg-card border border-theme rounded-lg transition-colors duration-500">
-                  {isLoading ? (
-                    <div className="px-4 py-3 text-center text-primary flex items-center justify-center space-x-2">
-                        {/* Indicador simples de loading (Spinner) */}
-                        <svg className="animate-spin h-5 w-5 mr-3 text-primary" viewBox="0 0 24 24">
-                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                        Buscando escola...
-                    </div>
-                  ) : escolasFiltradas.length > 0 ? (
+                  {escolasFiltradas.length > 0 ? (
                     escolasFiltradas.map((escola) => (
-                      // Note: O BigQuery retorna todos os valores como string, então use escola.id.
                       <button
                         key={escola.id}
                         className="w-full text-left px-4 py-3 border-b border-theme last:border-b-0 hover:bg-card-alt text-text transition-colors duration-500 group"
