@@ -1,13 +1,13 @@
-const HybridRAGService = require("../services/hybrid-ragService");
+const hybridRAGService = require("../services/hybrid-ragServices").default;
 
 class ChatController {
   constructor() {
-    this.ragService = HybridRAGService;
+    this.ragService = hybridRAGService;
   }
 
   async chat(req, res) {
     try {
-      const { question, schoolId, filters } = req.body;
+      const { question, filters = {} } = req.body; // MUDOU: schoolId → filters
 
       if (!question) {
         return res.status(400).json({
@@ -15,45 +15,30 @@ class ChatController {
         });
       }
 
-      const result = await this.ragService.processQuery(question, schoolId);
+      // Inicializar se necessário
+      if (!this.ragService.isInitialized) {
+        await this.ragService.initialize();
+      }
+
+      const result = await this.ragService.processQuery(question, filters); // MUDOU
 
       res.json({
         success: true,
-        question,
-        answer: result.resposta,
+        pergunta: result.pergunta, // MUDOU: question → pergunta
+        resposta: result.resposta, // MUDOU: answer → resposta
         intent: result.intent,
+        filtros: result.filtros,
         sources: result.sources,
         statistics: result.statistics,
-        filters: result.filtros,
-        timestamp: new Date().toISOString(),
+        timestamp: result.timestamp,
       });
     } catch (error) {
       console.error("Erro no chat:", error);
       res.status(500).json({
+        success: false, // ADICIONADO
         error: "Erro interno do servidor",
         details: error.message,
       });
-    }
-  }
-
-  async searchSchools(req, res) {
-    try {
-      const { city, state, adminType, page = 1, limit = 20 } = req.query;
-      const filters = { city, state, adminType };
-
-      const schools = await bigQueryService.getDadosEscolas(filters);
-
-      res.json({
-        success: true,
-        data: schools,
-        pagination: {
-          page: parseInt(page),
-          limit: parseInt(limit),
-          total: schools.length,
-        },
-      });
-    } catch (error) {
-      res.status(500).json({ error: error.message });
     }
   }
 }
