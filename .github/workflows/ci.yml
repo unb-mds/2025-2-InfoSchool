@@ -3,8 +3,12 @@ name: Integração Contínua (CI)
 on:
   push:
     branches: [ "**" ]
+    paths-ignore:
+      - '**.md'
   pull_request:
     branches: [ "main" ]
+    paths-ignore:
+      - '**.md'
 
 jobs:
   backend-verificacao:
