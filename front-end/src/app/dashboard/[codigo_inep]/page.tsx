@@ -20,269 +20,6 @@ import { DICIONARIO_DADOS, CATEGORIAS_RELATORIO } from '@/utils/dicionario';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
-// --- DICIONÁRIO DE DADOS COMPLETO ---
-const DICIONARIO_DADOS: Record<string, string> = {
-  "NU_ANO_CENSO": "Ano do Censo",
-  "NO_REGIAO": "Nome da Região",
-  "CO_REGIAO": "Código da Região",
-  "NO_UF": "Nome da UF",
-  "SG_UF": "Sigla da UF",
-  "CO_UF": "Código da UF",
-  "NO_MUNICIPIO": "Nome do Município",
-  "CO_MUNICIPIO": "Código do Município",
-  "NO_REGIAO_GEOG_INTERM": "Região Geográfica Intermediária",
-  "CO_REGIAO_GEOG_INTERM": "Cód. Região Geográfica Intermediária",
-  "NO_REGIAO_GEOG_IMED": "Região Geográfica Imediata",
-  "CO_REGIAO_GEOG_IMED": "Cód. Região Geográfica Imediata",
-  "NO_MESORREGIAO": "Mesorregião",
-  "CO_MESORREGIAO": "Cód. Mesorregião",
-  "NO_MICRORREGIAO": "Microrregião",
-  "CO_MICRORREGIAO": "Cód. Microrregião",
-  "NO_DISTRITO": "Distrito",
-  "CO_DISTRITO": "Cód. Distrito",
-  "NO_ENTIDADE": "Nome da Escola",
-  "CO_ENTIDADE": "Código INEP (Escola)",
-  "TP_DEPENDENCIA": "Dependência Administrativa (Rede)",
-  "TP_CATEGORIA_ESCOLA_PRIVADA": "Categoria Escola Privada",
-  "TP_LOCALIZACAO": "Localização (Zona)",
-  "TP_LOCALIZACAO_DIFERENCIADA": "Localização Diferenciada",
-  "DS_ENDERECO": "Endereço",
-  "NU_ENDERECO": "Número",
-  "DS_COMPLEMENTO": "Complemento",
-  "NO_BAIRRO": "Bairro",
-  "CO_CEP": "CEP",
-  "NU_DDD": "DDD",
-  "NU_TELEFONE": "Telefone",
-  "TP_SITUACAO_FUNCIONAMENTO": "Situação de Funcionamento",
-  "CO_ORGAO_REGIONAL": "Cód. Órgão Regional",
-  "DT_ANO_LETIVO_INICIO": "Início Ano Letivo",
-  "DT_ANO_LETIVO_TERMINO": "Fim Ano Letivo",
-  "IN_VINCULO_SECRETARIA_EDUCACAO": "Vínculo Secretaria Educação",
-  "IN_VINCULO_SEGURANCA_PUBLICA": "Vínculo Segurança Pública",
-  "IN_VINCULO_SECRETARIA_SAUDE": "Vínculo Secretaria Saúde",
-  "IN_VINCULO_OUTRO_ORGAO": "Vínculo Outro Órgão",
-  "IN_PODER_PUBLICO_PARCERIA": "Parceria Poder Público",
-  "TP_PODER_PUBLICO_PARCERIA": "Tipo Parceria Poder Público",
-  "IN_FORMA_CONT_TERMO_COLABORA": "Termo de Colaboração",
-  "IN_FORMA_CONT_TERMO_FOMENTO": "Termo de Fomento",
-  "IN_FORMA_CONT_ACORDO_COOP": "Acordo de Cooperação",
-  "IN_FORMA_CONT_PRESTACAO_SERV": "Contrato Prestação Serviço",
-  "IN_FORMA_CONT_COOP_TEC_FIN": "Cooperação Téc. Financeira",
-  "IN_FORMA_CONT_CONSORCIO_PUB": "Consórcio Público",
-  "IN_LOCAL_FUNC_PREDIO_ESCOLAR": "Funciona em Prédio Escolar",
-  "TP_OCUPACAO_PREDIO_ESCOLAR": "Tipo Ocupação Prédio",
-  "IN_LOCAL_FUNC_SOCIOEDUCATIVO": "Funciona em Unid. Socioeducativa",
-  "IN_LOCAL_FUNC_UNID_PRISIONAL": "Funciona em Unid. Prisional",
-  "IN_LOCAL_FUNC_PRISIONAL_SOCIO": "Funciona em Prisional/Socio",
-  "IN_LOCAL_FUNC_GALPAO": "Funciona em Galpão",
-  "TP_OCUPACAO_GALPAO": "Tipo Ocupação Galpão",
-  "IN_LOCAL_FUNC_SALAS_OUTRA_ESC": "Funciona em Salas Outra Escola",
-  "IN_LOCAL_FUNC_OUTROS": "Funciona em Outros Locais",
-  "IN_PREDIO_COMPARTILHADO": "Prédio Compartilhado",
-  "QT_SALAS_UTILIZADAS_DENTRO": "Qtd. Salas Dentro Prédio",
-  "QT_SALAS_UTILIZADAS_FORA": "Qtd. Salas Fora Prédio",
-  "QT_SALAS_UTILIZADAS": "Total Salas Utilizadas",
-  "QT_SALAS_UTILIZA_CLIMATIZADAS": "Qtd. Salas Climatizadas",
-  "QT_SALAS_UTILIZADAS_ACESSIVEIS": "Qtd. Salas Acessíveis",
-  "IN_AGUA_POTAVEL": "Água Potável",
-  "IN_AGUA_REDE_PUBLICA": "Água Rede Pública",
-  "IN_AGUA_POCO_ARTESIANO": "Água Poço Artesiano",
-  "IN_AGUA_CACIMBA": "Água Cacimba",
-  "IN_AGUA_FONTE_RIO": "Água Fonte/Rio",
-  "IN_AGUA_INEXISTENTE": "Sem Água",
-  "IN_AGUA_CARRO_PIPA": "Água Carro Pipa",
-  "IN_ENERGIA_REDE_PUBLICA": "Energia Rede Pública",
-  "IN_ENERGIA_GERADOR_FOSSIL": "Energia Gerador",
-  "IN_ENERGIA_RENOVAVEL": "Energia Renovável",
-  "IN_ENERGIA_INEXISTENTE": "Sem Energia",
-  "IN_ESGOTO_REDE_PUBLICA": "Esgoto Rede Pública",
-  "IN_ESGOTO_FOSSA_SEPTICA": "Esgoto Fossa Séptica",
-  "IN_ESGOTO_FOSSA_COMUM": "Esgoto Fossa Comum",
-  "IN_ESGOTO_FOSSA": "Esgoto Fossa",
-  "IN_ESGOTO_INEXISTENTE": "Sem Esgoto",
-  "IN_LIXO_SERVICO_COLETA": "Coleta de Lixo",
-  "IN_LIXO_QUEIMA": "Queima Lixo",
-  "IN_LIXO_ENTERRA": "Enterra Lixo",
-  "IN_LIXO_DESTINO_FINAL_PUBLICO": "Lixo Destino Público",
-  "IN_LIXO_DESCARTA_OUTRA_AREA": "Descarta Lixo Outra Área",
-  "IN_TRATAMENTO_LIXO_SEPARACAO": "Separação de Lixo",
-  "IN_TRATAMENTO_LIXO_REUTILIZA": "Reutilização de Lixo",
-  "IN_TRATAMENTO_LIXO_RECICLAGEM": "Reciclagem de Lixo",
-  "IN_TRATAMENTO_LIXO_INEXISTENTE": "Sem Tratamento Lixo",
-  "IN_ALMOXARIFADO": "Almoxarifado",
-  "IN_AREA_VERDE": "Área Verde",
-  "IN_AREA_PLANTIO": "Área de Plantio",
-  "IN_AUDITORIO": "Auditório",
-  "IN_BANHEIRO": "Banheiro",
-  "IN_BANHEIRO_EI": "Banheiro Educação Infantil",
-  "IN_BANHEIRO_PNE": "Banheiro PNE (Acessível)",
-  "IN_BANHEIRO_FUNCIONARIOS": "Banheiro Funcionários",
-  "IN_BANHEIRO_CHUVEIRO": "Banheiro com Chuveiro",
-  "IN_BIBLIOTECA": "Biblioteca",
-  "IN_BIBLIOTECA_SALA_LEITURA": "Sala de Leitura",
-  "IN_COZINHA": "Cozinha",
-  "IN_DESPENSA": "Despensa",
-  "IN_DORMITORIO_ALUNO": "Dormitório Aluno",
-  "IN_DORMITORIO_PROFESSOR": "Dormitório Professor",
-  "IN_LABORATORIO_CIENCIAS": "Lab. Ciências",
-  "IN_LABORATORIO_INFORMATICA": "Lab. Informática",
-  "IN_LABORATORIO_EDUC_PROF": "Lab. Educação Profissional",
-  "IN_PATIO_COBERTO": "Pátio Coberto",
-  "IN_PATIO_DESCOBERTO": "Pátio Descoberto",
-  "IN_PARQUE_INFANTIL": "Parque Infantil",
-  "IN_PISCINA": "Piscina",
-  "IN_QUADRA_ESPORTES": "Quadra Esportes",
-  "IN_QUADRA_ESPORTES_COBERTA": "Quadra Coberta",
-  "IN_QUADRA_ESPORTES_DESCOBERTA": "Quadra Descoberta",
-  "IN_REFEITORIO": "Refeitório",
-  "IN_SALA_ATELIE_ARTES": "Sala/Ateliê Artes",
-  "IN_SALA_MUSICA_CORAL": "Sala Música/Coral",
-  "IN_SALA_ESTUDIO_DANCA": "Estúdio Dança",
-  "IN_SALA_MULTIUSO": "Sala Multiuso",
-  "IN_SALA_ESTUDIO_GRAVACAO": "Estúdio Gravação",
-  "IN_SALA_OFICINAS_EDUC_PROF": "Oficinas Educ. Profissional",
-  "IN_SALA_DIRETORIA": "Sala Diretoria",
-  "IN_SALA_LEITURA": "Sala Leitura",
-  "IN_SALA_PROFESSOR": "Sala Professores",
-  "IN_SALA_REPOUSO_ALUNO": "Sala Repouso Aluno",
-  "IN_SECRETARIA": "Secretaria",
-  "IN_SALA_ATENDIMENTO_ESPECIAL": "Sala Atendimento Especial (AEE)",
-  "IN_TERREIRAO": "Terreirão",
-  "IN_VIVEIRO": "Viveiro",
-  "IN_DEPENDENCIAS_OUTRAS": "Outras Dependências",
-  "IN_ACESSIBILIDADE_CORRIMAO": "Acessibilidade: Corrimão",
-  "IN_ACESSIBILIDADE_ELEVADOR": "Acessibilidade: Elevador",
-  "IN_ACESSIBILIDADE_PISOS_TATEIS": "Acessibilidade: Pisos Táteis",
-  "IN_ACESSIBILIDADE_VAO_LIVRE": "Acessibilidade: Vão Livre",
-  "IN_ACESSIBILIDADE_RAMPAS": "Acessibilidade: Rampas",
-  "IN_ACESSIBILIDADE_SINAL_SONORO": "Acessibilidade: Sinal Sonoro",
-  "IN_ACESSIBILIDADE_SINAL_TATIL": "Acessibilidade: Sinal Tátil",
-  "IN_ACESSIBILIDADE_SINAL_VISUAL": "Acessibilidade: Sinal Visual",
-  "IN_ACESSIBILIDADE_INEXISTENTE": "Sem Acessibilidade",
-  "IN_ACESSIBILIDADE_SINALIZACAO": "Acessibilidade: Sinalização",
-  "IN_EQUIP_PARABOLICA": "Antena Parabólica",
-  "IN_COMPUTADOR": "Computadores",
-  "IN_EQUIP_COPIADORA": "Copiadora",
-  "IN_EQUIP_IMPRESSORA": "Impressora",
-  "IN_EQUIP_IMPRESSORA_MULT": "Impressora Multifuncional",
-  "IN_EQUIP_SCANNER": "Scanner",
-  "IN_EQUIP_NENHUM": "Nenhum Equipamento",
-  "IN_EQUIP_DVD": "DVD",
-  "QT_EQUIP_DVD": "Qtd. DVDs",
-  "IN_EQUIP_SOM": "Aparelho de Som",
-  "QT_EQUIP_SOM": "Qtd. Sons",
-  "IN_EQUIP_TV": "TV",
-  "QT_EQUIP_TV": "Qtd. TVs",
-  "IN_EQUIP_LOUSA_DIGITAL": "Lousa Digital",
-  "QT_EQUIP_LOUSA_DIGITAL": "Qtd. Lousas Digitais",
-  "IN_EQUIP_MULTIMIDIA": "Projetor Multimídia",
-  "QT_EQUIP_MULTIMIDIA": "Qtd. Projetores",
-  "IN_DESKTOP_ALUNO": "Desktop para Aluno",
-  "QT_DESKTOP_ALUNO": "Qtd. Desktops Aluno",
-  "IN_COMP_PORTATIL_ALUNO": "Notebook para Aluno",
-  "QT_COMP_PORTATIL_ALUNO": "Qtd. Notebooks Aluno",
-  "IN_TABLET_ALUNO": "Tablet para Aluno",
-  "QT_TABLET_ALUNO": "Qtd. Tablets Aluno",
-  "IN_INTERNET": "Possui Internet",
-  "IN_INTERNET_ALUNOS": "Internet para Alunos",
-  "IN_INTERNET_ADMINISTRATIVO": "Internet Administrativa",
-  "IN_INTERNET_APRENDIZAGEM": "Internet Aprendizagem",
-  "IN_INTERNET_COMUNIDADE": "Internet Comunidade",
-  "IN_ACESSO_INTERNET_COMPUTADOR": "Acesso via Computador",
-  "IN_ACES_INTERNET_DISP_PESSOAIS": "Acesso via Disp. Pessoais",
-  "TP_REDE_LOCAL": "Tipo Rede Local",
-  "IN_BANDA_LARGA": "Banda Larga",
-  "IN_PROF_ADMINISTRATIVOS": "Prof. Administrativos",
-  "QT_PROF_ADMINISTRATIVOS": "Qtd. Prof. Administrativos",
-  "IN_PROF_SERVICOS_GERAIS": "Prof. Serviços Gerais",
-  "QT_PROF_SERVICOS_GERAIS": "Qtd. Prof. Serviços Gerais",
-  "IN_PROF_BIBLIOTECARIO": "Bibliotecário",
-  "QT_PROF_BIBLIOTECARIO": "Qtd. Bibliotecários",
-  "IN_PROF_SAUDE": "Prof. Saúde",
-  "QT_PROF_SAUDE": "Qtd. Prof. Saúde",
-  "IN_PROF_COORDENADOR": "Coordenador",
-  "QT_PROF_COORDENADOR": "Qtd. Coordenadores",
-  "IN_PROF_FONAUDIOLOGO": "Fonoaudiólogo",
-  "QT_PROF_FONAUDIOLOGO": "Qtd. Fonoaudiólogos",
-  "IN_PROF_NUTRICIONISTA": "Nutricionista",
-  "QT_PROF_NUTRICIONISTA": "Qtd. Nutricionistas",
-  "IN_PROF_PSICOLOGO": "Psicólogo",
-  "QT_PROF_PSICOLOGO": "Qtd. Psicólogos",
-  "IN_PROF_ALIMENTACAO": "Merendeira/Cozinheiro",
-  "QT_PROF_ALIMENTACAO": "Qtd. Merendeiras",
-  "IN_PROF_PEDAGOGIA": "Pedagogo",
-  "QT_PROF_PEDAGOGIA": "Qtd. Pedagogos",
-  "IN_PROF_SECRETARIO": "Secretário Escolar",
-  "QT_PROF_SECRETARIO": "Qtd. Secretários",
-  "IN_PROF_SEGURANCA": "Segurança",
-  "QT_PROF_SEGURANCA": "Qtd. Seguranças",
-  "IN_PROF_MONITORES": "Monitores",
-  "QT_PROF_MONITORES": "Qtd. Monitores",
-  "IN_PROF_GESTAO": "Gestão Escolar",
-  "QT_PROF_GESTAO": "Qtd. Gestão",
-  "IN_PROF_ASSIST_SOCIAL": "Assistente Social",
-  "QT_PROF_ASSIST_SOCIAL": "Qtd. Assist. Social",
-  "IN_PROF_TRAD_LIBRAS": "Tradutor Libras",
-  "QT_PROF_TRAD_LIBRAS": "Qtd. Tradutor Libras",
-  "IN_PROF_AGRICOLA": "Prof. Agrícola",
-  "QT_PROF_AGRICOLA": "Qtd. Prof. Agrícola",
-  "IN_PROF_REVISOR_BRAILLE": "Revisor Braille",
-  "QT_PROF_REVISOR_BRAILLE": "Qtd. Revisores Braille",
-  "IN_ALIMENTACAO": "Fornece Alimentação",
-  "IN_MATERIAL_PED_MULTIMIDIA": "Mat. Pedagógico Multimídia",
-  "IN_MATERIAL_PED_INFANTIL": "Mat. Pedagógico Infantil",
-  "IN_MATERIAL_PED_CIENTIFICO": "Mat. Pedagógico Científico",
-  "IN_MATERIAL_PED_DIFUSAO": "Mat. Difusão (Som)",
-  "IN_MATERIAL_PED_MUSICAL": "Mat. Musical",
-  "IN_MATERIAL_PED_JOGOS": "Jogos Educativos",
-  "IN_MATERIAL_PED_ARTISTICAS": "Mat. Artístico",
-  "IN_MATERIAL_PED_PROFISSIONAL": "Mat. Ed. Profissional",
-  "IN_MATERIAL_PED_DESPORTIVA": "Mat. Esportivo",
-  "IN_MATERIAL_PED_INDIGENA": "Mat. Indígena",
-  "IN_MATERIAL_PED_ETNICO": "Mat. Étnico-Racial",
-  "IN_MATERIAL_PED_CAMPO": "Mat. Educação do Campo",
-  "IN_MATERIAL_PED_BIL_SURDOS": "Mat. Bilíngue Surdos",
-  "IN_MATERIAL_PED_AGRICOLA": "Mat. Agrícola",
-  "IN_MATERIAL_PED_QUILOMBOLA": "Mat. Quilombola",
-  "IN_MATERIAL_PED_EDU_ESP": "Mat. Educação Especial",
-  "IN_MATERIAL_PED_NENHUM": "Nenhum Material",
-  "IN_EDUCACAO_INDIGENA": "Educação Indígena",
-  "IN_EXAME_SELECAO": "Exame de Seleção",
-  "IN_RESERVA_PPI": "Cotas PPI",
-  "IN_RESERVA_RENDA": "Cotas Renda",
-  "IN_RESERVA_PUBLICA": "Cotas Escola Pública",
-  "IN_RESERVA_PCD": "Cotas PCD",
-  "IN_RESERVA_OUTROS": "Cotas Outros",
-  "IN_RESERVA_NENHUMA": "Sem Cotas",
-  "IN_REDES_SOCIAIS": "Possui Redes Sociais",
-  "IN_ESPACO_ATIVIDADE": "Compartilha Espaço",
-  "IN_ESPACO_EQUIPAMENTO": "Usa Espaço Entorno",
-  "IN_ORGAO_ASS_PAIS": "Assoc. Pais",
-  "IN_ORGAO_ASS_PAIS_MESTRES": "Assoc. Pais e Mestres",
-  "IN_ORGAO_CONSELHO_ESCOLAR": "Conselho Escolar",
-  "IN_ORGAO_GREMIO_ESTUDANTIL": "Grêmio Estudantil",
-  "TP_PROPOSTA_PEDAGOGICA": "Proposta Pedagógica Atualizada",
-  "IN_EDUC_AMBIENTAL": "Educação Ambiental",
-  "TP_AEE": "Tipo AEE",
-  "TP_ATIVIDADE_COMPLEMENTAR": "Atividade Complementar",
-  "IN_MEDIACAO_PRESENCIAL": "Ensino Presencial",
-  "IN_MEDIACAO_SEMIPRESENCIAL": "Ensino Semipresencial",
-  "IN_MEDIACAO_EAD": "Ensino EAD",
-  "IN_REGULAR": "Ensino Regular",
-  "IN_DIURNO": "Turno Diurno",
-  "IN_NOTURNO": "Turno Noturno",
-  "IN_EAD": "Turno EAD",
-  "QT_MAT_BAS": "Total Matrículas Básica",
-  "QT_MAT_INF": "Matrículas Infantil",
-  "QT_MAT_FUND": "Matrículas Fundamental",
-  "QT_MAT_MED": "Matrículas Médio",
-  "QT_MAT_PROF": "Matrículas Profissional",
-  "QT_MAT_EJA": "Matrículas EJA",
-  "QT_MAT_ESP": "Matrículas Educação Especial",
-  "QT_DOC_BAS": "Total Docentes",
-  "QT_TUR_BAS": "Total Turmas"
-};
-
 // --- FUNÇÃO DE PDF ---
 const generatePDF = (dadosCompletos: any) => {
   const { raw } = dadosCompletos;
@@ -589,8 +326,8 @@ const generatePDF = (dadosCompletos: any) => {
 
         /* FOOTER */
         .footer {
-          background: #2d3748;
-          color: #cbd5e0;
+          background: #f8f9fa; /* Mesmo fundo do conteúdo */
+          color: #666;
           padding: 30px 50px;
           text-align: center;
           font-size: 11px;
@@ -600,12 +337,12 @@ const generatePDF = (dadosCompletos: any) => {
         .footer-logo {
           font-size: 18px;
           font-weight: 700;
-          color: #fff;
+          color: #2C80FF; /* Azul igual ao header */
           margin-bottom: 8px;
         }
 
         .footer-text {
-          opacity: 0.8;
+          color: #666;
         }
 
         .footer-divider {
@@ -731,21 +468,43 @@ const DashboardService = {
         salas: data.QT_SALAS_UTILIZADAS || 0,
       };
 
-      // GERANDO DADOS DE 2007 A 2024
-      const dadosTemporais = [];
-      const baseAlunos = data.QT_MAT_BAS || 500;
-      const baseProfessores = data.QT_DOC_BAS || 20;
-      const baseTurmas = data.QT_TUR_BAS || 18;
+      // BUSCANDO DADOS HISTÓRICOS REAIS DO BIGQUERY
+      let dadosTemporais = [];
 
-      // Loop cobre 2023 explicitamente (<= 2024)
-      for (let ano = 2007; ano <= 2024; ano++) {
-        const variacao = Math.sin(ano + hash) * 0.1;
-        dadosTemporais.push({
-          ano: ano,
-          alunos: Math.floor(baseAlunos * (1 + variacao + (ano - 2007) * 0.01)),
-          turmas: Math.floor(baseTurmas * (1 + (ano - 2007) * 0.005 + variacao)),
-          professores: Math.floor(baseProfessores * (1 + (ano - 2007) * 0.01))
-        });
+      try {
+        // Tenta buscar dados históricos do backend
+        const historicalUrl = `${API_BASE_URL}/api/escola/historical?id=${codigoLimpo}`;
+        const historicalResponse = await fetch(historicalUrl);
+
+        if (historicalResponse.ok) {
+          const historicalData = await historicalResponse.json();
+
+          if (historicalData.dadosTemporais && historicalData.dadosTemporais.length > 0) {
+            dadosTemporais = historicalData.dadosTemporais;
+            console.log(`✅ Dados históricos reais carregados: ${dadosTemporais.length} anos`);
+          } else {
+            throw new Error('Nenhum dado histórico encontrado');
+          }
+        } else {
+          throw new Error('Falha ao buscar dados históricos');
+        }
+      } catch (error) {
+        // Fallback: gera dados sintéticos se a API falhar
+        console.warn('⚠️ Usando dados sintéticos (API histórica falhou):', error);
+
+        const baseAlunos = data.QT_MAT_BAS || 500;
+        const baseProfessores = data.QT_DOC_BAS || 20;
+        const baseTurmas = data.QT_TUR_BAS || 18;
+
+        for (let ano = 2007; ano <= 2024; ano++) {
+          const variacao = Math.sin(ano + hash) * 0.1;
+          dadosTemporais.push({
+            ano: ano,
+            alunos: Math.floor(baseAlunos * (1 + variacao + (ano - 2007) * 0.01)),
+            turmas: Math.floor(baseTurmas * (1 + (ano - 2007) * 0.005 + variacao)),
+            professores: Math.floor(baseProfessores * (1 + (ano - 2007) * 0.01))
+          });
+        }
       }
 
       return {
@@ -976,15 +735,12 @@ function InfraestruturaEscola({ infraestrutura }: { infraestrutura: any }) {
 }
 
 function AnaliseTemporal({ dadosTemporais }: { dadosTemporais: any[] }) {
-  const [anoSelecionado, setAnoSelecionado] = useState(2024);
-  const anos = dadosTemporais.map((d) => d.ano);
-  const dadosAnoAtual = dadosTemporais.find((d) => d.ano === anoSelecionado);
+  const dadosAnoAtual = dadosTemporais[dadosTemporais.length - 1];
 
   const evolucaoAlunos = dadosAnoAtual ? (((dadosAnoAtual.alunos - dadosTemporais[0].alunos) / dadosTemporais[0].alunos) * 100).toFixed(1) : 0;
   const evolucaoTurmas = dadosAnoAtual ? (((dadosAnoAtual.turmas - dadosTemporais[0].turmas) / dadosTemporais[0].turmas) * 100).toFixed(1) : 0;
   const evolucaoProfessores = dadosAnoAtual ? (((dadosAnoAtual.professores - dadosTemporais[0].professores) / dadosTemporais[0].professores) * 100).toFixed(1) : 0;
 
-  // --- TOOLTIP ESTILIZADO (Mantido) ---
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
       return (
@@ -1005,12 +761,12 @@ function AnaliseTemporal({ dadosTemporais }: { dadosTemporais: any[] }) {
 
   return (
     <div id="analise-temporal" className="bg-card rounded-2xl p-4 sm:p-6 border border-white/10 shadow-[0_0_20px_-5px_rgba(0,0,0,0.35)] backdrop-blur-sm transition-all">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 sm:mb-6 gap-3">
-        <div className="flex items-center gap-3"><TrendingUp className="text-blue-500 w-5 h-5 sm:w-6 sm:h-6" /><div><h2 className="text-lg font-semibold text-text">Evolução do Número de Alunos</h2><p className="text-sm text-gray-theme">Histórico de matrículas (2007-2024)</p></div></div>
-
-        <select value={anoSelecionado} onChange={(e) => setAnoSelecionado(Number(e.target.value))} className="bg-card-alt border border-theme text-text rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors w-full sm:w-auto">
-          {anos.map((ano) => <option key={ano} value={ano}>{ano}</option>)}
-        </select>
+      <div className="flex items-center gap-3 mb-4 sm:mb-6">
+        <TrendingUp className="text-blue-500 w-5 h-5 sm:w-6 sm:h-6" />
+        <div>
+          <h2 className="text-lg font-semibold text-text">Evolução do Número de Alunos</h2>
+          <p className="text-sm text-gray-theme">Histórico de matrículas ao longo dos anos</p>
+        </div>
       </div>
 
       <div className="bg-card-alt rounded-lg p-4 border border-theme shadow-inner mb-6">

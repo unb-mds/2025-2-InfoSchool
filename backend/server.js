@@ -9,6 +9,7 @@ const brasilRoutes = require("./src/routes/maps/brasil.js");
 const estadosRoutes = require("./src/routes/maps/estado.js");
 const municipioRoutes = require("./src/routes/maps/municipio.js");
 const dashboardRoutes = require("./src/routes/dashboard/dashboard.js");
+const historicalRoutes = require("./src/routes/dashboard/historical.js");
 const escolasApiRoutes = require("./src/routes/explorar-escolas/api/explorar-escolas.js");
 const escolaSearchRoutes = require("./src/routes/paginaPrincipal/escolaSearch.js");
 const escolasLocationRoutes = require("./src/routes/caminho-normal/api/escolaPorLocalizao.js");
@@ -19,14 +20,14 @@ const app = Fastify({
   logger: {
     level: process.env.NODE_ENV === "development" ? "info" : "warn",
     transport:
-    process.env.NODE_ENV === "development"
-    ? {
-      target: "pino-pretty",
-    }
-    : undefined,
+      process.env.NODE_ENV === "development"
+        ? {
+          target: "pino-pretty",
+        }
+        : undefined,
   },
   // Adiciona o ignoreTrailingSlash para evitar 404s
-  ignoreTrailingSlash: true 
+  ignoreTrailingSlash: true
 });
 
 // ETAPA 3: REGISTRO DE PLUGINS
@@ -51,11 +52,12 @@ app.register(escolasApiRoutes, { prefix: "/api/explorar-escolas" });
 app.register(escolaSearchRoutes, { prefix: "/api/escolas/search" });
 
 // Adaptação dos seus prefixos
-app.register(estadosRoutes, { prefix: "/estados" }); 
-app.register(municipioRoutes, { prefix: "/municipios" }); 
-app.register(dashboardRoutes, { prefix: "/dashboard" }); 
+app.register(estadosRoutes, { prefix: "/estados" });
+app.register(municipioRoutes, { prefix: "/municipios" });
+app.register(dashboardRoutes, { prefix: "/dashboard" });
 app.register(escolasLocationRoutes, { prefix: "/api/escolas/location" });
 app.register(dashboardRoutes, { prefix: "/api/escola/details" });
+app.register(historicalRoutes, { prefix: "/api/escola/historical" });
 
 // Rota raiz
 app.get("/", async (request, reply) => {
