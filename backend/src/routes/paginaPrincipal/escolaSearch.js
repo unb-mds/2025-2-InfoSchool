@@ -1,20 +1,20 @@
-const { BigQuery } = require('@google-cloud/bigquery');
+import { BigQuery } from '@google-cloud/bigquery';
 const PROJECT_ID = 'infoschool-475602';
 
 const bigquery = new BigQuery({ projectId: PROJECT_ID });
 
-module.exports = async function (fastify, opts) {
+export default async function (fastify, opts) {
 
   fastify.get('/', async (request, reply) => {
-    
+
     const term = request.query.q;
 
     if (!term || term.trim() === '') {
       return { escolas: [] };
     }
-    
+
     if (term.trim().length < 3) {
-        return { escolas: [] };
+      return { escolas: [] };
     }
 
     const searchTermForQuery = `%${term.toLowerCase()}%`;
@@ -50,10 +50,10 @@ module.exports = async function (fastify, opts) {
       const [rows] = await bigquery.query(options);
 
       return { escolas: rows };
-      
+
     } catch (error) {
       fastify.log.error(`Erro ao consultar BigQuery: ${error.message}`);
-      
+
       const httpError = new Error('Falha na busca de escolas');
       httpError.statusCode = 500;
       throw httpError;

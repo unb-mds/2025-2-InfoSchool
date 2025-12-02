@@ -1,9 +1,9 @@
-const { BigQuery } = require('@google-cloud/bigquery');
+import { BigQuery } from '@google-cloud/bigquery';
 
 const PROJECT_ID = process.env.GOOGLE_CLOUD_PROJECT || 'infoschool-475602';
 const bigquery = new BigQuery({ projectId: PROJECT_ID });
 
-module.exports = async function (fastify, opts) {
+export default async function (fastify, opts) {
 
     // Rota GET: /api/escola/historical?id=53018877
     // Retorna dados históricos de matrículas da escola de 2007 até 2024

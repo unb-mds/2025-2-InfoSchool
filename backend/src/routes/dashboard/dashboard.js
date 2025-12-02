@@ -1,10 +1,10 @@
-const { BigQuery } = require('@google-cloud/bigquery');
+import { BigQuery } from '@google-cloud/bigquery';
 
 const PROJECT_ID = process.env.GOOGLE_CLOUD_PROJECT || 'infoschool-475602';
 const bigquery = new BigQuery({ projectId: PROJECT_ID });
 
-module.exports = async function (fastify, opts) {
-  
+export default async function (fastify, opts) {
+
   // Rota GET: /api/escola/details?id=...&full=true
   fastify.get('/', async (request, reply) => {
     const { id, full } = request.query;
@@ -15,7 +15,7 @@ module.exports = async function (fastify, opts) {
 
     const escolaId = id.trim();
     const isFullReport = full === 'true';
-    
+
     console.log(`🔍 Buscando escola ID: ${escolaId} | Modo: ${isFullReport ? 'RELATÓRIO COMPLETO (*)' : 'DASHBOARD (LEVE)'}`);
 
     // 1. CAMPOS CALCULADOS (Essenciais para o seu Frontend funcionar)
@@ -100,7 +100,7 @@ module.exports = async function (fastify, opts) {
       const dados = rows[0];
 
       // 4. PÓS-PROCESSAMENTO (Lógica de UI que o SQL não faz bem)
-      
+
       // Cria o array de turnos para as etiquetas coloridas
       const turnos = [];
       if (dados.IN_DIURNO === 1) turnos.push('Diurno');
@@ -111,15 +111,15 @@ module.exports = async function (fastify, opts) {
       // Booleanos prontos para o frontend
       dados.tem_acessibilidade_ui = (dados.IN_ACESSIBILIDADE_INEXISTENTE === 0);
       dados.tem_biblioteca_ui = (dados.IN_BIBLIOTECA === 1 || dados.IN_SALA_LEITURA === 1);
-      
+
       return dados;
 
     } catch (error) {
       console.error(`❌ Erro BigQuery Dashboard:`, error);
       // Retorna JSON de erro para o frontend tratar elegantemente
-      return reply.status(500).send({ 
+      return reply.status(500).send({
         error: 'Erro interno ao buscar dados.',
-        details: error.message 
+        details: error.message
       });
     }
   });

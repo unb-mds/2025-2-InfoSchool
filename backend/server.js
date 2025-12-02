@@ -1,52 +1,40 @@
-require('dotenv').config({ override: true });
+import 'dotenv/config';
+import Fastify from "fastify";
+import cors from "@fastify/cors";
+import helmet from "@fastify/helmet";
+import rateLimit from "@fastify/rate-limit";
 
-// ETAPA 1: IMPORTAÇÕES
-const Fastify = require("fastify");
-const paginaInicialRoutes = require("./src/routes/public/home.js");
-const rankingRoutes = require("./src/routes/public/ranking.js");
-const ragRoutes = require("./src/routes/public/rag.js");
-const brasilRoutes = require("./src/routes/maps/brasil.js");
-const estadosRoutes = require("./src/routes/maps/estado.js");
-const municipioRoutes = require("./src/routes/maps/municipio.js");
-const dashboardRoutes = require("./src/routes/dashboard/dashboard.js");
-const historicalRoutes = require("./src/routes/dashboard/historical.js");
-const escolasApiRoutes = require("./src/routes/explorar-escolas/api/explorar-escolas.js");
-const escolaSearchRoutes = require("./src/routes/paginaPrincipal/escolaSearch.js");
-const escolasLocationRoutes = require("./src/routes/caminho-normal/api/escolaPorLocalizao.js");
-
-// ETAPA 2: INICIALIZAÇÃO DA INSTÂNCIA ÚNICA (AP = APP)
-const app = Fastify({
-  logger: process.env.NODE_ENV === "development" 
-    ? { 
-        level: 'info',
-        transport: {
-          target: 'pino-pretty',
-          options: {
-            colorize: true,
-            ignore: 'pid,hostname',
-            translateTime: 'HH:MM:ss.l'
-          }
-        }
-      }
-    : { 
-        level: 'warn' 
-      }
-});
-
-// Import de rotas (CORRIGIDO para ES Modules)
+// Import de rotas
 import paginaInicialRoutes from "./src/routes/public/home.js";
 import rankingRoutes from "./src/routes/public/ranking.js";
 import ragRoutes from "./src/routes/public/rag.js";
 import brasilRoutes from "./src/routes/maps/brasil.js";
 import estadosRoutes from "./src/routes/maps/estado.js";
 import municipioRoutes from "./src/routes/maps/municipio.js";
-import dashboardRoutes from "./src/routes/dashboard/index.js";
+import dashboardRoutes from "./src/routes/dashboard/dashboard.js";
+import historicalRoutes from "./src/routes/dashboard/historical.js";
 import escolasApiRoutes from "./src/routes/explorar-escolas/api/explorar-escolas.js";
+import escolaSearchRoutes from "./src/routes/paginaPrincipal/escolaSearch.js";
+import escolasLocationRoutes from "./src/routes/caminho-normal/api/escolaPorLocalizao.js";
 
-// Plugins (CORRIGIDO para ES Modules)
-import cors from "@fastify/cors";
-import helmet from "@fastify/helmet";
-import rateLimit from "@fastify/rate-limit";
+// Inicialização da instância única
+const app = Fastify({
+  logger: process.env.NODE_ENV === "development"
+    ? {
+      level: 'info',
+      transport: {
+        target: 'pino-pretty',
+        options: {
+          colorize: true,
+          ignore: 'pid,hostname',
+          translateTime: 'HH:MM:ss.l'
+        }
+      }
+    }
+    : {
+      level: 'warn'
+    }
+});
 
 app.register(cors, {
   origin: true,
@@ -123,7 +111,7 @@ const start = async () => {
 
     // Inicialização automática do RAG
     console.log("🔄 Inicializando RAG Híbrido...");
-    
+
     // CORRIGIDO: import para ES Modules
     import('./src/services/hybrid-ragService.js')
       .then(module => {
@@ -142,7 +130,7 @@ const start = async () => {
       .catch(error => {
         console.error("❌ Erro ao carregar módulo RAG:", error.message);
       });
-      
+
   } catch (err) {
     console.error(err);
     process.exit(1);
