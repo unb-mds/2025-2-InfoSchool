@@ -1,9 +1,20 @@
-import Fastify from "fastify";
-import dotenv from 'dotenv';
+require('dotenv').config({ override: true });
 
-dotenv.config();
+// ETAPA 1: IMPORTAÇÕES
+const Fastify = require("fastify");
+const paginaInicialRoutes = require("./src/routes/public/home.js");
+const rankingRoutes = require("./src/routes/public/ranking.js");
+const ragRoutes = require("./src/routes/public/rag.js");
+const brasilRoutes = require("./src/routes/maps/brasil.js");
+const estadosRoutes = require("./src/routes/maps/estado.js");
+const municipioRoutes = require("./src/routes/maps/municipio.js");
+const dashboardRoutes = require("./src/routes/dashboard/dashboard.js");
+const historicalRoutes = require("./src/routes/dashboard/historical.js");
+const escolasApiRoutes = require("./src/routes/explorar-escolas/api/explorar-escolas.js");
+const escolaSearchRoutes = require("./src/routes/paginaPrincipal/escolaSearch.js");
+const escolasLocationRoutes = require("./src/routes/caminho-normal/api/escolaPorLocalizao.js");
 
-// Crie APENAS UMA instância do Fastify
+// ETAPA 2: INICIALIZAÇÃO DA INSTÂNCIA ÚNICA (AP = APP)
 const app = Fastify({
   logger: process.env.NODE_ENV === "development" 
     ? { 
@@ -54,10 +65,16 @@ app.register(rankingRoutes, { prefix: "/ranking" });
 app.register(ragRoutes, { prefix: "/rag" });
 app.register(brasilRoutes, { prefix: "/mapa" });
 app.register(escolasApiRoutes, { prefix: "/api/explorar-escolas" });
+
+app.register(escolaSearchRoutes, { prefix: "/api/escolas/search" });
+
+// Adaptação dos seus prefixos
 app.register(estadosRoutes, { prefix: "/estados" });
 app.register(municipioRoutes, { prefix: "/municipios" });
 app.register(dashboardRoutes, { prefix: "/dashboard" });
-
+app.register(escolasLocationRoutes, { prefix: "/api/escolas/location" });
+app.register(dashboardRoutes, { prefix: "/api/escola/details" });
+app.register(historicalRoutes, { prefix: "/api/escola/historical" });
 
 // Rota raiz
 app.get("/", async (request, reply) => {
