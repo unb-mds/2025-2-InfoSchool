@@ -1,7 +1,6 @@
 import { BigQuery } from '@google-cloud/bigquery';
 
-// Garante o ID do projeto via variável de ambiente ou string fixa
-const BIGQUERY_PROJECT_ID = process.env.GOOGLE_CLOUD_PROJECT || 'infoschool-475602';
+const BIGQUERY_PROJECT_ID = 'infoschool-475602';
 const bigquery = new BigQuery({ projectId: BIGQUERY_PROJECT_ID });
 
 const getEscolas = async (fastify, options) => {
@@ -57,6 +56,7 @@ const getEscolas = async (fastify, options) => {
 
     try {
       const countQuery = `SELECT COUNT(*) as total FROM ${tabelaCenso} ${whereCondition}`;
+
       const countParams = { ...params };
 
       const [countRows] = await bigquery.query({
@@ -68,7 +68,6 @@ const getEscolas = async (fastify, options) => {
 
       const dataQuery = `
                 SELECT 
-                    CAST(CO_ENTIDADE AS STRING) AS CO_ENTIDADE, -- ADICIONADO: O ID Essencial
                     NO_ENTIDADE, 
                     NO_MUNICIPIO, 
                     SG_UF, 
@@ -94,10 +93,9 @@ const getEscolas = async (fastify, options) => {
         location: 'US'
       });
 
-      // Retorna a resposta
       reply.send({
         dados: dataRows,
-        total: total.toString(), // BigQuery retorna BigInt para COUNT, converter para string é seguro
+        total: total.toString(),
         paginaAtual: page,
         limite: pageSize
       });
@@ -108,7 +106,7 @@ const getEscolas = async (fastify, options) => {
       reply.code(500)
         .header('Content-Type', 'application/json')
         .send({
-          error: 'Falha na comunicação com o BigQuery.',
+          error: 'Falha na comunicação com o BigQuery. Verifique a tabela ou o formato da coluna.',
           details: error.message
         });
     }
