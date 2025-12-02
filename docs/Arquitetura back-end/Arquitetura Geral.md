@@ -11,7 +11,7 @@
 ---
 
 ## 2. Camada de Aplicação (Backend – Node.js)
-- **Tecnologia**: Node.js (Express ou Fastify).  
+- **Tecnologia**: Node.js (Fastify).  
 - **Funções**:
   - Orquestrar consultas e lógica de negócio.  
   - Expor APIs REST/GraphQL para o frontend.  
@@ -31,10 +31,9 @@
 
 ## 4. Camada de Integração (RAG e IA)
 - **Componentes**:
-  - **Indexação e embeddings** dos microdados ou metadados.  
-  - **Armazenamento Vetorial**: Pinecone, Weaviate ou Milvus.  
+  - **Indexação e embeddings** dos microdados ou metadados.   
   - **Busca híbrida**: semântica + filtros tabulares vindos do BigQuery.  
-  - **LLM Provider**: GPT, Claude ou Llama para geração de respostas.  
+  - **LLM Provider**: Gemini API para geração de respostas.  
 
 ---
 
@@ -42,15 +41,7 @@
 - **BigQuery (Data Warehouse)**  
   - Fonte única de dados tabulares e históricos.  
   - Responsável por consultas analíticas massivas.  
-  - Armazena tanto microdados brutos quanto tabelas processadas.  
-
-- **Data Lake (CSV/Parquet no GCS)**  
-  - Armazena arquivos originais do Censo Escolar.  
-  - Alimenta o BigQuery.  
-
-- **Banco Vetorial (VectorDB)**  
-  - Para embeddings usados no RAG.  
-  - Conectado ao backend para buscas semânticas.  
+  - Armazena tanto microdados brutos quanto tabelas processadas. 
 
 ---
 
@@ -85,20 +76,17 @@ A[Frontend - Next.js] -->|REST/GraphQL| B[API Layer - Node.js]
 B --> C[Business Services]
 
 %% Camada de Integração
-C --> D[RAG Pipeline]
+C --> D[RAG ]
 D --> D1[Indexação & Embeddings]
-D --> D2[VectorDB - Pinecone / Weaviate / Milvus]
-D --> D3[LLM Provider - GPT / Claude / Llama]
+D --> D3[LLM Provider - Gemini API]
 
 %% Camada de Dados
 C --> E[(BigQuery - Data Warehouse)]
-E --> F[(Data Lake - CSV/Parquet)]
 
 %% Camada de Infraestrutura
 subgraph Infra[Infraestrutura]
   H[Hospedagem: Vercel, Azure, AWS]
   I[CI/CD: GitHub Actions / Cloud Build]
-  J[Monitoramento: Grafana / Stackdriver]
 end
 
 A --- Infra
