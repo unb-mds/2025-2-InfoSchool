@@ -1,49 +1,52 @@
-// --- ETAPA 0: CARREGAMENTO IMEDIATO DO AMBIENTE ---
-// ATENÇÃO: Usando a opção 'override: true' para forçar o carregamento das variáveis
-// do .env, mesmo que elas já estejam definidas no shell, resolvendo o 'injecting env (0)'.
-require('dotenv').config({ override: true });
+import 'dotenv/config';
+import Fastify from "fastify";
+import cors from "@fastify/cors";
+import helmet from "@fastify/helmet";
+import rateLimit from "@fastify/rate-limit";
 
-// ETAPA 1: IMPORTAÇÕES
-const Fastify = require("fastify");
-const paginaInicialRoutes = require("./src/routes/public/home.js");
-const rankingRoutes = require("./src/routes/public/ranking.js");
-const ragRoutes = require("./src/routes/public/rag.js");
-const brasilRoutes = require("./src/routes/maps/brasil.js");
-const estadosRoutes = require("./src/routes/maps/estado.js");
-const municipioRoutes = require("./src/routes/maps/municipio.js");
-const dashboardRoutes = require("./src/routes/dashboard/index.js");
-const escolasApiRoutes = require("./src/routes/explorar-escolas/api/explorar-escolas.js");
-const escolaSearchRoutes = require("./src/routes/paginaPrincipal/escolaSearch.js");
-const escolasLocationRoutes = require("./src/routes/caminho-normal/api/escolaPorLocalizao.js");
+// Import de rotas
+import paginaInicialRoutes from "./src/routes/public/home.js";
+import rankingRoutes from "./src/routes/public/ranking.js";
+import ragRoutes from "./src/routes/public/rag.js";
+import brasilRoutes from "./src/routes/maps/brasil.js";
+import estadosRoutes from "./src/routes/maps/estado.js";
+import municipioRoutes from "./src/routes/maps/municipio.js";
+import dashboardRoutes from "./src/routes/dashboard/dashboard.js";
+import historicalRoutes from "./src/routes/dashboard/historical.js";
+import escolasApiRoutes from "./src/routes/explorar-escolas/api/explorar-escolas.js";
+import escolaSearchRoutes from "./src/routes/paginaPrincipal/escolaSearch.js";
+import escolasLocationRoutes from "./src/routes/caminho-normal/api/escolaPorLocalizao.js";
 
-// ETAPA 2: INICIALIZAÇÃO DA INSTÂNCIA ÚNICA (AP = APP)
+// Inicialização da instância única
 const app = Fastify({
-  // Consolidando a configuração de logger que estava no seu 'ap'
-  logger: {
-    level: process.env.NODE_ENV === "development" ? "info" : "warn",
-    transport:
-    process.env.NODE_ENV === "development"
+  logger: process.env.NODE_ENV === "development"
     ? {
-      target: "pino-pretty",
+      level: 'info',
+      transport: {
+        target: 'pino-pretty',
+        options: {
+          colorize: true,
+          ignore: 'pid,hostname',
+          translateTime: 'HH:MM:ss.l'
+        }
+      }
     }
-        : undefined,
-  },
-  // Adiciona o ignoreTrailingSlash para evitar 404s
-  ignoreTrailingSlash: true 
+    : {
+      level: 'warn'
+    }
 });
 
-// ETAPA 3: REGISTRO DE PLUGINS
-app.register(require("@fastify/cors"), {
-  // ATENÇÃO: Para produção, mude 'true' para o endereço exato do seu frontend (ex: 'https://seuapp.com')
+app.register(cors, {
   origin: true,
   methods: ["GET", "POST"],
 });
-app.register(require("@fastify/helmet"));
-app.register(require("@fastify/rate-limit"), {
+app.register(helmet);
+app.register(rateLimit, {
   max: 100,
   timeWindow: "1 minute",
 });
 
+// Registro de rotas
 // ETAPA 4: REGISTRO DE ROTAS (TODAS NO OBJETO 'app')
 app.register(paginaInicialRoutes, { prefix: "/pagina-inicial" });
 app.register(rankingRoutes, { prefix: "/ranking" });
@@ -54,10 +57,12 @@ app.register(escolasApiRoutes, { prefix: "/api/explorar-escolas" });
 app.register(escolaSearchRoutes, { prefix: "/api/escolas/search" });
 
 // Adaptação dos seus prefixos
-app.register(estadosRoutes, { prefix: "/estados" }); 
-app.register(municipioRoutes, { prefix: "/municipios" }); 
-app.register(dashboardRoutes, { prefix: "/dashboard" }); 
+app.register(estadosRoutes, { prefix: "/estados" });
+app.register(municipioRoutes, { prefix: "/municipios" });
+app.register(dashboardRoutes, { prefix: "/dashboard" });
 app.register(escolasLocationRoutes, { prefix: "/api/escolas/location" });
+app.register(dashboardRoutes, { prefix: "/api/escola/details" });
+app.register(historicalRoutes, { prefix: "/api/escola/historical" });
 
 // Rota raiz
 app.get("/", async (request, reply) => {
@@ -83,16 +88,16 @@ app.get("/", async (request, reply) => {
   };
 });
 
-// Error handler 
+// Error handler
 app.setErrorHandler((error, request, reply) => {
   console.error(error);
 
+  // É CRUCIAL retornar JSON em caso de erro para o frontend!
   reply.status(error.statusCode || 500).send({
     error: true,
     message: error.message || "Erro interno do servidor",
   });
 });
-
 
 // Iniciar servidor
 const start = async () => {
@@ -106,18 +111,26 @@ const start = async () => {
 
     // Inicialização automática do RAG
     console.log("🔄 Inicializando RAG Híbrido...");
-    const hybridRAGService = require("./src/services/hybrid-ragService");
-    setTimeout(async () => {
-      try {
-        await hybridRAGService.initialize();
-        console.log("✅ RAG Híbrido inicializado automaticamente");
-      } catch (error) {
-        console.error(
-          "❌ Erro na inicialização automática do RAG:",
-          error.message
-        );
-      }
-    }, 2000);
+
+    // CORRIGIDO: import para ES Modules
+    import('./src/services/hybrid-ragService.js')
+      .then(module => {
+        setTimeout(async () => {
+          try {
+            await module.default.initialize();
+            console.log("✅ RAG Híbrido inicializado automaticamente");
+          } catch (error) {
+            console.error(
+              "❌ Erro na inicialização automática do RAG:",
+              error.message
+            );
+          }
+        }, 2000);
+      })
+      .catch(error => {
+        console.error("❌ Erro ao carregar módulo RAG:", error.message);
+      });
+
   } catch (err) {
     console.error(err);
     process.exit(1);

@@ -1,15 +1,18 @@
-const { ChatOpenAI } = require("@langchain/openai");
-const { HumanMessage, SystemMessage } = require("@langchain/core/messages");
-const { BigQueryService } = require("./bigQueryServices"); 
-const vectorStoreService = require("./vectorStoreServices");
-const { ENV } = require("../config/environment");
+import { GoogleGenerativeAI } from "@google/generative-ai";
+import { BigQueryService } from "./bigQueryServices.js"; 
+import vectorStoreService from "./vectorStoreServices.js";
+import { ENV } from "../config/environment.js";
 
 class HybridRAGService {
   constructor() {
-    this.llm = new ChatOpenAI({
-      openAIApiKey: ENV.OPENAI_API_KEY,
-      modelName: "gpt-3.5-turbo",
-      temperature: 0.1,
+    this.genAI = new GoogleGenerativeAI(ENV.GOOGLE_API_KEY);
+    this.model = this.genAI.getGenerativeModel({ 
+      model: "gemini-pro",
+      generationConfig: {
+        temperature: 0.1,
+        topP: 0.8,
+        topK: 40,
+      }
     });
     this.isInitialized = false;
     this.bm25Index = null;
@@ -59,9 +62,9 @@ class HybridRAGService {
 
   async initializeBM25(documents) {
     console.log("🔄 Inicializando BM25...");
-    const elasticlunr = require("elasticlunr");
+    const elasticlunr = await import("elasticlunr");
 
-    this.bm25Index = elasticlunr(function () {
+    this.bm25Index = elasticlunr.default(function () {
       this.addField("nome_escola");
       this.addField("municipio");
       this.addField("uf");
@@ -204,8 +207,9 @@ Possíveis categorias:
 Responda APENAS com a categoria mais apropriada.`;
 
     try {
-      const response = await this.llm.invoke([new HumanMessage(prompt)]);
-      return response.content.trim().toLowerCase();
+      const result = await this.model.generateContent(prompt);
+      const response = await result.response;
+      return response.text().trim().toLowerCase();
     } catch (error) {
       console.error("❌ Erro na análise de intenção:", error);
       return "general";
@@ -289,25 +293,13 @@ Responda APENAS com a categoria mais apropriada.`;
   async extractFilters(pergunta) {
     const ufMatch = pergunta.match(/\b([A-Z]{2})\b/);
 
-    // Lista mais completa de municípios
+    // Lista expandida de municípios
     const municipios = [
-      "São Paulo",
-      "Rio de Janeiro",
-      "Belo Horizonte",
-      "Brasília",
-      "Salvador",
-      "Fortaleza",
-      "Manaus",
-      "Curitiba",
-      "Recife",
-      "Porto Alegre",
-      "Goiânia",
-      "Belém",
-      "São Luís",
-      "Maceió",
-      "Campinas",
-      "São Gonçalo",
-      "Duque de Caxias",
+      "São Paulo", "Rio de Janeiro", "Belo Horizonte", "Brasília", "Salvador",
+      "Fortaleza", "Manaus", "Curitiba", "Recife", "Porto Alegre", "Goiânia",
+      "Belém", "São Luís", "Maceió", "Campinas", "São Gonçalo", "Duque de Caxias",
+      "Natal", "Teresina", "João Pessoa", "Florianópolis", "Aracaju", "Cuiabá",
+      "Porto Velho", "Boa Vista", "Macapá", "Rio Branco", "Palmas", "Vitória"
     ];
 
     const municipioMatch = municipios.find((m) =>
@@ -316,19 +308,66 @@ Responda APENAS com a categoria mais apropriada.`;
 
     // Extrair etapa de ensino
     let etapa_ensino = null;
-    if (pergunta.toLowerCase().includes("fundamental")) {
-      etapa_ensino = "Fundamental";
-    } else if (
-      pergunta.toLowerCase().includes("médio") ||
-      pergunta.toLowerCase().includes("medio")
-    ) {
-      etapa_ensino = "Médio";
+    const etapas = {
+      'infantil': 'Infantil',
+      'creche': 'Infantil',
+      'pré-escola': 'Infantil',
+      'fundamental': 'Fundamental',
+      'médio': 'Médio',
+      'medio': 'Médio',
+      'eja': 'EJA',
+      'profissional': 'Profissional',
+      'técnico': 'Profissional'
+    };
+
+    Object.entries(etapas).forEach(([palavra, etapa]) => {
+      if (pergunta.toLowerCase().includes(palavra)) {
+        etapa_ensino = etapa;
+      }
+    });
+
+    // Extrair ano específico
+    let ano = null;
+    const anoMatch = pergunta.match(/\b(20\d{2})\b/);
+    if (anoMatch) {
+      ano = anoMatch[1];
+    } else if (pergunta.toLowerCase().includes("histórico") || 
+               pergunta.toLowerCase().includes("comparação") ||
+               pergunta.toLowerCase().includes("evolução") ||
+               pergunta.toLowerCase().includes("tendência")) {
+      ano = 'todos'; // Sinal para buscar múltiplos anos
+    }
+
+    // Extrair tipo de dependência
+    let dependencia = null;
+    if (pergunta.toLowerCase().includes("pública") || pergunta.toLowerCase().includes("público")) {
+      dependencia = "pública";
+    } else if (pergunta.toLowerCase().includes("privada") || pergunta.toLowerCase().includes("particular")) {
+      dependencia = "privada";
+    }
+
+    // Extrair características específicas
+    let caracteristicas = [];
+    if (pergunta.toLowerCase().includes("laboratório") || pergunta.toLowerCase().includes("informática")) {
+      caracteristicas.push("laboratorio_informatica");
+    }
+    if (pergunta.toLowerCase().includes("biblioteca")) {
+      caracteristicas.push("biblioteca");
+    }
+    if (pergunta.toLowerCase().includes("internet")) {
+      caracteristicas.push("internet");
+    }
+    if (pergunta.toLowerCase().includes("quadra") || pergunta.toLowerCase().includes("esporte")) {
+      caracteristicas.push("quadra_esportes");
     }
 
     return {
       uf: ufMatch ? ufMatch[1] : null,
       municipio: municipioMatch || null,
       etapa_ensino: etapa_ensino,
+      ano: ano,
+      dependencia: dependencia,
+      caracteristicas: caracteristicas.length > 0 ? caracteristicas : null
     };
   }
 
@@ -347,13 +386,11 @@ Responda APENAS com a categoria mais apropriada.`;
       )
       .join("\n\n");
 
-    const systemMessage =
-      new SystemMessage(`Você é um assistente especializado em dados educacionais do Censo Escolar. 
+    const prompt = `Você é um assistente especializado em dados educacionais do Censo Escolar. 
 Sua função é responder perguntas baseando-se exclusivamente nos dados fornecidos.
-Seja direto, informativo e baseie-se apenas nas informações disponíveis.`);
+Seja direto, informativo e baseie-se apenas nas informações disponíveis.
 
-    const humanMessage =
-      new HumanMessage(`Com base nos dados do Censo Escolar abaixo, responda a pergunta de forma precisa.
+Com base nos dados do Censo Escolar abaixo, responda a pergunta de forma precisa.
 
 INTENÇÃO: ${intent}
 DADOS RELEVANTES:
@@ -365,11 +402,13 @@ INSTRUÇÕES:
 - Baseie-se apenas nos dados fornecidos
 - Seja direto e informativo
 - Se não houver dados suficientes, informe isso
-- Destaque informações importantes baseado na intenção`);
+- Destaque informações importantes baseado na intenção
+- Formate a resposta de forma clara e organizada`;
 
     try {
-      const response = await this.llm.invoke([systemMessage, humanMessage]);
-      return response.content;
+      const result = await this.model.generateContent(prompt);
+      const response = await result.response;
+      return response.text();
     } catch (error) {
       console.error("❌ Erro ao gerar resposta:", error);
       return "Desculpe, não consegui processar sua pergunta no momento. Tente novamente em alguns instantes.";
@@ -377,4 +416,6 @@ INSTRUÇÕES:
   }
 }
 
-module.exports = new HybridRAGService();
+// Exportação usando ES modules
+const hybridRAGService = new HybridRAGService();
+export default hybridRAGService;
