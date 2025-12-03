@@ -1,7 +1,9 @@
 'use client';
 import { useState, useRef, useEffect } from 'react';
+import Link from 'next/link';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSearch, faDownload, faChevronDown } from '@fortawesome/free-solid-svg-icons';
+import { faSearch, faDownload, faChevronDown, faSpinner } from '@fortawesome/free-solid-svg-icons';
+import { sendMessageToRAG } from '../../services/chat-service';
 
 interface Message {
   id: string;
@@ -56,6 +58,7 @@ export default function RAGPage() {
     consultType?: string;
     awaitingSchoolInput?: boolean;
   }>({});
+  const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -87,11 +90,11 @@ export default function RAGPage() {
         taxa_abandono: 3.3
       }
     },
-    
+
     "são paulo": {
       "escola estadual sao paulo": {
         nome: "Escola Estadual São Paulo",
-        municipio: "São Paulo", 
+        municipio: "São Paulo",
         estado: "SP",
         endereco: "Avenida Paulista, 1000 - Bela Vista",
         zona: "Urbana",
@@ -114,10 +117,10 @@ export default function RAGPage() {
     const baseUrl = window.location.origin;
     const now = new Date();
     const dataHora = now.toLocaleDateString('pt-BR') + ' às ' + now.toLocaleTimeString('pt-BR');
-    
+
     // Define o título baseado no tipo de consulta
     let tituloRelatorio = '';
-    switch(consultType) {
+    switch (consultType) {
       case 'Localização da escola':
         tituloRelatorio = 'Relatório de Localização';
         break;
@@ -413,11 +416,11 @@ export default function RAGPage() {
     if (printWindow) {
       printWindow.document.write(fullContent);
       printWindow.document.close();
-      
+
       printWindow.onload = () => {
         printWindow.focus();
         printWindow.print();
-        
+
         setTimeout(() => {
           printWindow.close();
         }, 3000);
@@ -442,7 +445,7 @@ export default function RAGPage() {
       hasOptions: true,
       options: [
         "Localização da escola",
-        "Etapas de ensino oferecidas", 
+        "Etapas de ensino oferecidas",
         "Número de matrículas",
         "Infraestrutura disponível",
         "Corpo docente e funcionários",
@@ -475,7 +478,7 @@ export default function RAGPage() {
     setTimeout(() => {
       let response = "";
 
-      switch(option) {
+      switch (option) {
         case "Localização da escola":
           response = "Entendi! Para consultar a localização, me informe o nome da escola e a cidade onde ela se encontra.";
           break;
@@ -513,7 +516,7 @@ export default function RAGPage() {
   // Busca escola na base de dados - Ponto de integração com RAG/Backend
   const findSchool = (input: string): { escola: SchoolData; municipio: string } | null => {
     const inputLower = input.toLowerCase();
-    
+
     // Busca por município primeiro
     for (const municipio in SCHOOLS_DATA) {
       if (inputLower.includes(municipio.toLowerCase())) {
@@ -529,7 +532,7 @@ export default function RAGPage() {
         return { escola: primeiraEscola, municipio };
       }
     }
-    
+
     // Busca por nome da escola em qualquer município
     for (const municipio in SCHOOLS_DATA) {
       const escolasNoMunicipio = SCHOOLS_DATA[municipio];
@@ -540,12 +543,31 @@ export default function RAGPage() {
         }
       }
     }
-    
+
     return null;
   };
 
-  // Processa resposta do usuário - Aqui será integrado com RAG
-  const handleUserResponse = (userInput: string) => {
+  interface Message {
+    id: string;
+    content: string;
+    isUser: boolean;
+    timestamp: Date;
+    hasMainButton?: boolean;
+    hasOptions?: boolean;
+    hasDownload?: boolean;
+    hasContinue?: boolean;
+    options?: string[];
+    consultType?: string;
+    schoolData?: SchoolData;
+    structuredData?: any[]; // List of schools
+    nextPage?: number; // For pagination
+    originalQuery?: string; // To repeat query for next page
+  }
+
+  // ... existing interfaces ...
+
+  // Processa resposta do usuário - Integrado com RAG
+  const handleUserResponse = async (userInput: string) => {
     if (!userInput.trim()) return;
 
     const userMsg: Message = {
@@ -557,72 +579,61 @@ export default function RAGPage() {
 
     setMessages(prev => [...prev, userMsg]);
     setInputMessage('');
+    setIsLoading(true); // Assuming you will add this state
 
-    setTimeout(() => {
-      const schoolInfo = findSchool(userInput);
-      let response = "";
-      let hasDownload = false;
-      let hasContinue = false;
-      let consultType = "";
-      let schoolData: SchoolData | undefined = undefined;
-
-      // Usa contexto atual mantendo o tipo de consulta
-      consultType = currentContext.consultType || "";
-
-      if (schoolInfo) {
-        const { escola } = schoolInfo;
-        schoolData = escola;
-        
-        // Gera resposta baseada no tipo de consulta do contexto
-        if (consultType.includes("Localização") || consultType === "Localização da escola") {
-          response = `A ${escola.nome} está localizada na ${escola.endereco}, em ${escola.municipio} - ${escola.estado}. A escola fica na zona ${escola.zona.toLowerCase()} da região ${escola.regiao}.`;
-        } else if (consultType.includes("Etapas") || consultType === "Etapas de ensino oferecidas") {
-          response = `A ${escola.nome} oferece ${escola.etapas_ensino.join(" e ")}.`;
-        } else if (consultType.includes("matrículas") || consultType === "Número de matrículas") {
-          response = `A ${escola.nome} possui ${escola.total_matriculas} alunos matriculados no ano de 2023.`;
-        } else if (consultType.includes("Infraestrutura") || consultType === "Infraestrutura disponível") {
-          response = `A infraestrutura da ${escola.nome} conta com ${escola.total_salas} salas de aula e ${escola.acesso_internet ? "possui acesso à internet" : "não possui acesso à internet"}.`;
-        } else if (consultType.includes("docente") || consultType === "Corpo docente e funcionários") {
-          response = `O corpo da ${escola.nome} é composto por ${escola.total_professores} professores e ${escola.total_funcionarios} funcionários.`;
-        } else if (consultType.includes("Indicadores") || consultType === "Indicadores de desempenho") {
-          response = `Os indicadores da ${escola.nome} mostram uma taxa de aprovação de ${escola.taxa_aprovacao}%, reprovação de ${escola.taxa_reprovacao}% e abandono de ${escola.taxa_abandono}%.`;
-        } else {
-          response = `Aqui estão todas as informações da ${escola.nome} em ${escola.municipio}:\n\nLocalizada na ${escola.endereco}, oferece ${escola.etapas_ensino.join(" e ")}.\n\nPossui ${escola.total_matriculas} alunos matriculados, ${escola.total_salas} salas de aula e ${escola.acesso_internet ? "acesso à internet" : "sem acesso à internet"}.\n\nConta com ${escola.total_professores} professores e ${escola.total_funcionarios} funcionários.\n\nSeus indicadores: ${escola.taxa_aprovacao}% de aprovação, ${escola.taxa_reprovacao}% de reprovação e ${escola.taxa_abandono}% de abandono.\n\nDados do Censo Escolar 2023.`;
-        }
-        
-        hasDownload = true;
-        hasContinue = true;
-
-      } else {
-        response = "Não encontrei essa escola em nossa base de dados. Você pode tentar consultar a Escola Notre Dame em Campinas ou a Escola Estadual São Paulo em São Paulo. Verifique se digitou o nome e cidade corretamente.";
-        
-        // Mantém contexto para nova tentativa
-        if (currentContext.consultType) {
-          response += ` Continuo aguardando informações sobre ${currentContext.consultType.toLowerCase()}.`;
-        }
-      }
+    try {
+      const response = await sendMessageToRAG(userInput, 1);
 
       const iaMsg: Message = {
         id: (Date.now() + 1).toString(),
-        content: response,
+        content: response.resposta || "Desculpe, não consegui obter uma resposta.",
         isUser: false,
         timestamp: new Date(),
-        hasDownload: hasDownload,
-        hasContinue: hasContinue,
-        consultType: consultType,
-        schoolData: schoolData
+        hasDownload: false, // You might want to parse this from response if needed
+        hasContinue: true,
+        structuredData: response.structuredData,
+        nextPage: response.structuredData && response.structuredData.length >= 20 ? 2 : undefined,
+        originalQuery: userInput
+        // Map other fields if necessary
       };
 
       setMessages(prev => [...prev, iaMsg]);
-      
-      // Atualiza contexto após processamento
-      if (schoolInfo) {
-        setCurrentContext(prev => ({
-          ...prev,
-          awaitingSchoolInput: false
-        }));
-      }
-    }, 800);
+    } catch (error) {
+      console.error("Erro ao enviar mensagem:", error);
+      const errorMsg: Message = {
+        id: (Date.now() + 1).toString(),
+        content: "Desculpe, ocorreu um erro ao processar sua mensagem. Por favor, tente novamente mais tarde.",
+        isUser: false,
+        timestamp: new Date()
+      };
+      setMessages(prev => [...prev, errorMsg]);
+      // Optional: Show toast here
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleLoadMore = async (originalQuery: string, page: number) => {
+    setIsLoading(true);
+    try {
+      const response = await sendMessageToRAG(originalQuery, page);
+
+      const iaMsg: Message = {
+        id: Date.now().toString(),
+        content: `Carregando mais resultados (página ${page})...`,
+        isUser: false,
+        timestamp: new Date(),
+        structuredData: response.structuredData,
+        nextPage: response.structuredData && response.structuredData.length >= 20 ? page + 1 : undefined,
+        originalQuery: originalQuery
+      };
+
+      setMessages(prev => [...prev, iaMsg]);
+    } catch (error) {
+      console.error("Erro ao carregar mais:", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleSendMessage = () => {
@@ -647,7 +658,7 @@ export default function RAGPage() {
     };
 
     setMessages(prev => [...prev, iaMsg]);
-    
+
     // Limpa contexto para nova conversa
     setCurrentContext({});
   };
@@ -672,7 +683,7 @@ export default function RAGPage() {
           hasOptions: true,
           options: [
             "Localização da escola",
-            "Etapas de ensino oferecidas", 
+            "Etapas de ensino oferecidas",
             "Número de matrículas",
             "Infraestrutura disponível",
             "Corpo docente e funcionários",
@@ -702,39 +713,38 @@ export default function RAGPage() {
 
   return (
     <div className="min-h-screen bg-background text-text transition-colors duration-500">
-      
+
       <div className="max-w-[95%] sm:max-w-[90%] md:max-w-[80%] mx-auto px-3 sm:px-4 py-8">
-        
+
         <div className="bg-card-alt rounded-2xl transition-all duration-500 w-full h-[75vh] min-h-[600px] max-h-[800px] flex flex-col shadow-2xl hover:shadow-3xl"
-             style={{ boxShadow: '20px 20px 50px rgba(0, 0, 0, 0.6)' }}>
-          
+          style={{ boxShadow: '20px 20px 50px rgba(0, 0, 0, 0.6)' }}>
+
           <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 bg-card-alt rounded-t-2xl transition-colors duration-500">
             {messages.map((message) => (
               <div
                 key={message.id}
                 className={`flex ${message.isUser ? 'justify-end' : 'justify-start'} items-start gap-3 transition-all duration-500`}
               >
-                
+
                 {!message.isUser && (
                   <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center flex-shrink-0 transition-colors duration-500">
-                    <img 
-                      src="/RAG/Aluno-IA.png" 
+                    <img
+                      src="/RAG/Aluno-IA.png"
                       alt="Aluno IA"
                       className="w-8 h-8 sm:w-10 sm:h-10 rounded-full object-cover transition-colors duration-500"
                     />
                   </div>
                 )}
-                
+
                 <div
-                  className={`max-w-[75%] rounded-[25px] p-3 sm:p-4 transition-all duration-500 ${
-                    message.isUser
-                      ? 'bg-[#2C80FF] text-white' 
-                      : 'bg-[#2C80FF] bg-opacity-50 text-white'
-                  }`}
+                  className={`max-w-[75%] rounded-[25px] p-3 sm:p-4 transition-all duration-500 ${message.isUser
+                    ? 'bg-[#2C80FF] text-white'
+                    : 'bg-[#2C80FF] bg-opacity-50 text-white'
+                    }`}
                 >
-                  <div 
+                  <div
                     className="whitespace-pre-wrap text-white leading-relaxed transition-colors duration-500"
-                    style={{ 
+                    style={{
                       fontFamily: "'Sansita', sans-serif",
                       fontSize: '14px sm:text-base',
                       lineHeight: '1.5'
@@ -780,6 +790,35 @@ export default function RAGPage() {
                     </button>
                   )}
 
+                  {message.structuredData && message.structuredData.length > 0 && (
+                    <div className="mt-4 flex flex-col gap-2">
+                      <div className="font-bold mb-2">Escolas encontradas:</div>
+                      {message.structuredData.map((school: any, idx: number) => (
+                        <Link
+                          href={`/dashboard/${school.identificacao.id_escola}`}
+                          key={idx}
+                          className="block transition-transform hover:scale-[1.02]"
+                        >
+                          <div className="bg-[#2D2D2D] p-3 rounded-lg text-sm text-white cursor-pointer hover:bg-[#3D3D3D] transition-colors" style={{ fontFamily: "'Sansita', sans-serif" }}>
+                            <div className="font-bold text-base">{school.identificacao.nome_escola}</div>
+                            <div className="text-xs opacity-80 mt-1">
+                              {school.localizacao.geografia.municipio} - {school.localizacao.geografia.uf}
+                            </div>
+                          </div>
+                        </Link>
+                      ))}
+
+                      {message.nextPage && message.originalQuery && (
+                        <button
+                          onClick={() => handleLoadMore(message.originalQuery!, message.nextPage!)}
+                          className="mt-2 bg-white text-[#2C80FF] rounded-full px-4 py-2 text-sm font-bold hover:bg-opacity-90 transition-all self-start"
+                        >
+                          Carregar mais resultados
+                        </button>
+                      )}
+                    </div>
+                  )}
+
                   {message.hasContinue && (
                     <button
                       onClick={handleContinue}
@@ -793,8 +832,8 @@ export default function RAGPage() {
 
                 {message.isUser && (
                   <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center flex-shrink-0 transition-colors duration-500">
-                    <img 
-                      src="/RAG/Usuário.png" 
+                    <img
+                      src="/RAG/Usuário.png"
                       alt="Usuário"
                       className="w-8 h-8 sm:w-10 sm-h-10 rounded-full object-cover transition-colors duration-500"
                     />
@@ -802,6 +841,23 @@ export default function RAGPage() {
                 )}
               </div>
             ))}
+            {isLoading && (
+              <div className="flex justify-start items-start gap-3 transition-all duration-500">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center flex-shrink-0 transition-colors duration-500">
+                  <img
+                    src="/RAG/Aluno-IA.png"
+                    alt="Aluno IA"
+                    className="w-8 h-8 sm:w-10 sm:h-10 rounded-full object-cover transition-colors duration-500"
+                  />
+                </div>
+                <div className="bg-[#2C80FF] bg-opacity-50 text-white rounded-[25px] p-3 sm:p-4 transition-all duration-500">
+                  <div className="flex items-center gap-2">
+                    <FontAwesomeIcon icon={faSpinner} spin />
+                    <span>Processando...</span>
+                  </div>
+                </div>
+              </div>
+            )}
             <div ref={messagesEndRef} />
           </div>
 
@@ -810,7 +866,7 @@ export default function RAGPage() {
               <div className="text-gray-400 transition-colors duration-500">
                 <FontAwesomeIcon icon={faSearch} />
               </div>
-              
+
               <div className="flex-1 relative transition-colors duration-500">
                 <input
                   type="text"
@@ -822,7 +878,7 @@ export default function RAGPage() {
                   style={{ fontFamily: "'Sansita', sans-serif" }}
                 />
               </div>
-              
+
               <button
                 onClick={handleSendMessage}
                 disabled={!inputMessage.trim()}

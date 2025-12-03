@@ -223,12 +223,16 @@ export class BigQueryService {
 
     const tableName = this.getTableName(ano);
 
+    const limit = filtros.limit || 20;
+    const page = filtros.page || 1;
+    const offset = (page - 1) * limit;
+
     return `
       SELECT 
         ${selectedColumns}
       FROM \`${ENV.GOOGLE_CLOUD_PROJECT}.${ENV.BIGQUERY_DATASET}.${tableName}\`
       ${whereClause}
-      LIMIT ${filtros.limit || 500}
+      LIMIT ${limit} OFFSET ${offset}
     `;
   }
 
@@ -242,12 +246,14 @@ export class BigQueryService {
 
     // UF
     if (mapping.SG_UF && filtros.uf) {
-      conditions.push(`\`${mapping.SG_UF}\` = '${filtros.uf}'`);
+      conditions.push(`UPPER(\`${mapping.SG_UF}\`) = UPPER('${filtros.uf}')`);
     }
 
     // Município
     if (mapping.NO_MUNICIPIO && filtros.municipio) {
-      conditions.push(`\`${mapping.NO_MUNICIPIO}\` = '${filtros.municipio}'`);
+      conditions.push(
+        `UPPER(\`${mapping.NO_MUNICIPIO}\`) = UPPER('${filtros.municipio}')`
+      );
     }
 
     // ID da escola
@@ -934,6 +940,105 @@ export class BigQueryService {
     return tipos[codigo] || "Não informado";
   }
 
+  // --- NOVOS MÉTODOS PARA TEXT-TO-SQL ---
+
+  async runCustomQuery(sql) {
+    // 1. Sanitização básica e Verificação de Segurança
+    const forbiddenKeywords = [
+      "DROP",
+      "DELETE",
+      "UPDATE",
+      "INSERT",
+      "ALTER",
+      "TRUNCATE",
+      "CREATE",
+      "GRANT",
+      "REVOKE",
+    ];
+    const upperSql = sql.toUpperCase().trim();
+
+    if (!upperSql.startsWith("SELECT") && !upperSql.startsWith("WITH")) {
+      throw new Error("Apenas consultas SELECT são permitidas.");
+    }
+
+    for (const keyword of forbiddenKeywords) {
+      if (upperSql.includes(keyword + " ")) {
+        // Verifica a palavra seguida de espaço para evitar falsos positivos parciais
+        throw new Error(`Comando proibido detectado: ${keyword}`);
+      }
+    }
+
+    // 2. Execução
+    try {
+      console.log("📊 Executando SQL Gerado pela IA:", sql);
+      return await this.query(sql);
+    } catch (error) {
+      console.error("❌ Erro na execução do SQL Customizado:", error);
+      throw error;
+    }
+  }
+
+  getSchemaSummary() {
+    // Pega o mapeamento de 2024 como referência
+    const mapping = completeColumnMappings["2024"];
+
+    // Categorias para organizar o contexto (pode ser refinado)
+    const categories = {
+      Identificação: [
+        "NO_ENTIDADE",
+        "CO_ENTIDADE",
+        "NU_ANO_CENSO",
+        "TP_DEPENDENCIA",
+        "TP_SITUACAO_FUNCIONAMENTO",
+      ],
+      Localização: ["NO_MUNICIPIO", "SG_UF", "NO_BAIRRO", "NO_REGIAO"],
+      Infraestrutura: [
+        "IN_BIBLIOTECA",
+        "IN_LABORATORIO_INFORMATICA",
+        "IN_QUADRA_ESPORTES",
+        "IN_INTERNET",
+        "IN_AGUA_POTAVEL",
+        "IN_ENERGIA_REDE_PUBLICA",
+        "IN_ESGOTO_REDE_PUBLICA",
+      ],
+      Matrículas: [
+        "QT_MAT_BAS",
+        "QT_MAT_INF",
+        "QT_MAT_FUND",
+        "QT_MAT_MED",
+        "QT_MAT_EJA",
+        "QT_MAT_PROF",
+      ],
+      Docentes: ["QT_DOC_BAS", "QT_DOC_INF", "QT_DOC_FUND", "QT_DOC_MED"],
+      Equipamentos: [
+        "QT_DESKTOP_ALUNO",
+        "QT_COMP_PORTATIL_ALUNO",
+        "QT_TABLET_ALUNO",
+        "IN_EQUIP_MULTIMIDIA",
+      ],
+    };
+
+    let summary =
+      "ESQUEMA DO BANCO DE DADOS (Tabela: `censo_escolar_2024`):\n\n";
+
+    for (const [category, cols] of Object.entries(categories)) {
+      summary += `### ${category}:\n`;
+      cols.forEach((col) => {
+        if (mapping[col]) {
+          summary += `- ${col}: ${col} (Coluna original)\n`; // Aqui poderia ter uma descrição mais detalhada se tivéssemos
+        }
+      });
+      summary += "\n";
+    }
+
+    summary +=
+      "OBS: A tabela contém muitas outras colunas seguindo o padrão IN_ (indicador booleano 0/1), QT_ (quantidade), TP_ (tipo/categoria), NO_ (nome), CO_ (código).\n";
+    summary +=
+      "Use `UPPER()` para comparações de strings (ex: NO_MUNICIPIO, NO_ENTIDADE).\n";
+
+    return summary;
+  }
+
   async query(sql) {
     try {
       console.log(
@@ -956,6 +1061,6 @@ export class BigQueryService {
   // Fallback simplificado
   async getDadosEscolasFallback(ano, filtros) {
     console.log(`🔄 Usando fallback para ${ano}`);
-    // Implementação do fallback...
+    return [];
   }
 }
