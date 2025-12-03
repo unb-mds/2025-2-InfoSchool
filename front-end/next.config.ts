@@ -1,26 +1,17 @@
-import type { NextConfig } from 'next';
+// front-end/next/next.config.ts
+import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  outputFileTracingRoot: __dirname,
+  // Configuração básica
+  output: "standalone", // IMPORTANTE para Vercel
   images: {
-    unoptimized: true,
-  },
-  typescript: {
-    ignoreBuildErrors: true,
+    unoptimized: true, // Simplifica o deploy
   },
   eslint: {
-    ignoreDuringBuilds: true,
+    ignoreDuringBuilds: true, // Ignora erros ESLint
   },
-  trailingSlash: false,
-  skipTrailingSlashRedirect: true,
-  // Configuração para o Proxy
-  async rewrites() {
-    return [
-      {
-        source: '/api/:path*',
-        destination: 'http://localhost:3001/api/:path*',
-      },
-    ];
+  typescript: {
+    ignoreBuildErrors: true, // Ignora erros TypeScript
   },
 };
 
