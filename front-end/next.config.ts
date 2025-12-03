@@ -2,7 +2,7 @@ import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
   output: 'export',
-  basePath: '/2025-2-InfoSchool-GitPages',
+  basePath: '/2025-2-InfoSchool',
   outputFileTracingRoot: __dirname,
   images: {
     unoptimized: true,
