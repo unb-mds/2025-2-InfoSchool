@@ -1,9 +1,9 @@
 import { BigQuery } from "@google-cloud/bigquery";
 import { ENV } from "../config/environment.js";
-import { 
-  completeColumnMappings, 
-  essentialColumns, 
-  columnCategories 
+import {
+  completeColumnMappings,
+  essentialColumns,
+  columnCategories
 } from "../config/completeColumnMappings.js";
 
 export class BigQueryService {
@@ -16,7 +16,7 @@ export class BigQueryService {
 
   async getDadosEscolas(filtros = {}) {
     const ano = filtros.ano || '2024';
-    
+
     try {
       if (!completeColumnMappings[ano]) {
         throw new Error(`Mapeamento não encontrado para o ano ${ano}`);
@@ -24,12 +24,12 @@ export class BigQueryService {
 
       const mapping = completeColumnMappings[ano];
       const query = this.buildCompleteQuery(ano, mapping, filtros);
-      
+
       console.log(`🔍 Executando query completa para ${ano} com ${Object.keys(mapping).length} colunas`);
       const resultados = await this.query(query);
-      
+
       return resultados.map(escola => this.processarEscolaCompleta(escola, ano));
-      
+
     } catch (error) {
       console.error(`❌ Erro ao carregar dados de ${ano}:`, error);
       return await this.getDadosEscolasFallback(ano, filtros);
@@ -39,7 +39,7 @@ export class BigQueryService {
   buildCompleteQuery(ano, mapping, filtros) {
     const whereConditions = this.buildWhereConditions(mapping, filtros);
     const whereClause = whereConditions.length > 0 ? `WHERE ${whereConditions.join(" AND ")}` : "";
-    
+
     // Selecionar TODAS as colunas mapeadas
     const selectedColumns = Object.values(mapping)
       .filter((value, index, self) => self.indexOf(value) === index)
@@ -47,19 +47,23 @@ export class BigQueryService {
       .join(", ");
 
     const tableName = this.getTableName(ano);
-    
+
+    const limit = filtros.limit || 20;
+    const page = filtros.page || 1;
+    const offset = (page - 1) * limit;
+
     return `
       SELECT 
         ${selectedColumns}
       FROM \`${ENV.GOOGLE_CLOUD_PROJECT}.${ENV.BIGQUERY_DATASET}.${tableName}\`
       ${whereClause}
-      LIMIT ${filtros.limit || 500}
+      LIMIT ${limit} OFFSET ${offset}
     `;
   }
 
   buildWhereConditions(mapping, filtros) {
     const conditions = [];
-    
+
     // Ano
     if (mapping.NU_ANO_CENSO && filtros.ano && filtros.ano !== 'todos') {
       conditions.push(`\`${mapping.NU_ANO_CENSO}\` = ${filtros.ano}`);
@@ -67,12 +71,12 @@ export class BigQueryService {
 
     // UF
     if (mapping.SG_UF && filtros.uf) {
-      conditions.push(`\`${mapping.SG_UF}\` = '${filtros.uf}'`);
+      conditions.push(`UPPER(\`${mapping.SG_UF}\`) = UPPER('${filtros.uf}')`);
     }
 
     // Município
     if (mapping.NO_MUNICIPIO && filtros.municipio) {
-      conditions.push(`\`${mapping.NO_MUNICIPIO}\` = '${filtros.municipio}'`);
+      conditions.push(`UPPER(\`${mapping.NO_MUNICIPIO}\`) = UPPER('${filtros.municipio}')`);
     }
 
     // ID da escola
@@ -88,7 +92,7 @@ export class BigQueryService {
         'Infantil': mapping.IN_INF,
         'EJA': mapping.IN_EJA
       };
-      
+
       const colunaEtapa = etapaMapping[filtros.etapa_ensino];
       if (colunaEtapa) {
         conditions.push(`\`${colunaEtapa}\` = 1`);
@@ -116,14 +120,14 @@ export class BigQueryService {
       '2011': ENV.BIGQUERY_TABLE_2011 || '2011',
       '2007': ENV.BIGQUERY_TABLE_2007 || '2007'
     };
-    
+
     return tableMap[ano] || ENV.BIGQUERY_TABLE;
   }
 
   // Processamento completo com TODAS as colunas
   processarEscolaCompleta(escola, ano = '2024') {
     const mapping = completeColumnMappings[ano] || completeColumnMappings['2024'];
-    
+
     return {
       dados_brutos: escola,
       identificacao: this.extrairIdentificacao(escola, mapping),
@@ -139,7 +143,7 @@ export class BigQueryService {
       acessibilidade: this.extrairAcessibilidadeCompleta(escola, mapping),
       saneamento: this.extrairSaneamentoCompleto(escola, mapping),
       gestao: this.extrairGestaoCompleta(escola, mapping),
-      
+
       // Resumo para RAG com informações completas
       resumo: this.criarResumoCompletoParaRAG(escola, mapping, ano)
     };
@@ -346,7 +350,7 @@ export class BigQueryService {
 
   criarResumoCompletoParaRAG(escola, mapping, ano) {
     const caracteristicas = this.extrairCaracteristicasPrincipais(escola, mapping);
-    
+
     return {
       nome: escola[mapping.NO_ENTIDADE],
       localizacao: `${escola[mapping.NO_MUNICIPIO]} - ${escola[mapping.SG_UF]}`,
@@ -354,29 +358,29 @@ export class BigQueryService {
       dependencia: this.mapearTipoDependencia(escola[mapping.TP_DEPENDENCIA]),
       localizacao_tipo: this.mapearLocalizacao(escola[mapping.TP_LOCALIZACAO]),
       situacao: this.mapearSituacaoFuncionamento(escola[mapping.TP_SITUACAO_FUNCIONAMENTO]),
-      
+
       // Infraestrutura
       tem_laboratorio_informatica: escola[mapping.IN_LABORATORIO_INFORMATICA] === 1,
       tem_biblioteca: escola[mapping.IN_BIBLIOTECA] === 1,
       tem_internet: escola[mapping.IN_INTERNET] === 1,
       tem_quadra_esportes: escola[mapping.IN_QUADRA_ESPORTES] === 1,
-      
+
       // Dados quantitativos
       total_matriculas: escola[mapping.QT_MAT_BAS] || 0,
       total_docentes: escola[mapping.QT_DOC_BAS] || 0,
       total_turmas: escola[mapping.QT_TUR_BAS] || 0,
       salas_aula: escola[mapping.QT_SALAS_UTILIZADAS] || 0,
-      
+
       // Etapas ofertadas
       oferta_infantil: escola[mapping.IN_INF] === 1,
       oferta_fundamental: escola[mapping.IN_FUND] === 1,
       oferta_medio: escola[mapping.IN_MED] === 1,
       oferta_eja: escola[mapping.IN_EJA] === 1,
       oferta_profissional: escola[mapping.IN_PROF] === 1,
-      
+
       // Características principais
       caracteristicas: caracteristicas,
-      
+
       // Recursos tecnológicos
       recursos_tecnologicos: {
         computadores_alunos: (escola[mapping.QT_DESKTOP_ALUNO] || 0) + (escola[mapping.QT_COMP_PORTATIL_ALUNO] || 0),
@@ -384,14 +388,14 @@ export class BigQueryService {
         lousa_digital: escola[mapping.IN_EQUIP_LOUSA_DIGITAL] === 1,
         equip_multimidia: escola[mapping.IN_EQUIP_MULTIMIDIA] === 1
       },
-      
+
       // Acessibilidade
       acessibilidade: {
         rampas: escola[mapping.IN_ACESSIBILIDADE_RAMPAS] === 1,
         banheiro_pne: escola[mapping.IN_BANHEIRO_PNE] === 1,
         salas_acessiveis: escola[mapping.QT_SALAS_UTILIZADAS_ACESSIVEIS] || 0
       },
-      
+
       // Saneamento básico
       saneamento: {
         agua_potavel: escola[mapping.IN_AGUA_POTAVEL] === 1,
@@ -439,25 +443,25 @@ export class BigQueryService {
 
   extrairCaracteristicasPrincipais(escola, mapping) {
     const caracteristicas = [];
-    
+
     // Infraestrutura
     if (escola[mapping.IN_LABORATORIO_INFORMATICA] === 1) caracteristicas.push("Laboratório de Informática");
     if (escola[mapping.IN_BIBLIOTECA] === 1) caracteristicas.push("Biblioteca");
     if (escola[mapping.IN_QUADRA_ESPORTES] === 1) caracteristicas.push("Quadra de Esportes");
     if (escola[mapping.IN_INTERNET] === 1) caracteristicas.push("Acesso à Internet");
     if (escola[mapping.IN_REFEITORIO] === 1) caracteristicas.push("Refeitório");
-    
+
     // Recursos especiais
     if (escola[mapping.IN_EDUCACAO_INDIGENA] === 1) caracteristicas.push("Educação Indígena");
     if (escola[mapping.IN_ACESSIBILIDADE_RAMPAS] === 1) caracteristicas.push("Acessibilidade (Rampas)");
     if (escola[mapping.IN_BANHEIRO_PNE] === 1) caracteristicas.push("Banheiro Acessível");
     if (escola[mapping.IN_ALIMENTACAO] === 1) caracteristicas.push("Alimentação Escolar");
-    
+
     // Modalidades
     if (escola[mapping.IN_EJA] === 1) caracteristicas.push("EJA");
     if (escola[mapping.IN_PROF_TEC] === 1) caracteristicas.push("Ensino Profissional Técnico");
     if (escola[mapping.IN_ESP] === 1) caracteristicas.push("Educação Especial");
-    
+
     return caracteristicas;
   }
 
@@ -697,6 +701,65 @@ export class BigQueryService {
     return tipos[codigo] || "Não informado";
   }
 
+  // --- NOVOS MÉTODOS PARA TEXT-TO-SQL ---
+
+  async runCustomQuery(sql) {
+    // 1. Sanitização básica e Verificação de Segurança
+    const forbiddenKeywords = ['DROP', 'DELETE', 'UPDATE', 'INSERT', 'ALTER', 'TRUNCATE', 'CREATE', 'GRANT', 'REVOKE'];
+    const upperSql = sql.toUpperCase().trim();
+
+    if (!upperSql.startsWith('SELECT') && !upperSql.startsWith('WITH')) {
+      throw new Error("Apenas consultas SELECT são permitidas.");
+    }
+
+    for (const keyword of forbiddenKeywords) {
+      if (upperSql.includes(keyword + ' ')) { // Verifica a palavra seguida de espaço para evitar falsos positivos parciais
+        throw new Error(`Comando proibido detectado: ${keyword}`);
+      }
+    }
+
+    // 2. Execução
+    try {
+      console.log("📊 Executando SQL Gerado pela IA:", sql);
+      return await this.query(sql);
+    } catch (error) {
+      console.error("❌ Erro na execução do SQL Customizado:", error);
+      throw error;
+    }
+  }
+
+  getSchemaSummary() {
+    // Pega o mapeamento de 2024 como referência
+    const mapping = completeColumnMappings['2024'];
+
+    // Categorias para organizar o contexto (pode ser refinado)
+    const categories = {
+      'Identificação': ['NO_ENTIDADE', 'CO_ENTIDADE', 'NU_ANO_CENSO', 'TP_DEPENDENCIA', 'TP_SITUACAO_FUNCIONAMENTO'],
+      'Localização': ['NO_MUNICIPIO', 'SG_UF', 'NO_BAIRRO', 'NO_REGIAO'],
+      'Infraestrutura': ['IN_BIBLIOTECA', 'IN_LABORATORIO_INFORMATICA', 'IN_QUADRA_ESPORTES', 'IN_INTERNET', 'IN_AGUA_POTAVEL', 'IN_ENERGIA_REDE_PUBLICA', 'IN_ESGOTO_REDE_PUBLICA'],
+      'Matrículas': ['QT_MAT_BAS', 'QT_MAT_INF', 'QT_MAT_FUND', 'QT_MAT_MED', 'QT_MAT_EJA', 'QT_MAT_PROF'],
+      'Docentes': ['QT_DOC_BAS', 'QT_DOC_INF', 'QT_DOC_FUND', 'QT_DOC_MED'],
+      'Equipamentos': ['QT_DESKTOP_ALUNO', 'QT_COMP_PORTATIL_ALUNO', 'QT_TABLET_ALUNO', 'IN_EQUIP_MULTIMIDIA']
+    };
+
+    let summary = "ESQUEMA DO BANCO DE DADOS (Tabela: `censo_escolar_2024`):\n\n";
+
+    for (const [category, cols] of Object.entries(categories)) {
+      summary += `### ${category}:\n`;
+      cols.forEach(col => {
+        if (mapping[col]) {
+          summary += `- ${col}: ${col} (Coluna original)\n`; // Aqui poderia ter uma descrição mais detalhada se tivéssemos
+        }
+      });
+      summary += "\n";
+    }
+
+    summary += "OBS: A tabela contém muitas outras colunas seguindo o padrão IN_ (indicador booleano 0/1), QT_ (quantidade), TP_ (tipo/categoria), NO_ (nome), CO_ (código).\n";
+    summary += "Use `UPPER()` para comparações de strings (ex: NO_MUNICIPIO, NO_ENTIDADE).\n";
+
+    return summary;
+  }
+
   async query(sql) {
     try {
       console.log("📊 Executando query BigQuery:", sql.substring(0, 100) + "...");
@@ -716,6 +779,6 @@ export class BigQueryService {
   // Fallback simplificado
   async getDadosEscolasFallback(ano, filtros) {
     console.log(`🔄 Usando fallback para ${ano}`);
-    // Implementação do fallback...
+    return [];
   }
 }
