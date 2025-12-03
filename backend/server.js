@@ -4,7 +4,8 @@ import cors from "@fastify/cors";
 import helmet from "@fastify/helmet";
 import rateLimit from "@fastify/rate-limit";
 import { writeFileSync, existsSync } from "fs";
-import { join } from "path";
+import { join, dirname } from "path";
+import { fileURLToPath } from "url";
 
 // Import de rotas
 import paginaInicialRoutes from "./src/routes/public/home.js";
@@ -40,6 +41,8 @@ const app = Fastify({
 });
 
 const serviceAccountPath = join(__dirname, "service-account.json");
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 if (
   process.env.GOOGLE_APPLICATION_CREDENTIALS &&
