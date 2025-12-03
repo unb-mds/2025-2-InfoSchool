@@ -11,51 +11,85 @@ class CredentialsManager {
 
     console.log("🔍 Verificando credenciais...");
 
-    // Caso 1: Já é um caminho de arquivo que existe
-    if (credentialsString && fs.existsSync(credentialsString)) {
-      console.log("✅ Usando arquivo existente:", credentialsString);
-      return credentialsString;
+    if (!credentialsString) {
+      throw new Error("Variável GOOGLE_APPLICATION_CREDENTIALS não definida");
     }
 
-    // Caso 2: É JSON string (Render)
-    if (credentialsString && credentialsString.trim().startsWith("{")) {
+    // DEBUG: Mostrar início da string
+    console.log("Primeiros 50 chars:", credentialsString.substring(0, 50));
+    console.log(
+      "É JSON?",
+      credentialsString.trim().startsWith("{") ||
+        credentialsString.includes("type")
+    );
+
+    // Caso 1: Já é JSON válido (mesmo com espaços)
+    const trimmed = credentialsString.trim();
+
+    // Verifica se parece JSON (começa com { ou tem "type":)
+    if (trimmed.startsWith("{") || trimmed.includes('"type":')) {
       console.log("📝 JSON detectado, criando arquivo...");
 
       const filePath = path.join(__dirname, "../../service-account.json");
 
       try {
-        // Limpar o JSON
-        const cleanJson = credentialsString
-          .replace(/\\n/g, "\n") // Converte \n para quebra de linha real
-          .replace(/\\"/g, '"') // Remove escapes de aspas
-          .replace(/^"|"$/g, ""); // Remove aspas no início/fim se houver
+        // Limpar o JSON - método robusto
+        let cleanJson = credentialsString;
 
-        // Validar JSON
+        // Remove espaços/aspas no início se existirem
+        cleanJson = cleanJson.trim();
+        if (cleanJson.startsWith('"') && cleanJson.endsWith('"')) {
+          cleanJson = cleanJson.slice(1, -1);
+        }
+
+        // Converte \n para quebras de linha reais
+        cleanJson = cleanJson.replace(/\\n/g, "\n");
+
+        // Remove escapes de aspas
+        cleanJson = cleanJson.replace(/\\"/g, '"');
+
+        // Valida JSON
         JSON.parse(cleanJson);
 
-        // Escrever arquivo
+        // Escreve arquivo
         fs.writeFileSync(filePath, cleanJson, "utf8");
 
         console.log("✅ Arquivo criado:", filePath);
+        console.log("Tamanho do arquivo:", fs.statSync(filePath).size, "bytes");
 
-        // Atualizar a variável de ambiente
+        // Atualiza variável de ambiente
         process.env.GOOGLE_APPLICATION_CREDENTIALS = filePath;
 
         return filePath;
       } catch (error) {
         console.error("❌ Erro ao processar JSON:", error.message);
+        console.error(
+          "Primeiros 200 chars do JSON:",
+          credentialsString.substring(0, 200)
+        );
         throw error;
       }
     }
 
-    // Caso 3: Fallback para arquivo local
+    // Caso 2: Já é caminho de arquivo
+    if (fs.existsSync(credentialsString)) {
+      console.log("✅ Usando arquivo existente:", credentialsString);
+      return credentialsString;
+    }
+
+    // Caso 3: Fallback
     const localPath = path.join(__dirname, "../../service-account.json");
     if (fs.existsSync(localPath)) {
       console.log("⚠️  Usando arquivo local:", localPath);
       return localPath;
     }
 
-    throw new Error("Credenciais do Google não configuradas");
+    throw new Error(
+      `Credenciais não configuradas. Tipo: ${typeof credentialsString}, Início: ${credentialsString.substring(
+        0,
+        50
+      )}`
+    );
   }
 
   static initialize() {

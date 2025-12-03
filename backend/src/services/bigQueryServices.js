@@ -8,16 +8,51 @@ import {
 
 export class BigQueryService {
   constructor() {
-    // SIMPLES: Usa o caminho do arquivo que já foi configurado
+    const projectId = ENV.GOOGLE_CLOUD_PROJECT;
+    const credentialsString = process.env.GOOGLE_APPLICATION_CREDENTIALS;
+
+    console.log("🔧 Configurando BigQuery...");
+
+    // Tenta usar JSON direto
+    if (
+      credentialsString &&
+      (credentialsString.includes("type") ||
+        credentialsString.includes("service_account"))
+    ) {
+      try {
+        // Limpa o JSON
+        let jsonStr = credentialsString
+          .trim()
+          .replace(/\\n/g, "\n")
+          .replace(/\\"/g, '"');
+
+        // Remove aspas extras
+        if (jsonStr.startsWith('"') && jsonStr.endsWith('"')) {
+          jsonStr = jsonStr.slice(1, -1);
+        }
+
+        const credentials = JSON.parse(jsonStr);
+
+        this.bigQuery = new BigQuery({
+          projectId,
+          credentials, // JSON direto!
+        });
+
+        console.log("✅ BigQuery configurado com JSON direto");
+        return;
+      } catch (error) {
+        console.error("❌ Erro ao usar JSON direto:", error.message);
+      }
+    }
+
+    // Fallback para arquivo
     this.bigQuery = new BigQuery({
-      projectId: ENV.GOOGLE_CLOUD_PROJECT,
-      keyFilename: ENV.GOOGLE_APPLICATION_CREDENTIALS,
+      projectId,
+      keyFilename:
+        ENV.GOOGLE_APPLICATION_CREDENTIALS || "./service-account.json",
     });
 
-    console.log(
-      "✅ BigQuery configurado com projeto:",
-      ENV.GOOGLE_CLOUD_PROJECT
-    );
+    console.log("✅ BigQuery configurado com arquivo");
   }
 
   async getDadosEscolas(filtros = {}) {
