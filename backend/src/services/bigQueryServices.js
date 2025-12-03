@@ -8,12 +8,16 @@ import {
 
 export class BigQueryService {
   constructor() {
-    const projectId = ENV.GOOGLE_CLOUD_PROJECT;
+    // SIMPLES: Usa o caminho do arquivo que já foi configurado
     this.bigQuery = new BigQuery({
-      projectId,
-      keyFilename:
-        ENV.GOOGLE_APPLICATION_CREDENTIALS || "./service-account.json",
+      projectId: ENV.GOOGLE_CLOUD_PROJECT,
+      keyFilename: ENV.GOOGLE_APPLICATION_CREDENTIALS,
     });
+
+    console.log(
+      "✅ BigQuery configurado com projeto:",
+      ENV.GOOGLE_CLOUD_PROJECT
+    );
   }
 
   async getDadosEscolas(filtros = {}) {

@@ -1,12 +1,22 @@
 // src/config/environment.js
 import dotenv from "dotenv";
+import CredentialsManager from "../utils/credentialsManager.js";
 
+// Configurar dotenv PRIMEIRO
 dotenv.config();
+
+// Inicializar credenciais ANTES de tudo
+let credentialsPath = null;
+try {
+  credentialsPath = CredentialsManager.initialize();
+} catch (error) {
+  console.error("⚠️  Credenciais não disponíveis, BigQuery desabilitado");
+}
 
 const ENV = {
   GOOGLE_CLOUD_PROJECT: process.env.GOOGLE_CLOUD_PROJECT,
   GOOGLE_API_KEY: process.env.GOOGLE_API_KEY,
-  GOOGLE_APPLICATION_CREDENTIALS: process.env.GOOGLE_APPLICATION_CREDENTIALS,
+  GOOGLE_APPLICATION_CREDENTIALS: credentialsPath, // Agora é CAMINHO, não JSON
   BIGQUERY_DATASET: process.env.BIGQUERY_DATASET || "censo_escolar",
   BIGQUERY_TABLE: process.env.BIGQUERY_TABLE,
 

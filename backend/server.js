@@ -1,41 +1,9 @@
-import { join, dirname } from "path";
-import { fileURLToPath } from "url";
-import fs from "fs";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-if (
-  process.env.GOOGLE_APPLICATION_CREDENTIALS &&
-  process.env.GOOGLE_APPLICATION_CREDENTIALS.includes("type")
-) {
-  try {
-    const serviceAccountPath = join(__dirname, "service-account.json");
-
-    // Limpa o JSON
-    const jsonString = process.env.GOOGLE_APPLICATION_CREDENTIALS.replace(
-      /\\n/g,
-      "\n"
-    )
-      .replace(/\\"/g, '"')
-      .replace(/^"|"$/g, "");
-
-    fs.writeFileSync(serviceAccountPath, jsonString);
-
-    // Atualiza a variável de ambiente para o caminho do arquivo
-    process.env.GOOGLE_APPLICATION_CREDENTIALS = serviceAccountPath;
-
-    console.log("✅ Arquivo de credenciais criado em:", serviceAccountPath);
-  } catch (error) {
-    console.error("❌ Erro ao criar arquivo de credenciais:", error.message);
-  }
-}
-
+// server.js - APENAS IMPORTS E CONFIGURAÇÃO SIMPLES
 import "dotenv/config";
 import Fastify from "fastify";
 import cors from "@fastify/cors";
 import helmet from "@fastify/helmet";
 import rateLimit from "@fastify/rate-limit";
-import { writeFileSync, existsSync } from "fs";
 
 // Import de rotas
 import paginaInicialRoutes from "./src/routes/public/home.js";
