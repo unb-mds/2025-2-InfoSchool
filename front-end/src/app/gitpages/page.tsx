@@ -1,4 +1,4 @@
-// src/app/gitpages/page.tsx - VERSÃO FINAL ATUALIZADA
+// src/app/gitpages/page.tsx 
 'use client';
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
@@ -144,9 +144,15 @@ export default function GitPages() {
                   Navegue pelo mapa interativo e descubra escolas em qualquer região do Brasil
                 </p>
                 <div className="bg-background rounded-lg p-4 transition-all duration-500 flex-1 min-h-0">
-                  <div className="aspect-video bg-gray-100 rounded-lg flex items-center justify-center border border-theme">
-                    <p className="text-gray-theme" style={{ fontFamily: "'Sansita', sans-serif" }}>GIF do Explorar Escolas</p>
-                  </div>
+                  <video 
+                    autoPlay 
+                    loop 
+                    muted 
+                    playsInline
+                    className="w-full h-full rounded-lg object-cover"
+                  >
+                    <source src="/gifs/explorarescolas.webm" type="video/webm" />
+                  </video>
                 </div>
               </div>
             </ScrollAnimation>
@@ -170,15 +176,21 @@ export default function GitPages() {
                   Busque escolas específicas e visualize dashboards completos com todos os dados
                 </p>
                 <div className="bg-background rounded-lg p-4 transition-all duration-500 flex-1 min-h-0">
-                  <div className="aspect-video bg-gray-100 rounded-lg flex items-center justify-center border border-theme">
-                    <p className="text-gray-theme" style={{ fontFamily: "'Sansita', sans-serif" }}>GIF do Caminho Normal</p>
-                  </div>
+                  <video 
+                    autoPlay 
+                    loop 
+                    muted 
+                    playsInline
+                    className="w-full h-full rounded-lg object-cover"
+                  >
+                    <source src="/gifs/dashboard.webm" type="video/webm" />
+                  </video>
                 </div>
               </div>
             </ScrollAnimation>
 
             {/* Card: Chat com IA */}
-            <ScrollAnimation direction="up" duration={500} delay={350}>
+            <ScrollAnimation direction="up" duration={500} delay={250}>
               <div className="text-center p-6 rounded-2xl bg-card border border-theme transition-all duration-500 hover:scale-105 flex flex-col">
                 <div className="w-16 h-16 md:w-20 md:h-20 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-6 transition-all duration-500">
                   <div className="w-10 h-10 md:w-12 md:h-12 relative transition-all duration-500">
@@ -191,14 +203,20 @@ export default function GitPages() {
                     />
                   </div>
                 </div>
-                <h3 className="text-xl md:text-2xl font-semibold mb-4 transition-all duration-500" style={{ fontFamily: "'Rammetto One', sans-serif" }}>Chat com IA</h3>
+                <h3 className="text-xl md:text-2xl font-semibold mb-4 transition-all duration-500" style={{ fontFamily: "'Rammetto One', sans-serif" }}>Chat com IA em Ação</h3>
                 <p className="text-gray-theme mb-6 transition-all duration-500" style={{ fontFamily: "'Sansita', sans-serif" }}>
-                  Converse naturalmente com nossa IA e gere relatórios personalizados em PDF
+                  Converse naturalmente com nossa IA e veja a geração de relatórios em PDF
                 </p>
                 <div className="bg-background rounded-lg p-4 transition-all duration-500 flex-1 min-h-0">
-                  <div className="aspect-video bg-gray-100 rounded-lg flex items-center justify-center border border-theme">
-                    <p className="text-gray-theme" style={{ fontFamily: "'Sansita', sans-serif" }}>GIF do Chat com IA</p>
-                  </div>
+                  <video 
+                    autoPlay 
+                    loop 
+                    muted 
+                    playsInline
+                    className="w-full h-full rounded-lg object-cover"
+                  >
+                    <source src="/gifs/rag.webm" type="video/webm" />
+                  </video>
                 </div>
               </div>
             </ScrollAnimation>
@@ -336,7 +354,7 @@ export default function GitPages() {
               <div className="bg-background border border-theme rounded-2xl p-6 text-center transition-all duration-500 hover:scale-105 h-[240px] flex flex-col justify-center">
                 <h3 className="text-xl font-semibold mb-4 text-primary transition-all duration-500" style={{ fontFamily: "'Rammetto One', sans-serif" }}>Dados Completos</h3>
                 <p className="text-text transition-all duration-500" style={{ fontFamily: "'Sansita', sans-serif" }}>
-                  Acesso a dados educacionais de 2007 até 2024
+                  Acesso a dados educacionais de 2011 até 2024
                 </p>
               </div>
             </ScrollAnimation>
@@ -386,7 +404,7 @@ export default function GitPages() {
 
             <ScrollAnimation direction="up" duration={500} delay={200}>
               <div className="bg-card border border-theme rounded-2xl p-4 md:p-6 text-center transition-all duration-500 hover:scale-105">
-                <div className="text-2xl md:text-3xl lg:text-4xl font-bold text-primary mb-2 transition-all duration-500">18</div>
+                <div className="text-2xl md:text-3xl lg:text-4xl font-bold text-primary mb-2 transition-all duration-500">13</div>
                 <div className="text-text text-sm md:text-base transition-all duration-500" style={{ fontFamily: "'Sansita', sans-serif" }}>Anos de Dados</div>
               </div>
             </ScrollAnimation>
@@ -563,10 +581,10 @@ export default function GitPages() {
               <div className="bg-card border border-theme rounded-2xl p-6 transition-all duration-500 hover:scale-105 h-[380px] flex flex-col">
                 <h3 className="text-xl font-semibold mb-3 transition-all duration-500" style={{ fontFamily: "'Rammetto One', sans-serif" }}>Para Pesquisadores</h3>
                 <p className="text-text mb-4 transition-all duration-500 flex-grow" style={{ fontFamily: "'Sansita', sans-serif" }}>
-                  <strong>Analise a evolução educacional desde 2007</strong> com dados consolidados e ferramentas de análise temporal.
+                  <strong>Analise a evolução educacional desde 2011</strong> com dados consolidados e ferramentas de análise temporal.
                 </p>
                 <ul className="text-sm text-gray-theme space-y-1 transition-all duration-500" style={{ fontFamily: "'Sansita', sans-serif" }}>
-                  <li>• Dados históricos de 2007-2024</li>
+                  <li>• Dados históricos de 2011-2024</li>
                   <li>• Análise de tendências e correlações</li>
                   <li>• Exportação de dados para pesquisa</li>
                 </ul>
@@ -638,7 +656,7 @@ export default function GitPages() {
               <div className="bg-card border border-theme rounded-2xl p-6 transition-all duration-500 hover:scale-105 h-[380px] flex flex-col">
                 <h3 className="text-xl font-semibold mb-4 text-primary transition-all duration-500" style={{ fontFamily: "'Rammetto One', sans-serif" }}>Análise Temporal</h3>
                 <ul className="space-y-2 text-text transition-all duration-500 flex-grow" style={{ fontFamily: "'Sansita', sans-serif" }}>
-                  <li>• Dados de 2007 até 2024</li>
+                  <li>• Dados de 2011 até 2024</li>
                   <li>• Evolução de matrículas</li>
                   <li>• Comparativo entre anos</li>
                   <li>• Destaques e indicadores</li>
@@ -729,7 +747,7 @@ export default function GitPages() {
                     </li>
                     <li className="flex items-start transition-all duration-500">
                       <span className="text-primary mr-2">•</span>
-                      <span>"Evolução das matrículas em São Paulo desde 2010"</span>
+                      <span>"Evolução das matrículas em São Paulo desde 2011"</span>
                     </li>
                   </ul>
                 </div>
