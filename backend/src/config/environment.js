@@ -1,16 +1,13 @@
 // src/config/environment.js
-import dotenv from 'dotenv';
+import dotenv from "dotenv";
 
 dotenv.config();
 
 const ENV = {
-  // Google AI (substitui OpenAI)
-  GOOGLE_API_KEY: process.env.GOOGLE_API_KEY,
-
-  // Google Cloud
   GOOGLE_CLOUD_PROJECT: process.env.GOOGLE_CLOUD_PROJECT,
+  GOOGLE_API_KEY: process.env.GOOGLE_API_KEY,
   GOOGLE_APPLICATION_CREDENTIALS: process.env.GOOGLE_APPLICATION_CREDENTIALS,
-  BIGQUERY_DATASET: process.env.BIGQUERY_DATASET,
+  BIGQUERY_DATASET: process.env.BIGQUERY_DATASET || "censo_escolar",
   BIGQUERY_TABLE: process.env.BIGQUERY_TABLE,
 
   // Server
