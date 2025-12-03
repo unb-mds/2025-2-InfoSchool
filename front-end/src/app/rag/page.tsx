@@ -1,8 +1,16 @@
 'use client';
 import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSearch, faDownload, faChevronDown, faSpinner } from '@fortawesome/free-solid-svg-icons';
+import {
+  Send,
+  User,
+  Loader2,
+  Download,
+  Search,
+  ChevronRight,
+  MessageSquare,
+  Sparkles
+} from 'lucide-react';
 import { sendMessageToRAG } from '../../services/chat-service';
 
 interface Message {
@@ -17,6 +25,9 @@ interface Message {
   options?: string[];
   consultType?: string;
   schoolData?: SchoolData;
+  structuredData?: any[];
+  nextPage?: number;
+  originalQuery?: string;
 }
 
 interface SchoolData {
@@ -37,80 +48,37 @@ interface SchoolData {
   taxa_abandono: number;
 }
 
-interface SchoolsData {
-  [municipio: string]: {
-    [escolaKey: string]: SchoolData;
-  };
-}
-
 export default function RAGPage() {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
-      content: "Olá! Sou o Aluno, sua assistente de IA para informações do Censo Escolar. Como posso ajudá-lo hoje?",
+      content: "Olá! Sou o Aluno, sua assistente de IA para informações do Censo Escolar. Como posso te ajudar hoje?",
       isUser: false,
-      timestamp: new Date(),
-      hasMainButton: true
+      timestamp: new Date()
     }
   ]);
   const [inputMessage, setInputMessage] = useState('');
-  const [currentContext, setCurrentContext] = useState<{
-    consultType?: string;
-    awaitingSchoolInput?: boolean;
-  }>({});
   const [isLoading, setIsLoading] = useState(false);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const chatContainerRef = useRef<HTMLDivElement>(null);
 
+  // Scroll automático
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+    }
   };
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages]);
+  }, [messages, isLoading]);
 
-  // Base de dados mockada - será substituída pela integração com RAG/backend
-  const SCHOOLS_DATA: SchoolsData = {
-    "campinas": {
-      "escola notre dame": {
-        nome: "Escola Notre Dame",
-        municipio: "Campinas",
-        estado: "SP",
-        endereco: "Rua das Flores, 123 - Centro",
-        zona: "Urbana",
-        regiao: "Sudeste",
-        etapas_ensino: ["Educação Infantil", "Ensino Fundamental", "Ensino Médio"],
-        total_matriculas: 850,
-        total_salas: 25,
-        acesso_internet: true,
-        total_professores: 45,
-        total_funcionarios: 28,
-        taxa_aprovacao: 92.5,
-        taxa_reprovacao: 4.2,
-        taxa_abandono: 3.3
-      }
-    },
-
-    "são paulo": {
-      "escola estadual sao paulo": {
-        nome: "Escola Estadual São Paulo",
-        municipio: "São Paulo",
-        estado: "SP",
-        endereco: "Avenida Paulista, 1000 - Bela Vista",
-        zona: "Urbana",
-        regiao: "Sudeste",
-        etapas_ensino: ["Ensino Fundamental", "Ensino Médio"],
-        total_matriculas: 1200,
-        total_salas: 35,
-        acesso_internet: false,
-        total_professores: 68,
-        total_funcionarios: 42,
-        taxa_aprovacao: 85.3,
-        taxa_reprovacao: 9.8,
-        taxa_abandono: 4.9
-      }
-    }
-  };
+  // Sugestões iniciais
+  const suggestions = [
+    { icon: <Search size={20} />, text: "Qual a melhor escola de Brasília?" },
+    { icon: <img src="/images/ai-avatar.png" alt="AI" className="w-5 h-5 object-contain" />, text: "Mostre dados do Rio de Janeiro" },
+    { icon: <Sparkles size={20} />, text: "Compare escolas públicas e privadas" },
+    { icon: <MessageSquare size={20} />, text: "Quais escolas têm laboratório?" },
+  ];
 
   // Geração de relatório PDF - Estrutura pronta para integração
   const generatePDF = (escola: SchoolData, consultType: string) => {
@@ -151,17 +119,17 @@ export default function RAGPage() {
         <meta charset="UTF-8">
         <title>${tituloRelatorio} - ${escola.nome}</title>
         <style>
-          body { 
-            font-family: Arial, sans-serif; 
-            margin: 40px; 
+          body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
             color: #333;
           }
-          .header { 
+          .header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            border-bottom: 2px solid #2C80FF; 
-            padding-bottom: 20px; 
+            border-bottom: 2px solid #2C80FF;
+            padding-bottom: 20px;
             margin-bottom: 30px;
           }
           .logo-container {
@@ -173,18 +141,18 @@ export default function RAGPage() {
             width: 80px;
             height: 80px;
           }
-          .logo-text { 
-            font-size: 24px; 
-            font-weight: bold; 
-            color: #2C80FF; 
+          .logo-text {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2C80FF;
           }
           .school-info {
             text-align: right;
           }
-          .school-name { 
-            font-size: 20px; 
-            font-weight: bold; 
-            margin: 5px 0; 
+          .school-name {
+            font-size: 20px;
+            font-weight: bold;
+            margin: 5px 0;
           }
           .report-title {
             font-size: 18px;
@@ -192,50 +160,50 @@ export default function RAGPage() {
             color: #2C80FF;
             margin: 10px 0;
           }
-          .section { 
-            margin: 25px 0; 
+          .section {
+            margin: 25px 0;
           }
-          .section-title { 
-            font-size: 16px; 
-            font-weight: bold; 
-            color: #2C80FF; 
+          .section-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #2C80FF;
             margin-bottom: 10px;
             border-bottom: 1px solid #2C80FF;
             padding-bottom: 5px;
           }
-          .info-grid { 
-            display: grid; 
-            grid-template-columns: 1fr 1fr; 
-            gap: 15px; 
+          .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
             margin-top: 10px;
           }
-          .info-item { 
-            margin: 5px 0; 
+          .info-item {
+            margin: 5px 0;
           }
-          .info-item .label { 
-            font-weight: bold; 
+          .info-item .label {
+            font-weight: bold;
             color: #2C80FF !important;
           }
-          .footer { 
-            margin-top: 40px; 
-            text-align: center; 
-            font-size: 12px; 
-            color: #666; 
+          .footer {
+            margin-top: 40px;
+            text-align: center;
+            font-size: 12px;
+            color: #666;
             border-top: 1px solid #2C80FF;
             padding-top: 20px;
           }
-          table { 
-            width: 100%; 
-            border-collapse: collapse; 
-            margin: 10px 0; 
+          table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
           }
-          th, td { 
-            border: 1px solid #2C80FF; 
-            padding: 8px; 
-            text-align: left; 
+          th, td {
+            border: 1px solid #2C80FF;
+            padding: 8px;
+            text-align: left;
           }
-          th { 
-            background-color: #2C80FF; 
+          th {
+            background-color: #2C80FF;
             color: white;
             font-weight: bold;
           }
@@ -245,8 +213,8 @@ export default function RAGPage() {
             background-color: #f8fafc;
           }
           @media print {
-            body { 
-              margin: 20px; 
+            body {
+              margin: 20px;
             }
             .header {
               page-break-after: avoid;
@@ -428,145 +396,6 @@ export default function RAGPage() {
     }
   };
 
-  // Fluxo principal da conversa
-  const handleMainButtonClick = () => {
-    const userMsg: Message = {
-      id: Date.now().toString(),
-      content: "Quero consultar informações sobre uma escola",
-      isUser: true,
-      timestamp: new Date()
-    };
-
-    const iaMsg: Message = {
-      id: (Date.now() + 1).toString(),
-      content: "Perfeito! Sobre qual informação específica você gostaria de saber?",
-      isUser: false,
-      timestamp: new Date(),
-      hasOptions: true,
-      options: [
-        "Localização da escola",
-        "Etapas de ensino oferecidas",
-        "Número de matrículas",
-        "Infraestrutura disponível",
-        "Corpo docente e funcionários",
-        "Indicadores de desempenho",
-        "Todas as informações"
-      ]
-    };
-
-    setMessages(prev => [...prev, userMsg, iaMsg]);
-  };
-
-  // Seleção de tipo de consulta
-  const handleOptionSelect = (option: string) => {
-    const userMsg: Message = {
-      id: Date.now().toString(),
-      content: option,
-      isUser: true,
-      timestamp: new Date(),
-      consultType: option
-    };
-
-    setMessages(prev => [...prev, userMsg]);
-
-    // Mantém contexto da consulta atual
-    setCurrentContext({
-      consultType: option,
-      awaitingSchoolInput: true
-    });
-
-    setTimeout(() => {
-      let response = "";
-
-      switch (option) {
-        case "Localização da escola":
-          response = "Entendi! Para consultar a localização, me informe o nome da escola e a cidade onde ela se encontra.";
-          break;
-        case "Etapas de ensino oferecidas":
-          response = "Certo! Posso verificar quais etapas de ensino a escola oferece. Qual é o nome da escola e município?";
-          break;
-        case "Número de matrículas":
-          response = "Posso consultar o total de alunos matriculados. De qual escola você gostaria de saber?";
-          break;
-        case "Infraestrutura disponível":
-          response = "Posso verificar a infraestrutura da escola, como número de salas e acesso à internet. Qual escola você quer consultar?";
-          break;
-        case "Corpo docente e funcionários":
-          response = "Tenho informações sobre a equipe da escola. Me informe o nome da escola e a cidade, por favor.";
-          break;
-        case "Indicadores de desempenho":
-          response = "Posso fornecer os indicadores educacionais da escola. Qual escola você gostaria de ver?";
-          break;
-        case "Todas as informações":
-          response = "Excelente! Vou buscar todas as informações disponíveis. Qual escola você quer consultar?";
-          break;
-      }
-
-      const iaMsg: Message = {
-        id: (Date.now() + 1).toString(),
-        content: response,
-        isUser: false,
-        timestamp: new Date()
-      };
-
-      setMessages(prev => [...prev, iaMsg]);
-    }, 500);
-  };
-
-  // Busca escola na base de dados - Ponto de integração com RAG/Backend
-  const findSchool = (input: string): { escola: SchoolData; municipio: string } | null => {
-    const inputLower = input.toLowerCase();
-
-    // Busca por município primeiro
-    for (const municipio in SCHOOLS_DATA) {
-      if (inputLower.includes(municipio.toLowerCase())) {
-        const escolasNoMunicipio = SCHOOLS_DATA[municipio];
-        for (const escolaKey in escolasNoMunicipio) {
-          const escola = escolasNoMunicipio[escolaKey];
-          if (inputLower.includes(escola.nome.toLowerCase()) || inputLower.includes(escolaKey)) {
-            return { escola, municipio };
-          }
-        }
-        // Retorna primeira escola do município se não encontrar nome específico
-        const primeiraEscola = Object.values(escolasNoMunicipio)[0];
-        return { escola: primeiraEscola, municipio };
-      }
-    }
-
-    // Busca por nome da escola em qualquer município
-    for (const municipio in SCHOOLS_DATA) {
-      const escolasNoMunicipio = SCHOOLS_DATA[municipio];
-      for (const escolaKey in escolasNoMunicipio) {
-        const escola = escolasNoMunicipio[escolaKey];
-        if (inputLower.includes(escola.nome.toLowerCase()) || inputLower.includes(escolaKey)) {
-          return { escola, municipio };
-        }
-      }
-    }
-
-    return null;
-  };
-
-  interface Message {
-    id: string;
-    content: string;
-    isUser: boolean;
-    timestamp: Date;
-    hasMainButton?: boolean;
-    hasOptions?: boolean;
-    hasDownload?: boolean;
-    hasContinue?: boolean;
-    options?: string[];
-    consultType?: string;
-    schoolData?: SchoolData;
-    structuredData?: any[]; // List of schools
-    nextPage?: number; // For pagination
-    originalQuery?: string; // To repeat query for next page
-  }
-
-  // ... existing interfaces ...
-
-  // Processa resposta do usuário - Integrado com RAG
   const handleUserResponse = async (userInput: string) => {
     if (!userInput.trim()) return;
 
@@ -579,7 +408,7 @@ export default function RAGPage() {
 
     setMessages(prev => [...prev, userMsg]);
     setInputMessage('');
-    setIsLoading(true); // Assuming you will add this state
+    setIsLoading(true);
 
     try {
       const response = await sendMessageToRAG(userInput, 1);
@@ -589,12 +418,9 @@ export default function RAGPage() {
         content: response.resposta || "Desculpe, não consegui obter uma resposta.",
         isUser: false,
         timestamp: new Date(),
-        hasDownload: false, // You might want to parse this from response if needed
-        hasContinue: true,
         structuredData: response.structuredData,
         nextPage: response.structuredData && response.structuredData.length >= 20 ? 2 : undefined,
         originalQuery: userInput
-        // Map other fields if necessary
       };
 
       setMessages(prev => [...prev, iaMsg]);
@@ -602,12 +428,11 @@ export default function RAGPage() {
       console.error("Erro ao enviar mensagem:", error);
       const errorMsg: Message = {
         id: (Date.now() + 1).toString(),
-        content: "Desculpe, ocorreu um erro ao processar sua mensagem. Por favor, tente novamente mais tarde.",
+        content: "Desculpe, ocorreu um erro ao processar sua mensagem.",
         isUser: false,
         timestamp: new Date()
       };
       setMessages(prev => [...prev, errorMsg]);
-      // Optional: Show toast here
     } finally {
       setIsLoading(false);
     }
@@ -617,7 +442,6 @@ export default function RAGPage() {
     setIsLoading(true);
     try {
       const response = await sendMessageToRAG(originalQuery, page);
-
       const iaMsg: Message = {
         id: Date.now().toString(),
         content: `Carregando mais resultados (página ${page})...`,
@@ -627,7 +451,6 @@ export default function RAGPage() {
         nextPage: response.structuredData && response.structuredData.length >= 20 ? page + 1 : undefined,
         originalQuery: originalQuery
       };
-
       setMessages(prev => [...prev, iaMsg]);
     } catch (error) {
       console.error("Erro ao carregar mais:", error);
@@ -640,70 +463,6 @@ export default function RAGPage() {
     handleUserResponse(inputMessage);
   };
 
-  const handleDownload = () => {
-    const lastMessage = messages[messages.length - 1];
-    if (lastMessage.schoolData && lastMessage.consultType) {
-      generatePDF(lastMessage.schoolData, lastMessage.consultType);
-    }
-  };
-
-  const handleContinue = () => {
-    const iaMsg: Message = {
-      id: Date.now().toString(),
-      content: "Posso ajudar com mais alguma coisa?",
-      isUser: false,
-      timestamp: new Date(),
-      hasOptions: true,
-      options: ["Fazer outra consulta", "Encerrar conversa"]
-    };
-
-    setMessages(prev => [...prev, iaMsg]);
-
-    // Limpa contexto para nova conversa
-    setCurrentContext({});
-  };
-
-  const handleContinueOption = (option: string) => {
-    const userMsg: Message = {
-      id: Date.now().toString(),
-      content: option,
-      isUser: true,
-      timestamp: new Date()
-    };
-
-    setMessages(prev => [...prev, userMsg]);
-
-    setTimeout(() => {
-      if (option === "Fazer outra consulta") {
-        const iaMsg: Message = {
-          id: (Date.now() + 1).toString(),
-          content: "Sobre qual informação você gostaria de saber agora?",
-          isUser: false,
-          timestamp: new Date(),
-          hasOptions: true,
-          options: [
-            "Localização da escola",
-            "Etapas de ensino oferecidas",
-            "Número de matrículas",
-            "Infraestrutura disponível",
-            "Corpo docente e funcionários",
-            "Indicadores de desempenho",
-            "Todas as informações"
-          ]
-        };
-        setMessages(prev => [...prev, iaMsg]);
-      } else {
-        const iaMsg: Message = {
-          id: (Date.now() + 1).toString(),
-          content: "Obrigado por usar nosso serviço! Estarei aqui quando precisar de mais informações sobre o Censo Escolar.",
-          isUser: false,
-          timestamp: new Date()
-        };
-        setMessages(prev => [...prev, iaMsg]);
-      }
-    }, 500);
-  };
-
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
@@ -712,98 +471,93 @@ export default function RAGPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background text-text transition-colors duration-500">
+    <div className="flex flex-col h-[calc(100vh-80px)] bg-background text-text transition-colors duration-500 font-sans">
 
-      <div className="max-w-[95%] sm:max-w-[90%] md:max-w-[80%] mx-auto px-3 sm:px-4 py-8">
+      {/* Área de Chat */}
+      <div
+        ref={chatContainerRef}
+        className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6 scroll-smooth"
+      >
+        {messages.length === 0 ? (
+          // Empty State
+          <div className="h-full flex flex-col items-center justify-center space-y-8 opacity-0 animate-fade-in" style={{ animationFillMode: 'forwards' }}>
+            <div className="text-center space-y-4">
+              <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                <img src="/images/ai-avatar.png" alt="AI Avatar" className="w-full h-full object-cover rounded-full" />
+              </div>
+              <h2 className="text-3xl font-bold font-display" style={{ fontFamily: "'Sansita', sans-serif" }}>
+                Como posso ajudar hoje?
+              </h2>
+              <p className="text-gray-500 dark:text-gray-400 max-w-md mx-auto">
+                Explore dados do Censo Escolar, compare escolas e descubra estatísticas educacionais.
+              </p>
+            </div>
 
-        <div className="bg-card-alt rounded-2xl transition-all duration-500 w-full h-[75vh] min-h-[600px] max-h-[800px] flex flex-col shadow-2xl hover:shadow-3xl"
-          style={{ boxShadow: '20px 20px 50px rgba(0, 0, 0, 0.6)' }}>
-
-          <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 bg-card-alt rounded-t-2xl transition-colors duration-500">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full max-w-2xl px-4">
+              {suggestions.map((suggestion, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => handleUserResponse(suggestion.text)}
+                  className="flex items-center gap-3 p-4 bg-card hover:bg-card-alt border border-theme rounded-xl text-left transition-all hover:scale-[1.02] hover:shadow-lg group"
+                >
+                  <div className="p-2 bg-background rounded-lg text-primary group-hover:bg-primary group-hover:text-white transition-colors">
+                    {suggestion.icon}
+                  </div>
+                  <span className="font-medium text-sm sm:text-base">{suggestion.text}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        ) : (
+          // Lista de Mensagens
+          <div className="max-w-4xl mx-auto w-full space-y-6 pb-4">
             {messages.map((message) => (
               <div
                 key={message.id}
-                className={`flex ${message.isUser ? 'justify-end' : 'justify-start'} items-start gap-3 transition-all duration-500`}
+                className={`flex items-start gap-4 ${message.isUser ? 'flex-row-reverse' : 'flex-row'} animate-slide-up`}
               >
+                {/* Avatar */}
+                <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 shadow-sm ${message.isUser ? 'bg-primary text-white' : 'bg-card border border-theme text-primary'
+                  }`}>
+                  {message.isUser ? <User size={20} /> : <img src="/images/ai-avatar.png" alt="AI" className="w-full h-full object-cover rounded-full" />}
+                </div>
 
-                {!message.isUser && (
-                  <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center flex-shrink-0 transition-colors duration-500">
-                    <img
-                      src="/RAG/Aluno-IA.png"
-                      alt="Aluno IA"
-                      className="w-8 h-8 sm:w-10 sm:h-10 rounded-full object-cover transition-colors duration-500"
-                    />
-                  </div>
-                )}
-
-                <div
-                  className={`max-w-[75%] rounded-[25px] p-3 sm:p-4 transition-all duration-500 ${message.isUser
-                    ? 'bg-[#2C80FF] text-white'
-                    : 'bg-[#2C80FF] bg-opacity-50 text-white'
-                    }`}
-                >
+                {/* Bolha de Mensagem */}
+                <div className={`flex flex-col max-w-[85%] sm:max-w-[75%] space-y-2 ${message.isUser ? 'items-end' : 'items-start'}`}>
                   <div
-                    className="whitespace-pre-wrap text-white leading-relaxed transition-colors duration-500"
-                    style={{
-                      fontFamily: "'Sansita', sans-serif",
-                      fontSize: '14px sm:text-base',
-                      lineHeight: '1.5'
-                    }}
+                    className={`p-4 shadow-sm relative text-sm sm:text-base leading-relaxed ${message.isUser
+                      ? 'bg-primary text-white rounded-2xl rounded-tr-sm'
+                      : 'bg-card text-text border border-theme rounded-2xl rounded-tl-sm'
+                      }`}
+                    style={{ fontFamily: "'Sansita', sans-serif" }}
                   >
-                    {message.content}
+                    <div className="whitespace-pre-wrap">{message.content}</div>
                   </div>
 
-                  {message.hasMainButton && (
-                    <button
-                      onClick={handleMainButtonClick}
-                      className="mt-4 bg-[#2C80FF] text-white rounded-[20px] px-6 py-3 hover:bg-[#1a6fd8] transition-all duration-500 flex items-center gap-2 hover:scale-105 active:scale-95 font-semibold"
-                      style={{ fontFamily: "'Sansita', sans-serif" }}
-                    >
-                      Consultar informações
-                      <FontAwesomeIcon icon={faChevronDown} />
-                    </button>
-                  )}
-
-                  {message.hasOptions && message.options && (
-                    <div className="mt-4 flex flex-col gap-2 transition-colors duration-500">
-                      {message.options.map((option, index) => (
-                        <button
-                          key={index}
-                          onClick={() => option === "Fazer outra consulta" || option === "Encerrar conversa" ? handleContinueOption(option) : handleOptionSelect(option)}
-                          className="bg-[#2C80FF] text-white rounded-[20px] px-4 py-2 text-sm hover:bg-[#1a6fd8] transition-all duration-500 hover:scale-105 active:scale-95 text-left"
-                          style={{ fontFamily: "'Sansita', sans-serif" }}
-                        >
-                          {option}
-                        </button>
-                      ))}
-                    </div>
-                  )}
-
-                  {message.hasDownload && (
-                    <button
-                      onClick={handleDownload}
-                      className="mt-4 bg-[#2C80FF] bg-opacity-50 text-white rounded-[25px] px-6 py-3 hover:bg-[#1a6fd8] transition-all duration-500 flex items-center gap-2 hover:scale-105 active:scale-95 font-semibold"
-                      style={{ fontFamily: "'Sansita', sans-serif" }}
-                    >
-                      <FontAwesomeIcon icon={faDownload} />
-                      Baixar Relatório PDF
-                    </button>
-                  )}
-
+                  {/* Dados Estruturados (Escolas) */}
                   {message.structuredData && message.structuredData.length > 0 && (
-                    <div className="mt-4 flex flex-col gap-2">
-                      <div className="font-bold mb-2">Escolas encontradas:</div>
+                    <div className="w-full grid gap-3 mt-2">
+                      <div className="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1">
+                        Escolas Encontradas
+                      </div>
                       {message.structuredData.map((school: any, idx: number) => (
                         <Link
                           href={`/dashboard/${school.identificacao.id_escola}`}
                           key={idx}
-                          className="block transition-transform hover:scale-[1.02]"
+                          className="block group"
                         >
-                          <div className="bg-[#2D2D2D] p-3 rounded-lg text-sm text-white cursor-pointer hover:bg-[#3D3D3D] transition-colors" style={{ fontFamily: "'Sansita', sans-serif" }}>
-                            <div className="font-bold text-base">{school.identificacao.nome_escola}</div>
-                            <div className="text-xs opacity-80 mt-1">
-                              {school.localizacao.geografia.municipio} - {school.localizacao.geografia.uf}
+                          <div className="bg-card hover:bg-card-alt border border-theme p-4 rounded-xl transition-all duration-300 hover:shadow-lg hover:border-primary/50 hover:scale-[1.02] flex justify-between items-center">
+                            <div>
+                              <div className="font-bold text-primary group-hover:text-primary/80 transition-colors" style={{ fontFamily: "'Sansita', sans-serif" }}>
+                                {school.identificacao.nome_escola}
+                              </div>
+                              <div className="text-xs text-gray-500 mt-1 flex items-center gap-2">
+                                <span>{school.localizacao.geografia.municipio} - {school.localizacao.geografia.uf}</span>
+                                <span className="w-1 h-1 bg-gray-400 rounded-full"></span>
+                                <span>{school.identificacao.dependencia}</span>
+                              </div>
                             </div>
+                            <ChevronRight size={16} className="text-gray-400 group-hover:text-primary transition-colors" />
                           </div>
                         </Link>
                       ))}
@@ -811,84 +565,70 @@ export default function RAGPage() {
                       {message.nextPage && message.originalQuery && (
                         <button
                           onClick={() => handleLoadMore(message.originalQuery!, message.nextPage!)}
-                          className="mt-2 bg-white text-[#2C80FF] rounded-full px-4 py-2 text-sm font-bold hover:bg-opacity-90 transition-all self-start"
+                          className="mt-2 text-primary text-sm font-bold hover:underline self-start flex items-center gap-1"
                         >
-                          Carregar mais resultados
+                          Carregar mais resultados <ChevronRight size={14} />
                         </button>
                       )}
                     </div>
                   )}
 
-                  {message.hasContinue && (
+                  {/* Botão de Download PDF */}
+                  {message.hasDownload && message.schoolData && (
                     <button
-                      onClick={handleContinue}
-                      className="mt-4 bg-[#2C80FF] text-white rounded-[20px] px-6 py-3 hover:bg-[#1a6fd8] transition-all duration-500 hover:scale-105 active:scale-95 font-semibold"
-                      style={{ fontFamily: "'Sansita', sans-serif" }}
+                      onClick={() => generatePDF(message.schoolData!, message.consultType || 'Relatório')}
+                      className="flex items-center gap-2 bg-card hover:bg-card-alt border border-theme px-4 py-2 rounded-lg text-sm font-medium transition-colors text-primary"
                     >
-                      Continuar
+                      <Download size={16} />
+                      Baixar Relatório PDF
                     </button>
                   )}
                 </div>
-
-                {message.isUser && (
-                  <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center flex-shrink-0 transition-colors duration-500">
-                    <img
-                      src="/RAG/Usuário.png"
-                      alt="Usuário"
-                      className="w-8 h-8 sm:w-10 sm-h-10 rounded-full object-cover transition-colors duration-500"
-                    />
-                  </div>
-                )}
               </div>
             ))}
+
+            {/* Loading Indicator */}
             {isLoading && (
-              <div className="flex justify-start items-start gap-3 transition-all duration-500">
-                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center flex-shrink-0 transition-colors duration-500">
-                  <img
-                    src="/RAG/Aluno-IA.png"
-                    alt="Aluno IA"
-                    className="w-8 h-8 sm:w-10 sm:h-10 rounded-full object-cover transition-colors duration-500"
-                  />
+              <div className="flex items-start gap-4">
+                <div className="w-10 h-10 rounded-full bg-card border border-theme flex items-center justify-center text-primary">
+                  <img src="/images/ai-avatar.png" alt="AI" className="w-full h-full object-cover rounded-full" />
                 </div>
-                <div className="bg-[#2C80FF] bg-opacity-50 text-white rounded-[25px] p-3 sm:p-4 transition-all duration-500">
-                  <div className="flex items-center gap-2">
-                    <FontAwesomeIcon icon={faSpinner} spin />
-                    <span>Processando...</span>
-                  </div>
+                <div className="bg-card border border-theme px-4 py-3 rounded-2xl rounded-tl-sm flex items-center gap-2">
+                  <Loader2 size={18} className="animate-spin text-primary" />
+                  <span className="text-sm text-gray-500">Processando...</span>
                 </div>
               </div>
             )}
-            <div ref={messagesEndRef} />
           </div>
+        )}
+      </div>
 
-          <div className="border-t border-theme p-4 sm:p-5 bg-card-alt rounded-b-2xl transition-colors duration-500">
-            <div className="flex gap-3 items-center transition-colors duration-500">
-              <div className="text-gray-400 transition-colors duration-500">
-                <FontAwesomeIcon icon={faSearch} />
-              </div>
-
-              <div className="flex-1 relative transition-colors duration-500">
-                <input
-                  type="text"
-                  value={inputMessage}
-                  onChange={(e) => setInputMessage(e.target.value)}
-                  onKeyDown={handleKeyPress}
-                  placeholder="Digite o nome da escola e a cidade..."
-                  className="w-full bg-transparent border border-theme rounded-2xl px-4 py-2 sm:py-3 text-text placeholder-gray-400 focus:outline-none focus:border-primary transition-all duration-500 text-sm sm:text-base"
-                  style={{ fontFamily: "'Sansita', sans-serif" }}
-                />
-              </div>
-
-              <button
-                onClick={handleSendMessage}
-                disabled={!inputMessage.trim()}
-                className="bg-primary text-white rounded-2xl px-4 py-2 sm:px-6 sm:py-3 hover:bg-[#1a6fd8] disabled:bg-gray-600 disabled:cursor-not-allowed transition-all duration-500 hover:scale-105 active:scale-95 font-semibold text-sm sm:text-base"
-                style={{ fontFamily: "'Sansita', sans-serif" }}
-              >
-                Enviar
-              </button>
-            </div>
+      {/* Input Area */}
+      <div className="p-4 bg-background/80 backdrop-blur-md border-t border-theme sticky bottom-0 z-10">
+        <div className="max-w-4xl mx-auto relative flex items-center gap-3">
+          <div className="relative flex-1">
+            <input
+              type="text"
+              value={inputMessage}
+              onChange={(e) => setInputMessage(e.target.value)}
+              onKeyDown={handleKeyPress}
+              placeholder="Digite sua pergunta sobre escolas..."
+              className="w-full bg-card border border-theme rounded-full pl-6 pr-12 py-4 text-text placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all shadow-sm"
+              style={{ fontFamily: "'Sansita', sans-serif" }}
+            />
+            <button
+              onClick={handleSendMessage}
+              disabled={!inputMessage.trim() || isLoading}
+              className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-primary text-white rounded-full hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all hover:scale-105 active:scale-95 shadow-md"
+            >
+              <Send size={20} />
+            </button>
           </div>
+        </div>
+        <div className="text-center mt-2">
+          <p className="text-[10px] text-gray-400">
+            A IA pode cometer erros. Verifique as informações importantes.
+          </p>
         </div>
       </div>
     </div>

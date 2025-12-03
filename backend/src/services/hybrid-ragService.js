@@ -143,8 +143,8 @@ PERGUNTA DO USUÁRIO: "${pergunta}"
 REGRAS:
 1. Retorne APENAS o código SQL. Sem markdown, sem explicações.
 2. Use \`UPPER()\` para comparar strings (ex: \`UPPER(NO_MUNICIPIO) = UPPER('Brasília')\`).
-3. Limite os resultados a 50 linhas (LIMIT 50) se não houver outro limite implícito.
-4. Selecione colunas relevantes para responder a pergunta. Se for uma busca geral, selecione NO_ENTIDADE, NO_MUNICIPIO, SG_UF e outras colunas úteis.
+3. Limite os resultados a 15 linhas (LIMIT 15) se não houver outro limite implícito.
+4. Selecione colunas relevantes para responder a pergunta. OBRIGATÓRIO: Sempre selecione \`CO_ENTIDADE\` para identificação. Se for uma busca geral, selecione \`CO_ENTIDADE\`, \`NO_ENTIDADE\`, \`NO_MUNICIPIO\`, \`SG_UF\` e outras colunas úteis.
 5. NÃO use comandos de modificação (DROP, UPDATE, DELETE). Apenas SELECT.
 6. Se a pergunta for sobre uma escola específica, tente filtrar por NO_ENTIDADE usando LIKE (ex: \`NO_ENTIDADE LIKE '%NOME%'\`).
 
@@ -187,10 +187,11 @@ ${dadosFormatados}
 
 INSTRUÇÕES:
 1. Use os dados acima para responder.
-2. Se for uma lista de escolas, cite algumas e suas características.
-3. Se for uma contagem ou estatística, apresente o número.
-4. Seja cordial e direto.
-5. Se os dados não responderem a pergunta, diga isso claramente.
+2. Se for uma lista de escolas, cite algumas e suas características principais (dependência, localização, etc).
+3. Priorize mencionar escolas "Em atividade". Se houver muitas escolas "Paralisada" ou "Extinta", mencione isso apenas como uma observação geral, sem listar todas individualmente.
+4. Se houver dados estatísticos (número de alunos, docentes, etc), use-os para enriquecer a resposta.
+5. Seja cordial, direto e evite frases genéricas como "Note que faltam dados". Se o dado não existe, apenas não mencione.
+6. Tente agrupar as informações para facilitar a leitura (ex: "Encontrei X escolas, sendo Y estaduais e Z municipais").
 
 RESPOSTA:`;
 
