@@ -327,8 +327,8 @@ describe('Testes Unitários: BigQueryService', () => {
             const query = service.buildCompleteQuery('2024', mockMappings['2024'], filtros);
 
             expect(query).toContain('WHERE');
-            expect(query).toContain("`SG_UF` = 'SP'");
-            expect(query).toContain("`NO_MUNICIPIO` = 'Sao Paulo'");
+            expect(query).toContain("UPPER(`SG_UF`) = UPPER('SP')");
+            expect(query).toContain("UPPER(`NO_MUNICIPIO`) = UPPER('Sao Paulo')");
             expect(query).toContain("`CO_ENTIDADE` = '123'");
             expect(query).toContain("`IN_FUND` = 1");
             expect(query).toContain("LIMIT 10");
