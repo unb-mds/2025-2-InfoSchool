@@ -3,7 +3,6 @@ import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import {
   Send,
-  User,
   Loader2,
   Download,
   Search,
@@ -61,7 +60,6 @@ export default function RAGPage() {
   const [isLoading, setIsLoading] = useState(false);
   const chatContainerRef = useRef<HTMLDivElement>(null);
 
-  // Scroll automático
   const scrollToBottom = () => {
     if (chatContainerRef.current) {
       chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
@@ -72,7 +70,6 @@ export default function RAGPage() {
     scrollToBottom();
   }, [messages, isLoading]);
 
-  // Sugestões iniciais
   const suggestions = [
     { icon: <Search size={20} />, text: "Qual a melhor escola de Brasília?" },
     { icon: <img src="/images/ai-avatar.png" alt="AI" className="w-5 h-5 object-contain" />, text: "Mostre dados do Rio de Janeiro" },
@@ -80,7 +77,7 @@ export default function RAGPage() {
     { icon: <MessageSquare size={20} />, text: "Quais escolas têm laboratório?" },
   ];
 
-  // Geração de relatório PDF - Estrutura pronta para integração
+
   const generatePDF = (escola: SchoolData, consultType: string) => {
     const baseUrl = window.location.origin;
     const now = new Date();
@@ -419,7 +416,7 @@ export default function RAGPage() {
         isUser: false,
         timestamp: new Date(),
         structuredData: response.structuredData,
-        nextPage: response.structuredData && response.structuredData.length >= 20 ? 2 : undefined,
+        nextPage: response.structuredData && response.structuredData.length >= 15 ? 2 : undefined,
         originalQuery: userInput
       };
 
@@ -448,7 +445,7 @@ export default function RAGPage() {
         isUser: false,
         timestamp: new Date(),
         structuredData: response.structuredData,
-        nextPage: response.structuredData && response.structuredData.length >= 20 ? page + 1 : undefined,
+        nextPage: response.structuredData && response.structuredData.length >= 15 ? page + 1 : undefined,
         originalQuery: originalQuery
       };
       setMessages(prev => [...prev, iaMsg]);
@@ -482,7 +479,7 @@ export default function RAGPage() {
           // Empty State
           <div className="h-full flex flex-col items-center justify-center space-y-8 opacity-0 animate-fade-in" style={{ animationFillMode: 'forwards' }}>
             <div className="text-center space-y-4">
-              <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
+              <div className="w-20 h-20 bg-transparent rounded-full flex items-center justify-center mx-auto mb-6">
                 <img src="/images/ai-avatar.png" alt="AI Avatar" className="w-full h-full object-cover rounded-full" />
               </div>
               <h2 className="text-3xl font-bold font-display" style={{ fontFamily: "'Sansita', sans-serif" }}>
@@ -517,9 +514,9 @@ export default function RAGPage() {
                 className={`flex items-start gap-4 ${message.isUser ? 'flex-row-reverse' : 'flex-row'} animate-slide-up`}
               >
                 {/* Avatar */}
-                <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 shadow-sm ${message.isUser ? 'bg-primary text-white' : 'bg-card border border-theme text-primary'
+                <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 shadow-sm ${message.isUser ? 'bg-transparent' : 'bg-transparent border border-theme text-primary'
                   }`}>
-                  {message.isUser ? <User size={20} /> : <img src="/images/ai-avatar.png" alt="AI" className="w-full h-full object-cover rounded-full" />}
+                  {message.isUser ? <img src="/RAG/Usuário.png" alt="User" className="w-full h-full object-cover rounded-full" /> : <img src="/images/ai-avatar.png" alt="AI" className="w-full h-full object-cover rounded-full" />}
                 </div>
 
                 {/* Bolha de Mensagem */}
@@ -565,7 +562,7 @@ export default function RAGPage() {
                       {message.nextPage && message.originalQuery && (
                         <button
                           onClick={() => handleLoadMore(message.originalQuery!, message.nextPage!)}
-                          className="mt-2 text-primary text-sm font-bold hover:underline self-start flex items-center gap-1"
+                          className="mt-2 text-primary text-sm font-bold hover:underline self-start flex items-center gap-1 cursor-pointer"
                         >
                           Carregar mais resultados <ChevronRight size={14} />
                         </button>
@@ -590,7 +587,7 @@ export default function RAGPage() {
             {/* Loading Indicator */}
             {isLoading && (
               <div className="flex items-start gap-4">
-                <div className="w-10 h-10 rounded-full bg-card border border-theme flex items-center justify-center text-primary">
+                <div className="w-10 h-10 rounded-full bg-transparent border border-theme flex items-center justify-center text-primary">
                   <img src="/images/ai-avatar.png" alt="AI" className="w-full h-full object-cover rounded-full" />
                 </div>
                 <div className="bg-card border border-theme px-4 py-3 rounded-2xl rounded-tl-sm flex items-center gap-2">

@@ -98,7 +98,10 @@ class HybridRAGService {
     const schemaSummary = this.bigQueryService.getSchemaSummary();
 
     // 2. Gerar SQL via LLM
-    const sqlQuery = await this.generateSQL(pergunta, schemaSummary);
+    const page = filtros.page || 1;
+    const limit = 15;
+    const offset = (page - 1) * limit;
+    const sqlQuery = await this.generateSQL(pergunta, schemaSummary, offset);
 
     let resultados = [];
     let erroSQL = null;
@@ -119,6 +122,11 @@ class HybridRAGService {
     // 4. Gerar Resposta Final
     const resposta = await this.generateAnswer(pergunta, resultados, erroSQL);
 
+    // Se houve erro na geração da resposta, não retornar dados estruturados para evitar confusão
+    if (resposta === "Desculpe, não consegui processar a resposta final." || erroSQL) {
+      resultados = [];
+    }
+
     return {
       pergunta,
       resposta,
@@ -129,7 +137,7 @@ class HybridRAGService {
     };
   }
 
-  async generateSQL(pergunta, schemaSummary) {
+  async generateSQL(pergunta, schemaSummary, offset = 0) {
     const prompt = `Você é um Engenheiro de Dados Expert em BigQuery.
 Sua tarefa é converter a pergunta do usuário em uma consulta SQL válida para o BigQuery.
 
@@ -144,6 +152,7 @@ REGRAS:
 1. Retorne APENAS o código SQL. Sem markdown, sem explicações.
 2. Use \`UPPER()\` para comparar strings (ex: \`UPPER(NO_MUNICIPIO) = UPPER('Brasília')\`).
 3. Limite os resultados a 15 linhas (LIMIT 15) se não houver outro limite implícito.
+4. Use OFFSET ${offset} para paginação.
 4. Selecione colunas relevantes para responder a pergunta. OBRIGATÓRIO: Sempre selecione \`CO_ENTIDADE\` para identificação. Se for uma busca geral, selecione \`CO_ENTIDADE\`, \`NO_ENTIDADE\`, \`NO_MUNICIPIO\`, \`SG_UF\` e outras colunas úteis.
 5. NÃO use comandos de modificação (DROP, UPDATE, DELETE). Apenas SELECT.
 6. Se a pergunta for sobre uma escola específica, tente filtrar por NO_ENTIDADE usando LIKE (ex: \`NO_ENTIDADE LIKE '%NOME%'\`).
