@@ -6,17 +6,12 @@ import CredentialsManager from "../utils/credentialsManager.js";
 dotenv.config();
 
 // Inicializar credenciais ANTES de tudo
-let credentialsPath = null;
-try {
-  credentialsPath = CredentialsManager.initialize();
-} catch (error) {
-  console.error("⚠️  Credenciais não disponíveis, BigQuery desabilitado");
-}
+const credentialsPath = CredentialsManager.initialize();
 
 const ENV = {
   GOOGLE_CLOUD_PROJECT: process.env.GOOGLE_CLOUD_PROJECT,
   GOOGLE_API_KEY: process.env.GOOGLE_API_KEY,
-  GOOGLE_APPLICATION_CREDENTIALS: credentialsPath, // Agora é CAMINHO, não JSON
+  GOOGLE_APPLICATION_CREDENTIALS: credentialsPath,
   BIGQUERY_DATASET: process.env.BIGQUERY_DATASET || "censo_escolar",
   BIGQUERY_TABLE: process.env.BIGQUERY_TABLE,
 
@@ -25,15 +20,19 @@ const ENV = {
   NODE_ENV: process.env.NODE_ENV || "development",
 };
 
-// Validação - removemos OPENAI_API_KEY e adicionamos GOOGLE_API_KEY
+// Validação - só exige GOOGLE_API_KEY e GOOGLE_CLOUD_PROJECT
 const required = ["GOOGLE_API_KEY", "GOOGLE_CLOUD_PROJECT"];
 const missing = required.filter((key) => !ENV[key]);
 
 if (missing.length > 0) {
   console.error("❌ Variáveis de ambiente faltando:", missing.join(", "));
-  console.error("💡 Certifique-se de configurar o arquivo .env corretamente");
   process.exit(1);
 }
 
-console.log("✅ Ambiente configurado com Google AI");
+if (credentialsPath) {
+  console.log("✅ Ambiente configurado com Google AI e BigQuery");
+} else {
+  console.log("⚠️  Ambiente configurado sem BigQuery (somente API Gemini)");
+}
+
 export { ENV };
