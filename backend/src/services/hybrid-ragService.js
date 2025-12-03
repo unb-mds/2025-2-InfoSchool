@@ -1,13 +1,13 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { BigQueryService } from "./bigQueryServices.js"; 
+import { BigQueryService } from "./bigQueryServices.js";
 import vectorStoreService from "./vectorStoreServices.js";
 import { ENV } from "../config/environment.js";
 
 class HybridRAGService {
   constructor() {
     this.genAI = new GoogleGenerativeAI(ENV.GOOGLE_API_KEY);
-    this.model = this.genAI.getGenerativeModel({ 
-      model: "gemini-pro",
+    this.model = this.genAI.getGenerativeModel({
+      model: "gemini-2.0-flash",
       generationConfig: {
         temperature: 0.1,
         topP: 0.8,
@@ -94,326 +94,128 @@ class HybridRAGService {
 
     console.log(`🤖 Processando pergunta: "${pergunta}"`);
 
-    // 1. Análise de intenção
-    const intent = await this.analyzeIntent(pergunta);
-    console.log(`🎯 Intenção detectada: ${intent}`);
+    // 1. Obter resumo do Schema
+    const schemaSummary = this.bigQueryService.getSchemaSummary();
 
-    // 2. Extrair filtros da pergunta e combinar com filtros fornecidos
-    const extractedFilters = await this.extractFilters(pergunta);
-    const combinedFilters = { ...extractedFilters, ...filtros };
-    console.log(`🔍 Filtros:`, combinedFilters);
+    // 2. Gerar SQL via LLM
+    const page = filtros.page || 1;
+    const limit = 15;
+    const offset = (page - 1) * limit;
+    const sqlQuery = await this.generateSQL(pergunta, schemaSummary, offset);
 
-    // 3. Busca híbrida em paralelo
-    const [resultadosVetoriais, resultadosSparsos, resultadosEstruturados] =
-      await Promise.all([
-        this.safeVectorSearch(pergunta, 5),
-        this.safeSparseSearch(pergunta, 5),
-        this.getStructuredData(intent, combinedFilters, pergunta),
-      ]);
+    let resultados = [];
+    let erroSQL = null;
 
-    console.log(
-      `📊 Resultados - Vetorial: ${resultadosVetoriais.length}, Esparsa: ${resultadosSparsos.length}, Estruturada: ${resultadosEstruturados.length}`
-    );
+    // 3. Executar SQL
+    if (sqlQuery) {
+      try {
+        const rawResults = await this.bigQueryService.runCustomQuery(sqlQuery);
+        // Mapear resultados brutos para o formato estruturado que o frontend espera
+        resultados = rawResults.map(row => this.bigQueryService.processarEscolaCompleta(row, '2024'));
+      } catch (error) {
+        console.error("❌ Falha na execução do SQL gerado:", error.message);
+        erroSQL = error.message;
+        // Fallback: Poderíamos tentar a busca vetorial aqui se o SQL falhar
+      }
+    }
 
-    // 4. Fusão híbrida com RRF
-    const contexto = this.combineResultsRRF(
-      resultadosVetoriais,
-      resultadosSparsos,
-      resultadosEstruturados
-    );
+    // 4. Gerar Resposta Final
+    const resposta = await this.generateAnswer(pergunta, resultados, erroSQL);
 
-    console.log(`🎯 Contexto final: ${contexto.length} itens`);
-
-    // 5. Gerar resposta
-    const resposta = await this.generateAnswer(pergunta, contexto, intent);
+    // Se houve erro na geração da resposta, não retornar dados estruturados para evitar confusão
+    if (resposta === "Desculpe, não consegui processar a resposta final." || erroSQL) {
+      resultados = [];
+    }
 
     return {
       pergunta,
       resposta,
-      intent,
-      filtros: combinedFilters,
-      sources: contexto.slice(0, 3),
-      statistics: {
-        totalResultados: contexto.length,
-        vetorial: resultadosVetoriais.length,
-        esparso: resultadosSparsos.length,
-        estruturado: resultadosEstruturados.length,
-      },
+      intent: "text-to-sql",
+      sql: sqlQuery, // Útil para debug
+      structuredData: resultados,
       timestamp: new Date().toISOString(),
     };
   }
 
-  async safeVectorSearch(query, topK) {
-    try {
-      return await vectorStoreService.search(query, topK);
-    } catch (error) {
-      console.error("❌ Erro na busca vetorial:", error.message);
-      return [];
-    }
-  }
+  async generateSQL(pergunta, schemaSummary, offset = 0) {
+    const prompt = `Você é um Engenheiro de Dados Expert em BigQuery.
+Sua tarefa é converter a pergunta do usuário em uma consulta SQL válida para o BigQuery.
 
-  async safeSparseSearch(query, topK) {
-    try {
-      if (!this.bm25Index || this.bm25Documents.length === 0) {
-        console.warn("⚠️  BM25 não disponível para busca esparsa");
-        return [];
-      }
-      return await this.sparseSearch(query, topK);
-    } catch (error) {
-      console.error("❌ Erro na busca esparsa:", error.message);
-      return [];
-    }
-  }
+SCHEMA DO BANCO DE DADOS:
+${schemaSummary}
 
-  async sparseSearch(query, topK = 5) {
-    const results = this.bm25Index.search(query, {
-      fields: {
-        nome_escola: { boost: 2 },
-        municipio: { boost: 1.5 },
-        uf: { boost: 1 },
-        etapa_ensino: { boost: 1 },
-      },
-    });
+TABELA ALVO: \`${ENV.GOOGLE_CLOUD_PROJECT}.${ENV.BIGQUERY_DATASET}.${ENV.BIGQUERY_TABLE_2024 || '2024'}\`
 
-    return results
-      .slice(0, topK)
-      .map((result) => {
-        const originalDoc = this.bm25Documents.find(
-          (doc) => doc.metadata.id_escola === result.ref
-        );
-        if (!originalDoc) return null;
+PERGUNTA DO USUÁRIO: "${pergunta}"
 
-        return {
-          ...originalDoc,
-          bm25Score: result.score,
-          fonte: "sparse",
-        };
-      })
-      .filter(Boolean);
-  }
+REGRAS:
+1. Retorne APENAS o código SQL. Sem markdown, sem explicações.
+2. Use \`UPPER()\` para comparar strings (ex: \`UPPER(NO_MUNICIPIO) = UPPER('Brasília')\`).
+3. Limite os resultados a 15 linhas (LIMIT 15) se não houver outro limite implícito.
+4. Use OFFSET ${offset} para paginação.
+4. Selecione colunas relevantes para responder a pergunta. OBRIGATÓRIO: Sempre selecione \`CO_ENTIDADE\` para identificação. Se for uma busca geral, selecione \`CO_ENTIDADE\`, \`NO_ENTIDADE\`, \`NO_MUNICIPIO\`, \`SG_UF\` e outras colunas úteis.
+5. NÃO use comandos de modificação (DROP, UPDATE, DELETE). Apenas SELECT.
+6. Se a pergunta for sobre uma escola específica, tente filtrar por NO_ENTIDADE usando LIKE (ex: \`NO_ENTIDADE LIKE '%NOME%'\`).
 
-  async analyzeIntent(question) {
-    const prompt = `Analise a pergunta sobre educação e classifique a intenção:
-
-Pergunta: "${question}"
-
-Possíveis categorias:
-- "school_info": Informações específicas de uma escola
-- "comparison": Comparação entre escolas  
-- "statistics": Dados estatísticos e métricas
-- "location": Busca por localização
-- "general": Informações gerais sobre educação
-
-Responda APENAS com a categoria mais apropriada.`;
+SQL:`;
 
     try {
       const result = await this.model.generateContent(prompt);
       const response = await result.response;
-      return response.text().trim().toLowerCase();
+      let sql = response.text().trim();
+
+      // Remove markdown formatting if present
+      sql = sql.replace(/```sql/g, '').replace(/```/g, '').trim();
+
+      return sql;
     } catch (error) {
-      console.error("❌ Erro na análise de intenção:", error);
-      return "general";
+      console.error("❌ Erro ao gerar SQL:", error);
+      return null;
     }
   }
 
-  async getStructuredData(intent, filtros, pergunta) {
-    try {
-      let queryFiltros = { ...filtros };
-
-      // Ajustar filtros baseado na intenção
-      switch (intent) {
-        case "school_info":
-          const schoolCodeMatch = pergunta.match(/\b\d{8}\b/);
-          if (schoolCodeMatch) {
-            queryFiltros.id_escola = schoolCodeMatch[0];
-          }
-          break;
-
-        case "comparison":
-          queryFiltros.limit = 10;
-          break;
-
-        case "location":
-          queryFiltros.limit = 15;
-          break;
-      }
-
-      return await this.bigQueryService.getDadosEscolas(queryFiltros);
-    } catch (error) {
-      console.error("❌ Erro na busca estruturada:", error);
-      return [];
-    }
-  }
-
-  combineResultsRRF(vetorial, esparso, estruturado, k = 60) {
-    const fusedScores = new Map();
-
-    const addToRRF = (results, source, isStructured = false) => {
-      results.forEach((item, rank) => {
-        if (!item) return;
-
-        const id = isStructured ? item.id_escola : item.metadata?.id_escola;
-        if (!id) return;
-
-        const score = 1 / (rank + k + 1);
-
-        if (fusedScores.has(id)) {
-          const existing = fusedScores.get(id);
-          existing.score += score;
-          existing.sources.add(source);
-        } else {
-          fusedScores.set(id, {
-            item: item,
-            score: score,
-            sources: new Set([source]),
-          });
-        }
-      });
-    };
-
-    // Aplicar RRF para cada fonte
-    addToRRF(vetorial, "vector");
-    addToRRF(esparso, "sparse");
-    addToRRF(estruturado, "structured", true);
-
-    // Ordenar e retornar
-    return Array.from(fusedScores.values())
-      .sort((a, b) => b.score - a.score)
-      .slice(0, 10)
-      .map((entry) => {
-        const itemData = entry.item.metadata || entry.item;
-        return {
-          ...itemData,
-          hybridScore: entry.score.toFixed(4),
-          sources: Array.from(entry.sources),
-        };
-      });
-  }
-
-  async extractFilters(pergunta) {
-    const ufMatch = pergunta.match(/\b([A-Z]{2})\b/);
-
-    // Lista expandida de municípios
-    const municipios = [
-      "São Paulo", "Rio de Janeiro", "Belo Horizonte", "Brasília", "Salvador",
-      "Fortaleza", "Manaus", "Curitiba", "Recife", "Porto Alegre", "Goiânia",
-      "Belém", "São Luís", "Maceió", "Campinas", "São Gonçalo", "Duque de Caxias",
-      "Natal", "Teresina", "João Pessoa", "Florianópolis", "Aracaju", "Cuiabá",
-      "Porto Velho", "Boa Vista", "Macapá", "Rio Branco", "Palmas", "Vitória"
-    ];
-
-    const municipioMatch = municipios.find((m) =>
-      pergunta.toLowerCase().includes(m.toLowerCase())
-    );
-
-    // Extrair etapa de ensino
-    let etapa_ensino = null;
-    const etapas = {
-      'infantil': 'Infantil',
-      'creche': 'Infantil',
-      'pré-escola': 'Infantil',
-      'fundamental': 'Fundamental',
-      'médio': 'Médio',
-      'medio': 'Médio',
-      'eja': 'EJA',
-      'profissional': 'Profissional',
-      'técnico': 'Profissional'
-    };
-
-    Object.entries(etapas).forEach(([palavra, etapa]) => {
-      if (pergunta.toLowerCase().includes(palavra)) {
-        etapa_ensino = etapa;
-      }
-    });
-
-    // Extrair ano específico
-    let ano = null;
-    const anoMatch = pergunta.match(/\b(20\d{2})\b/);
-    if (anoMatch) {
-      ano = anoMatch[1];
-    } else if (pergunta.toLowerCase().includes("histórico") || 
-               pergunta.toLowerCase().includes("comparação") ||
-               pergunta.toLowerCase().includes("evolução") ||
-               pergunta.toLowerCase().includes("tendência")) {
-      ano = 'todos'; // Sinal para buscar múltiplos anos
+  async generateAnswer(pergunta, resultados, erroSQL) {
+    if (erroSQL) {
+      return "Desculpe, tive um problema técnico ao consultar os dados. Tente reformular sua pergunta.";
     }
 
-    // Extrair tipo de dependência
-    let dependencia = null;
-    if (pergunta.toLowerCase().includes("pública") || pergunta.toLowerCase().includes("público")) {
-      dependencia = "pública";
-    } else if (pergunta.toLowerCase().includes("privada") || pergunta.toLowerCase().includes("particular")) {
-      dependencia = "privada";
+    if (!resultados || resultados.length === 0) {
+      return "Não encontrei nenhum resultado no banco de dados que corresponda à sua pesquisa.";
     }
 
-    // Extrair características específicas
-    let caracteristicas = [];
-    if (pergunta.toLowerCase().includes("laboratório") || pergunta.toLowerCase().includes("informática")) {
-      caracteristicas.push("laboratorio_informatica");
-    }
-    if (pergunta.toLowerCase().includes("biblioteca")) {
-      caracteristicas.push("biblioteca");
-    }
-    if (pergunta.toLowerCase().includes("internet")) {
-      caracteristicas.push("internet");
-    }
-    if (pergunta.toLowerCase().includes("quadra") || pergunta.toLowerCase().includes("esporte")) {
-      caracteristicas.push("quadra_esportes");
-    }
+    // Formatar resultados para o prompt (JSON stringificado identado)
+    const dadosFormatados = JSON.stringify(resultados, null, 2);
 
-    return {
-      uf: ufMatch ? ufMatch[1] : null,
-      municipio: municipioMatch || null,
-      etapa_ensino: etapa_ensino,
-      ano: ano,
-      dependencia: dependencia,
-      caracteristicas: caracteristicas.length > 0 ? caracteristicas : null
-    };
-  }
+    const prompt = `Você é um assistente educacional útil.
+Responda à pergunta do usuário com base nos DADOS REAIS retornados do banco de dados.
 
-  async generateAnswer(pergunta, contexto, intent) {
-    if (contexto.length === 0) {
-      return "Não encontrei informações suficientes no banco de dados para responder sua pergunta. Tente reformular ou ser mais específico sobre a escola, município ou estado.";
-    }
+PERGUNTA: "${pergunta}"
 
-    const contextoTexto = contexto
-      .map(
-        (item, index) =>
-          `${index + 1}. ${item.nome_escola} - ${item.municipio}/${item.uf}\n` +
-          `   IDEB: ${item.ideb || "N/A"} | Matrículas: ${
-            item.num_matriculas || "N/A"
-          }`
-      )
-      .join("\n\n");
-
-    const prompt = `Você é um assistente especializado em dados educacionais do Censo Escolar. 
-Sua função é responder perguntas baseando-se exclusivamente nos dados fornecidos.
-Seja direto, informativo e baseie-se apenas nas informações disponíveis.
-
-Com base nos dados do Censo Escolar abaixo, responda a pergunta de forma precisa.
-
-INTENÇÃO: ${intent}
-DADOS RELEVANTES:
-${contextoTexto}
-
-PERGUNTA: ${pergunta}
+DADOS ENCONTRADOS (${resultados.length} registros):
+${dadosFormatados}
 
 INSTRUÇÕES:
-- Baseie-se apenas nos dados fornecidos
-- Seja direto e informativo
-- Se não houver dados suficientes, informe isso
-- Destaque informações importantes baseado na intenção
-- Formate a resposta de forma clara e organizada`;
+1. Use os dados acima para responder.
+2. Se for uma lista de escolas, cite algumas e suas características principais (dependência, localização, etc).
+3. Priorize mencionar escolas "Em atividade". Se houver muitas escolas "Paralisada" ou "Extinta", mencione isso apenas como uma observação geral, sem listar todas individualmente.
+4. Se houver dados estatísticos (número de alunos, docentes, etc), use-os para enriquecer a resposta.
+5. Seja cordial, direto e evite frases genéricas como "Note que faltam dados". Se o dado não existe, apenas não mencione.
+6. Tente agrupar as informações para facilitar a leitura (ex: "Encontrei X escolas, sendo Y estaduais e Z municipais").
+
+RESPOSTA:`;
 
     try {
       const result = await this.model.generateContent(prompt);
       const response = await result.response;
       return response.text();
     } catch (error) {
-      console.error("❌ Erro ao gerar resposta:", error);
-      return "Desculpe, não consegui processar sua pergunta no momento. Tente novamente em alguns instantes.";
+      console.error("❌ Erro ao gerar resposta final:", error);
+      return "Desculpe, não consegui processar a resposta final.";
     }
   }
+
+  // Métodos antigos (Vector/Sparse/RRF) removidos ou comentados para focar no Text-to-SQL
+  // Se necessário, podem ser reintroduzidos como fallback.
 }
 
 // Exportação usando ES modules
