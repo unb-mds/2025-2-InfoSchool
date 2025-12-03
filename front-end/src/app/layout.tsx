@@ -1,10 +1,10 @@
 // src/app/layout.tsx
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
-import './globals.css';
 import { Header, Footer, ThemeProvider } from '@/modules/shared/components';
+import { getBasePath } from '@/utils/basePath';
 
-const inter = Inter({ 
+const inter = Inter({
   subsets: ['latin'],
 });
 
@@ -34,7 +34,7 @@ export default function RootLayout({
             `,
           }}
         />
-        <link rel="icon" href="/Favicon/favicon.ico" />
+        <link rel="icon" href={`${getBasePath()}/Favicon/favicon.ico`} />
         <link
           href="https://fonts.googleapis.com/css2?family=Rammetto+One&display=swap"
           rel="stylesheet"
@@ -44,7 +44,7 @@ export default function RootLayout({
           rel="stylesheet"
         />
         <link
-          href="/fonts/Harys-World.ttf"
+          href={`${getBasePath()}/fonts/Harys-World.ttf`}
           rel="stylesheet"
         />
       </head>
