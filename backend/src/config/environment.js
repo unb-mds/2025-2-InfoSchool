@@ -9,7 +9,7 @@ export const ENV = {
   GOOGLE_API_KEY: process.env.GOOGLE_API_KEY,
 
   // BigQuery - Vamos lidar com credenciais de forma diferente
-  BIGQUERY_DATASET: process.env.BIGQUERY_DATASET || "censo_escolar",
+  BIGQUERY_DATASET: process.env.BIGQUERY_DATASET || "escolas",
   BIGQUERY_TABLE: process.env.BIGQUERY_TABLE || "2024",
 
   // Server
