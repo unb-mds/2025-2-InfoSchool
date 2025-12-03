@@ -8,8 +8,10 @@ import {
 
 export class BigQueryService {
   constructor() {
-    const config = getBigQueryConfig();
-    this.bigQuery = new BigQuery(config);
+    this.bigQuery = new BigQuery({
+      projectId: ENV.GOOGLE_CLOUD_PROJECT,
+      keyFilename: ENV.GOOGLE_APPLICATION_CREDENTIALS,
+    });
   }
 
   async getDadosEscolas(filtros = {}) {
