@@ -41,8 +41,9 @@ const app = Fastify({
 app.register(cors, {
   origin: [
     "http://localhost:3000", // desenvolvimento
-    "https://seu-frontend.vercel.app", // ← VAI MUDAR DEPOIS
-    "https://*.vercel.app", // aceita qualquer subdomínio vercel
+    "https://20252infoschool.vercel.app", // ← VAI MUDAR DEPOIS
+    "https://*.vercel.app",
+    "https://two025-2-infoschool.onrender.com", // aceita qualquer subdomínio vercel
   ],
   methods: ["GET", "POST"],
   credentials: true,
