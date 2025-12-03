@@ -21,6 +21,8 @@ async function chatRoutes(fastify, options) {
           required: ["pergunta"],
           properties: {
             pergunta: { type: "string" },
+            page: { type: "integer" },
+            limit: { type: "integer" },
             filtros: {
               type: "object",
               properties: {
@@ -35,7 +37,7 @@ async function chatRoutes(fastify, options) {
     },
     async (request, reply) => {
       try {
-        const { pergunta, filtros } = request.body;
+        const { pergunta, filtros, page, limit } = request.body;
 
         if (!pergunta || pergunta.trim().length === 0) {
           return reply.status(400).send({
@@ -43,9 +45,9 @@ async function chatRoutes(fastify, options) {
           });
         }
 
-        console.log(`🤔 Processando pergunta: "${pergunta}"`);
+        console.log(`🤔 Processando pergunta: "${pergunta}" (Página: ${page || 1})`);
 
-        const resultado = await hybridRAGService.processQuery(pergunta);
+        const resultado = await hybridRAGService.processQuery(pergunta, { ...filtros, page, limit });
 
         return {
           success: true,
