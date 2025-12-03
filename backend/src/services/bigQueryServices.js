@@ -8,8 +8,12 @@ import {
 
 export class BigQueryService {
   constructor() {
-    const config = this.getBigQueryConfig();
-    this.bigQuery = new BigQuery(config);
+    const projectId = ENV.GOOGLE_CLOUD_PROJECT;
+    this.bigQuery = new BigQuery({
+      projectId,
+      keyFilename:
+        ENV.GOOGLE_APPLICATION_CREDENTIALS || "./service-account.json",
+    });
   }
 
   async getDadosEscolas(filtros = {}) {
@@ -42,6 +46,11 @@ export class BigQueryService {
   getBigQueryConfig() {
     const projectId = ENV.GOOGLE_CLOUD_PROJECT;
     const credentialsString = ENV.GOOGLE_APPLICATION_CREDENTIALS;
+
+    console.log(
+      "🔍 DEBUG GOOGLE_APPLICATION_CREDENTIALS:",
+      credentialsString ? credentialsString.substring(0, 100) + "..." : "NULL"
+    );
 
     // Se as credenciais são um JSON string (Render), parseie
     if (credentialsString && credentialsString.trim().startsWith("{")) {
