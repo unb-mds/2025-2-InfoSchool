@@ -1,8 +1,8 @@
 'use client';
 import { useState, useMemo, useCallback, useEffect } from 'react';
-import { useTheme } from '../ThemeProvider/ThemeProvider'; 
+import { useTheme } from '../ThemeProvider/ThemeProvider';
 import { Search, Loader2 } from 'lucide-react';
-import { useRouter, usePathname } from 'next/navigation'; 
+import { useRouter, usePathname } from 'next/navigation';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
@@ -33,42 +33,42 @@ type Escola = {
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-  const [escolasBuscadas, setEscolasBuscadas] = useState<Escola[]>([]); 
-  const [isLoading, setIsLoading] = useState(false); 
+  const [escolasBuscadas, setEscolasBuscadas] = useState<Escola[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
-  
+
   const { theme, toggleTheme } = useTheme();
   const router = useRouter();
   const pathname = usePathname();
 
   const isHomePage = pathname === '/inicial' || pathname === '/';
-  
-  const debouncedSearchTerm = useDebounce(searchTerm, 500); 
+
+  const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
   // Função para buscar dados reais no BigQuery via API Route
   const fetchEscolas = useCallback(async (term: string) => {
-    if (!term || term.trim().length < 3) { 
+    if (!term || term.trim().length < 3) {
       setEscolasBuscadas([]);
       setIsLoading(false);
       return;
     }
 
     setIsLoading(true);
-    
+
     try {
       // ATUALIZAÇÃO: Usando a URL absoluta para garantir conexão com o Fastify (porta 3001)
       const response = await fetch(`${API_BASE_URL}/api/escolas/search?q=${encodeURIComponent(term)}`);
-      
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      
+
       const data = await response.json();
       setEscolasBuscadas(data.escolas || []);
 
     } catch (error) {
       console.error("Erro na busca de escolas:", error);
-      setEscolasBuscadas([]); 
+      setEscolasBuscadas([]);
     } finally {
       setIsLoading(false);
     }
@@ -82,8 +82,8 @@ export default function Header() {
       setEscolasBuscadas([]);
     }
   }, [debouncedSearchTerm, fetchEscolas]);
-  
-  const escolasFiltradas = escolasBuscadas; 
+
+  const escolasFiltradas = escolasBuscadas;
 
   const handleSobreNosClick = useCallback(() => {
     setMenuOpen(false);
@@ -97,10 +97,10 @@ export default function Header() {
 
   // ATUALIZAÇÃO: Função redireciona para o Dashboard usando o ID (Código INEP)
   const redirecionarParaEscola = useCallback((escola: Escola) => {
-    router.push(`/dashboard/${escola.id}`);
+    router.push(`/dashboard?id=${escola.id}`);
     setShowSuggestions(false);
     setSearchTerm('');
-    setEscolasBuscadas([]); 
+    setEscolasBuscadas([]);
   }, [router]);
 
   const handleSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
@@ -120,20 +120,20 @@ export default function Header() {
     <header className="bg-header border-theme border-b sticky top-0 z-50 transition-colors duration-500">
       <div className="max-w-[95%] sm:max-w-[90%] md:max-w-[80%] mx-auto px-3 sm:px-4 py-2 md:py-3">
         <div className="flex justify-between items-center">
-          
-          <a 
+
+          <a
             href="/inicial"
             className="flex items-center gap-1 md:gap-2 hover:scale-110 transition-transform duration-500 active:scale-105 cursor-pointer flex-shrink-0"
           >
-            <h1 
+            <h1
               className="font-bold leading-none text-[28px] sm:text-[36px] md:text-[48px] transition-colors duration-500"
               style={{ fontFamily: "'Harys World', Arial, sans-serif" }}
             >
               InfoSchool
             </h1>
-            <img 
+            <img
               src="/images/InfoSchool-logo.svg"
-              alt="InfoSchool Logo" 
+              alt="InfoSchool Logo"
               width={60}
               height={60}
               className="object-contain w-[60px] h-[60px] md:w-[90px] md:h-[90px] transition-colors duration-500"
@@ -143,7 +143,7 @@ export default function Header() {
           {isHomePage && (
             <div className="flex-1 max-w-2xl mx-4 lg:mx-8 relative">
               <div className="relative transition-colors duration-500">
-                <Search 
+                <Search
                   className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-theme transition-colors duration-500"
                   size={20}
                 />
@@ -201,26 +201,26 @@ export default function Header() {
           )}
 
           <nav className="hidden md:flex items-center gap-10 lg:gap-12">
-            <button 
+            <button
               onClick={handleSobreNosClick}
               className="hover:text-gray-300 transition-all duration-500 text-base lg:text-lg hover:scale-110 active:scale-105 cursor-pointer"
               style={{ fontFamily: "'Rammetto One', cursive" }}
             >
               Sobre nós
             </button>
-            <button 
+            <button
               onClick={() => router.push('/rag')}
               className="bg-primary text-white rounded-[20px] hover:bg-[#1a6fd8] transition-all duration-500 flex items-center justify-center w-[160px] lg:w-[190px] h-[30px] lg:h-[32px] hover:scale-110 active:scale-105 cursor-pointer"
               style={{ fontFamily: "'Rammetto One', cursive" }}
             >
               Usar IA
             </button>
-            <button 
+            <button
               onClick={toggleTheme}
               className="flex items-center justify-center hover:opacity-80 transition-all duration-500 hover:scale-110 active:scale-105 cursor-pointer"
               aria-label={theme === 'light' ? 'Ativar modo escuro' : 'Ativar modo claro'}
             >
-              <img 
+              <img
                 src={theme === 'light' ? "/icons/dark-mode.png" : "/icons/light-mode.png"}
                 alt={theme === 'light' ? "Modo Escuro" : "Modo Claro"}
                 width={32}
@@ -230,7 +230,7 @@ export default function Header() {
             </button>
           </nav>
 
-          <button 
+          <button
             className="md:hidden p-1 rounded hover:bg-gray-700 transition-all duration-500 hover:scale-110 active:scale-105 cursor-pointer"
             onClick={toggleMenu}
             aria-label="Abrir menu"
@@ -243,21 +243,21 @@ export default function Header() {
 
         {menuOpen && (
           <div className="md:hidden mt-2 space-y-2 border-t border-theme pt-3 transition-colors duration-500">
-            <button 
+            <button
               onClick={handleSobreNosClick}
               className="block py-2 px-4 hover:bg-gray-800 rounded transition-all duration-500 w-full text-center hover:scale-105 active:scale-100 text-base cursor-pointer"
               style={{ fontFamily: "'Rammetto One', cursive" }}
             >
               Sobre nós
             </button>
-            <button 
+            <button
               onClick={() => router.push('/rag')}
               className="bg-primary text-white rounded-[20px] hover:bg-[#1a6fd8] transition-all duration-500 w-full py-2 hover:scale-105 active:scale-100 text-base cursor-pointer"
               style={{ fontFamily: "'Rammetto One', cursive" }}
             >
               Usar IA
             </button>
-            <button 
+            <button
               onClick={toggleTheme}
               className="flex items-center justify-center w-full py-2 text-gray-400 hover:text-white transition-all duration-500 hover:scale-105 active:scale-100 text-base cursor-pointer"
             >

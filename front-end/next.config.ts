@@ -1,6 +1,8 @@
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
+  output: 'export',
+  basePath: '/2025-2-InfoSchool-GitPages',
   outputFileTracingRoot: __dirname,
   images: {
     unoptimized: true,
@@ -13,15 +15,6 @@ const nextConfig: NextConfig = {
   },
   trailingSlash: false,
   skipTrailingSlashRedirect: true,
-  // Configuração para o Proxy
-  async rewrites() {
-    return [
-      {
-        source: '/api/:path*',
-        destination: 'http://localhost:3001/api/:path*',
-      },
-    ];
-  },
 };
 
 export default nextConfig;

@@ -1,1 +1,0 @@
-https://www.figma.com/design/gfIFyBDIbJ9caOpkb5G6rQ/Pr%C3%B3totipo-InfoSchool-Original?node-id=0-1&t=O05WL4oQA8xKVkNE-1
