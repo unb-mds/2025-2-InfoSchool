@@ -8,18 +8,25 @@ import {
 
 export class BigQueryService {
   constructor() {
-    console.log("🔧 Inicializando BigQueryService para Render...");
+    console.log("🔧 Inicializando BigQueryService...");
 
-    try {
-      // NOVO: Método otimizado para Render
-      const config = this.getRenderOptimizedConfig();
-      this.bigQuery = new BigQuery(config);
-      console.log("✅ BigQuery configurado para Render");
-    } catch (error) {
-      console.error("❌ Erro crítico ao configurar BigQuery:", error.message);
-      console.error("Stack:", error.stack);
-      throw error; // Propaga o erro para que o servidor não inicie sem BigQuery
+    // SOLUÇÃO ESPECÍFICA PARA RENDER
+    if (process.env.RENDER) {
+      console.log(
+        "🏗️ Ambiente Render detectado - usando configuração otimizada"
+      );
+      this.bigQuery = this.getRenderConfig();
+    } else {
+      // Configuração local
+      console.log("💻 Ambiente local - usando configuração padrão");
+      this.bigQuery = new BigQuery({
+        projectId: ENV.GOOGLE_CLOUD_PROJECT,
+        keyFilename:
+          ENV.GOOGLE_APPLICATION_CREDENTIALS || "./service-account.json",
+      });
     }
+
+    console.log("✅ BigQueryService inicializado");
   }
 
   async getDadosEscolas(filtros = {}) {
@@ -49,64 +56,65 @@ export class BigQueryService {
     }
   }
 
-  getRenderOptimizedConfig() {
+  getRenderConfig() {
     const projectId = ENV.GOOGLE_CLOUD_PROJECT;
+    const credentialsString = process.env.GOOGLE_APPLICATION_CREDENTIALS;
 
-    // Debug das variáveis (sem expor valores completos)
-    console.log("🔍 Debug variáveis BigQuery:");
-    console.log("Project ID:", projectId ? "✅ Definido" : "❌ Ausente");
-    console.log(
-      "Credenciais presentes:",
-      process.env.GOOGLE_APPLICATION_CREDENTIALS ? "✅ Sim" : "❌ Não"
-    );
-
-    // 1. Tenta usar GOOGLE_APPLICATION_CREDENTIALS_JSON (formato ideal para Render)
-    if (process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON) {
-      console.log("🔄 Usando GOOGLE_APPLICATION_CREDENTIALS_JSON...");
-      try {
-        const credentials = JSON.parse(
-          process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON
-        );
-        return { projectId, credentials };
-      } catch (error) {
-        console.warn("⚠️ Falha ao parsear JSON direto:", error.message);
-      }
+    if (!credentialsString) {
+      throw new Error("GOOGLE_APPLICATION_CREDENTIALS não definida no Render");
     }
 
-    // 2. Tenta GOOGLE_APPLICATION_CREDENTIALS (pode ter escapes)
-    if (process.env.GOOGLE_APPLICATION_CREDENTIALS) {
-      console.log("🔄 Processando GOOGLE_APPLICATION_CREDENTIALS...");
-      const credentialsString = process.env.GOOGLE_APPLICATION_CREDENTIALS;
+    console.log("📋 Processando credenciais do Render...");
 
-      // Limpa o string JSON
-      let cleanedJson = credentialsString
+    try {
+      // Método 1: Tenta usar como JSON direto
+      if (credentialsString.startsWith("{")) {
+        console.log("🔄 Tentando parsear como JSON direto...");
+        const credentials = JSON.parse(credentialsString);
+        return new BigQuery({
+          projectId,
+          credentials,
+        });
+      }
+
+      // Método 2: Cria arquivo temporário (mais confiável)
+      console.log("🔄 Criando arquivo temporário de credenciais...");
+
+      // Prepara o JSON - remove escapes
+      let jsonStr = credentialsString
         .trim()
-        .replace(/^"|"$/g, "") // Remove aspas no início e fim
-        .replace(/\\"/g, '"') // Substitui \" por "
-        .replace(/\\n/g, "\n") // Substitui \n por quebra de linha real
-        .replace(/\\r/g, "\r") // Substitui \r
-        .replace(/\\t/g, "\t") // Substitui \t
-        .replace(/\\\\/g, "\\"); // Substitui \\ por \
+        .replace(/^"|"$/g, "") // Remove aspas externas
+        .replace(/\\"/g, '"') // Converte \" para "
+        .replace(/\\n/g, "\n") // Converte \n para quebra de linha real
+        .replace(/\\\\/g, "\\"); // Converte \\ para \
 
-      try {
-        const credentials = JSON.parse(cleanedJson);
-        return { projectId, credentials };
-      } catch (error) {
-        console.error("❌ Falha ao parsear credenciais:", error.message);
-        console.log(
-          "Primeiros 200 chars do JSON:",
-          cleanedJson.substring(0, 200)
-        );
+      // Valida se é JSON
+      const credentials = JSON.parse(jsonStr);
+
+      // Cria arquivo temporário
+      const tempDir = "/tmp";
+      if (!fs.existsSync(tempDir)) {
+        fs.mkdirSync(tempDir, { recursive: true });
       }
-    }
 
-    // 3. Fallback: tenta usar Application Default Credentials
-    console.log("🔄 Tentando Application Default Credentials...");
-    return {
-      projectId,
-      // O BigQuery vai tentar usar as credenciais padrão
-      // Isso pode funcionar se você configurar as credenciais de outra forma
-    };
+      const tempFile = path.join(tempDir, "service-account-render.json");
+      fs.writeFileSync(tempFile, JSON.stringify(credentials, null, 2));
+      fs.chmodSync(tempFile, 0o600);
+
+      console.log("✅ Arquivo temporário criado:", tempFile);
+
+      return new BigQuery({
+        projectId,
+        keyFilename: tempFile,
+      });
+    } catch (error) {
+      console.error("❌ Erro ao configurar BigQuery no Render:", error.message);
+      console.error(
+        "Primeiros 300 chars do JSON:",
+        credentialsString.substring(0, 300)
+      );
+      throw new Error(`Falha na configuração do BigQuery: ${error.message}`);
+    }
   }
 
   // NOVO: Método de teste de conexão
