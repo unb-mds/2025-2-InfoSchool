@@ -1,4 +1,4 @@
-import 'dotenv/config';
+import "dotenv/config";
 import Fastify from "fastify";
 import cors from "@fastify/cors";
 import helmet from "@fastify/helmet";
@@ -19,26 +19,32 @@ import escolasLocationRoutes from "./src/routes/caminho-normal/api/escolaPorLoca
 
 // Inicialização da instância única
 const app = Fastify({
-  logger: process.env.NODE_ENV === "development"
-    ? {
-      level: 'info',
-      transport: {
-        target: 'pino-pretty',
-        options: {
-          colorize: true,
-          ignore: 'pid,hostname',
-          translateTime: 'HH:MM:ss.l'
+  logger:
+    process.env.NODE_ENV === "development"
+      ? {
+          level: "info",
+          transport: {
+            target: "pino-pretty",
+            options: {
+              colorize: true,
+              ignore: "pid,hostname",
+              translateTime: "HH:MM:ss.l",
+            },
+          },
         }
-      }
-    }
-    : {
-      level: 'warn'
-    }
+      : {
+          level: "warn",
+        },
 });
 
 app.register(cors, {
-  origin: true,
+  origin: [
+    "http://localhost:3000", // desenvolvimento
+    "https://seu-frontend.vercel.app", // ← VAI MUDAR DEPOIS
+    "https://*.vercel.app", // aceita qualquer subdomínio vercel
+  ],
   methods: ["GET", "POST"],
+  credentials: true,
 });
 app.register(helmet);
 app.register(rateLimit, {
@@ -113,8 +119,8 @@ const start = async () => {
     console.log("🔄 Inicializando RAG Híbrido...");
 
     // CORRIGIDO: import para ES Modules
-    import('./src/services/hybrid-ragService.js')
-      .then(module => {
+    import("./src/services/hybrid-ragService.js")
+      .then((module) => {
         setTimeout(async () => {
           try {
             await module.default.initialize();
@@ -127,10 +133,9 @@ const start = async () => {
           }
         }, 2000);
       })
-      .catch(error => {
+      .catch((error) => {
         console.error("❌ Erro ao carregar módulo RAG:", error.message);
       });
-
   } catch (err) {
     console.error(err);
     process.exit(1);
