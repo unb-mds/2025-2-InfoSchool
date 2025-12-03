@@ -8,57 +8,134 @@ import {
 
 export class BigQueryService {
   constructor() {
-    const projectId = ENV.GOOGLE_CLOUD_PROJECT;
-    const credentialsString = process.env.GOOGLE_APPLICATION_CREDENTIALS;
+    console.log("🔧 Inicializando BigQueryService para Render...");
 
-    console.log("🔧 Configurando BigQuery...");
-
-    // Tenta usar JSON direto
-    if (
-      credentialsString &&
-      (credentialsString.includes("type") ||
-        credentialsString.includes("service_account"))
-    ) {
-      try {
-        // Limpa o JSON
-        let jsonStr = credentialsString
-          .trim()
-          .replace(/\\n/g, "\n")
-          .replace(/\\"/g, '"');
-
-        // Remove aspas extras
-        if (jsonStr.startsWith('"') && jsonStr.endsWith('"')) {
-          jsonStr = jsonStr.slice(1, -1);
-        }
-
-        const credentials = JSON.parse(jsonStr);
-
-        this.bigQuery = new BigQuery({
-          projectId,
-          credentials, // JSON direto!
-        });
-
-        console.log("✅ BigQuery configurado com JSON direto");
-        return;
-      } catch (error) {
-        console.error("❌ Erro ao usar JSON direto:", error.message);
-      }
+    try {
+      // NOVO: Método otimizado para Render
+      const config = this.getRenderOptimizedConfig();
+      this.bigQuery = new BigQuery(config);
+      console.log("✅ BigQuery configurado para Render");
+    } catch (error) {
+      console.error("❌ Erro crítico ao configurar BigQuery:", error.message);
+      console.error("Stack:", error.stack);
+      throw error; // Propaga o erro para que o servidor não inicie sem BigQuery
     }
-
-    // Fallback para arquivo
-    this.bigQuery = new BigQuery({
-      projectId,
-      keyFilename:
-        ENV.GOOGLE_APPLICATION_CREDENTIALS || "./service-account.json",
-    });
-
-    console.log("✅ BigQuery configurado com arquivo");
   }
 
   async getDadosEscolas(filtros = {}) {
     const ano = filtros.ano || "2024";
 
     try {
+      if (!completeColumnMappings[ano]) {
+        throw new Error(`Mapeamento não encontrado para o ano ${ano}`);
+      }
+
+      const mapping = completeColumnMappings[ano];
+      const query = this.buildCompleteQuery(ano, mapping, filtros);
+
+      console.log(
+        `🔍 Executando query completa para ${ano} com ${
+          Object.keys(mapping).length
+        } colunas`
+      );
+      const resultados = await this.query(query);
+
+      return resultados.map((escola) =>
+        this.processarEscolaCompleta(escola, ano)
+      );
+    } catch (error) {
+      console.error(`❌ Erro ao carregar dados de ${ano}:`, error);
+      return await this.getDadosEscolasFallback(ano, filtros);
+    }
+  }
+
+  getRenderOptimizedConfig() {
+    const projectId = ENV.GOOGLE_CLOUD_PROJECT;
+
+    // Debug das variáveis (sem expor valores completos)
+    console.log("🔍 Debug variáveis BigQuery:");
+    console.log("Project ID:", projectId ? "✅ Definido" : "❌ Ausente");
+    console.log(
+      "Credenciais presentes:",
+      process.env.GOOGLE_APPLICATION_CREDENTIALS ? "✅ Sim" : "❌ Não"
+    );
+
+    // 1. Tenta usar GOOGLE_APPLICATION_CREDENTIALS_JSON (formato ideal para Render)
+    if (process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON) {
+      console.log("🔄 Usando GOOGLE_APPLICATION_CREDENTIALS_JSON...");
+      try {
+        const credentials = JSON.parse(
+          process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON
+        );
+        return { projectId, credentials };
+      } catch (error) {
+        console.warn("⚠️ Falha ao parsear JSON direto:", error.message);
+      }
+    }
+
+    // 2. Tenta GOOGLE_APPLICATION_CREDENTIALS (pode ter escapes)
+    if (process.env.GOOGLE_APPLICATION_CREDENTIALS) {
+      console.log("🔄 Processando GOOGLE_APPLICATION_CREDENTIALS...");
+      const credentialsString = process.env.GOOGLE_APPLICATION_CREDENTIALS;
+
+      // Limpa o string JSON
+      let cleanedJson = credentialsString
+        .trim()
+        .replace(/^"|"$/g, "") // Remove aspas no início e fim
+        .replace(/\\"/g, '"') // Substitui \" por "
+        .replace(/\\n/g, "\n") // Substitui \n por quebra de linha real
+        .replace(/\\r/g, "\r") // Substitui \r
+        .replace(/\\t/g, "\t") // Substitui \t
+        .replace(/\\\\/g, "\\"); // Substitui \\ por \
+
+      try {
+        const credentials = JSON.parse(cleanedJson);
+        return { projectId, credentials };
+      } catch (error) {
+        console.error("❌ Falha ao parsear credenciais:", error.message);
+        console.log(
+          "Primeiros 200 chars do JSON:",
+          cleanedJson.substring(0, 200)
+        );
+      }
+    }
+
+    // 3. Fallback: tenta usar Application Default Credentials
+    console.log("🔄 Tentando Application Default Credentials...");
+    return {
+      projectId,
+      // O BigQuery vai tentar usar as credenciais padrão
+      // Isso pode funcionar se você configurar as credenciais de outra forma
+    };
+  }
+
+  // NOVO: Método de teste de conexão
+  async testConnection() {
+    try {
+      console.log("🔍 Testando conexão com BigQuery...");
+      const [datasets] = await this.bigQuery.getDatasets();
+      console.log(`✅ Conectado! ${datasets.length} datasets disponíveis`);
+      return true;
+    } catch (error) {
+      console.error("❌ Falha na conexão com BigQuery:", error.message);
+      return false;
+    }
+  }
+
+  // Resto do seu código permanece igual...
+  async getDadosEscolas(filtros = {}) {
+    const ano = filtros.ano || "2024";
+
+    try {
+      // Testa a conexão antes de executar queries
+      if (!this.connectionTested) {
+        const connected = await this.testConnection();
+        if (!connected) {
+          throw new Error("Não foi possível conectar ao BigQuery");
+        }
+        this.connectionTested = true;
+      }
+
       if (!completeColumnMappings[ano]) {
         throw new Error(`Mapeamento não encontrado para o ano ${ano}`);
       }
