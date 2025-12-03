@@ -3,6 +3,8 @@ import Fastify from "fastify";
 import cors from "@fastify/cors";
 import helmet from "@fastify/helmet";
 import rateLimit from "@fastify/rate-limit";
+import { writeFileSync, existsSync } from "fs";
+import { join } from "path";
 
 // Import de rotas
 import paginaInicialRoutes from "./src/routes/public/home.js";
@@ -36,6 +38,34 @@ const app = Fastify({
           level: "warn",
         },
 });
+
+const serviceAccountPath = join(__dirname, "service-account.json");
+
+if (
+  process.env.GOOGLE_APPLICATION_CREDENTIALS &&
+  process.env.GOOGLE_APPLICATION_CREDENTIALS.includes("type")
+) {
+  // Limpa o JSON - remove escapes
+  const jsonString = process.env.GOOGLE_APPLICATION_CREDENTIALS.replace(
+    /\\n/g,
+    "\n"
+  )
+    .replace(/\\"/g, '"')
+    .replace(/^"|"$/g, ""); // Remove aspas no início e fim se houver
+
+  writeFileSync(serviceAccountPath, jsonString);
+  console.log("Arquivo de credenciais criado em:", serviceAccountPath);
+
+  // Atualiza a variável para o caminho do arquivo
+  process.env.GOOGLE_APPLICATION_CREDENTIALS = serviceAccountPath;
+}
+
+// Verifica se o arquivo foi criado
+if (existsSync(serviceAccountPath)) {
+  console.log("✅ Credenciais do Google disponíveis");
+} else {
+  console.log("⚠️  Credenciais do Google não encontradas");
+}
 
 app.register(cors, {
   origin: [
