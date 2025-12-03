@@ -10,7 +10,6 @@ export const ENV = {
 
   // BigQuery - Vamos lidar com credenciais de forma diferente
   BIGQUERY_DATASET: process.env.BIGQUERY_DATASET || "escolas",
-  BIGQUERY_TABLE: process.env.BIGQUERY_TABLE || "2024",
 
   // Server
   PORT: parseInt(process.env.PORT || "3001"),
